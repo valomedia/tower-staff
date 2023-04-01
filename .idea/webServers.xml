@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="e387d4a7-8488-41c0-8f7f-42c0e3342a40" name="tower-assist.valo-dev.de" url="http://tower-assist.valo-dev.de">
+        <fileTransfer rootFolder="/public_html/tower-assist.valo-dev.de" accessType="FTPS" host="www485.your-server.de" port="21">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
