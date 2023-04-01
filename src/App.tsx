@@ -21,7 +21,7 @@ const App = () => (
             <p>
                 Warten auf Anfragen…
             </p>
-            <button className='accept-button'>
+            <button className='accept-button' disabled={true}>
                 <FontAwesomeIcon icon={faPhone}/>
                 &nbsp;
                 Anfrage annehmen

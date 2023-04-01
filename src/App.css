@@ -36,3 +36,15 @@
         transform: rotate(360deg);
     }
 }
+
+.accept-button {
+    background-color: #4eaca7;
+    color: white;
+    border: 1em solid #4eaca7;
+    border-radius: 3em;
+}
+
+.accept-button[disabled] {
+    background-color: rgba(0, 0, 0, .9);
+    border-color: rgba(0, 0, 0, .9);
+}
