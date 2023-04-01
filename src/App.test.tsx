@@ -1,3 +1,11 @@
+//
+//  App.test.tsx
+//  tower-assist
+//
+//  Created by Jean-Pierre Höhmann on 2023-03-06.
+//
+//
+
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import App from './App';

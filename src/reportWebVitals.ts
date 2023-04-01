@@ -1,3 +1,10 @@
+//
+//  reportWebVitals.ts
+//  tower-assist
+//
+//  Created by Jean-Pierre Höhmann on 2023-03-06.
+//
+
 import { ReportHandler } from 'web-vitals';
 
 const reportWebVitals = (onPerfEntry?: ReportHandler) => {

@@ -1,3 +1,10 @@
+//
+//  index.tsx
+//  tower-assist
+//
+//  Created by Jean-Pierre Höhmann on 2023-03-06.
+//
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
