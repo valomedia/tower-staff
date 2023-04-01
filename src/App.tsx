@@ -8,6 +8,8 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPhone } from '@fortawesome/free-solid-svg-icons';
 
 const App = () => (
     <div className='App'>
@@ -20,6 +22,8 @@ const App = () => (
                 Warten auf Anfragen…
             </p>
             <button className='accept-button'>
+                <FontAwesomeIcon icon={faPhone}/>
+                &nbsp;
                 Anfrage annehmen
             </button>
         </main>
