@@ -7,7 +7,7 @@
 
 import React from 'react';
 import logo from './logo.svg';
-import './App.css';
+import './App.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
 

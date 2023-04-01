@@ -1,9 +1,11 @@
 /*
- *  App.css
+ *  App.scss
  *  tower-assist
  *
  *  Created by Jean-Pierre Höhmann on 2023-03-06.
  */
+
+@use 'styles/colors';
 
 .App {
     text-align: center;
@@ -38,9 +40,9 @@
 }
 
 .accept-button {
-    background-color: #4eaca7;
+    background-color: colors.$primary;
     color: white;
-    border: 1em solid #4eaca7;
+    border: 1em solid colors.$primary;
     border-radius: 3em;
 }
 
