@@ -5,6 +5,9 @@
  *  Created by Jean-Pierre Höhmann on 2023-03-06.
  */
 
+/*noinspection ALL*/
+@import-normalize;
+
 body {
     margin: 0;
     font-family:
