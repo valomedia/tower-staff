@@ -7,7 +7,7 @@
 //
 
 import React, { useState } from 'react';
-import logo from './logo.svg';
+import logo from '../Assets/logo.svg';
 import './LaunchScreen.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';

@@ -6,12 +6,7 @@
 //
 //
 
-@use 'styles/colors';
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
+@use '../Styles/colors';
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
