@@ -1,0 +1,41 @@
+//
+//  LaunchScreen.scss
+//  tower-assist
+//
+//  Created by Jean-Pierre Höhmann on 2023-04-25.
+//
+//
+
+@use 'styles/colors';
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.accept-button {
+  background-color: colors.$primary;
+  color: white;
+  border: 1em solid colors.$primary;
+  border-radius: 3em;
+}
+
+.accept-button[disabled] {
+  background-color: darkgray;
+  border-color: darkgray;
+}
