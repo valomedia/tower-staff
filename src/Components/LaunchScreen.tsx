@@ -18,17 +18,41 @@ import { faPhone } from '@fortawesome/free-solid-svg-icons';
 const LaunchScreen = () => {
 
     /*
+     * Whether the application is still trying to reach the backend.
+     */
+    const [isConnecting, setIsConnecting] = useState(true);
+
+    /*
+     * Whether a connection with the backend has been established.
+     */
+    const [hasBackend, setHasBackend] = useState(false);
+
+    /*
      * Whether there is a user that can be assisted.
      *
      * This will become true, when the app is connected, and there is a user actively waiting.
      */
     const [hasCustomer,setHasCustomer] = useState(false);
 
+    /*
+     * The name of the user seeking assistance.
+     *
+     * Once implemented, this will provide the assistant with the name of the user seeking assistance.
+     */
+    const [customerName, setCustomerName] = useState('Theo Test');
+
     return (
         <section id='launch-screen'>
             <img src={logo} className='App-logo' alt='logo'/>
             <h1>Tower</h1>
-            <p>Warten auf Anfragen…</p>
+            <p>
+                {
+                    hasCustomer ? `Neue Anfrage von ${customerName}`
+                        : hasBackend ? 'Warten auf Anfragen…'
+                            : isConnecting ? 'Verbindung wird hergestellt…'
+                                : 'Verbindung fehlgeschlagen!'
+                }
+            </p>
             <button className='accept-button' disabled={!hasCustomer}>
                 <FontAwesomeIcon icon={faPhone}/>
                 &nbsp;
