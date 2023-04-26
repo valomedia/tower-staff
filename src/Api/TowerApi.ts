@@ -6,6 +6,8 @@
 //
 //
 
+import JoinResponse from '../Models/JoinResponse';
+
 const TowerApi = {
 
     /*
@@ -18,7 +20,7 @@ const TowerApi = {
     /*
      * Make a request to the join endpoint.
      */
-    join: async () => {
+    join: async (): Promise<JoinResponse> => {
         return await request('POST', '/join');
     },
 
