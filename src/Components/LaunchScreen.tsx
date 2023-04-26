@@ -6,11 +6,12 @@
 //
 //
 
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import logo from '../Assets/logo.svg';
 import './LaunchScreen.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
+import TowerApi from '../Api/TowerApi';
 
 /*
  * The screen presented to the user upon opening the app.
@@ -40,6 +41,13 @@ const LaunchScreen = () => {
      * Once implemented, this will provide the assistant with the name of the user seeking assistance.
      */
     const [customerName, setCustomerName] = useState('Theo Test');
+
+    useEffect(() => {
+        TowerApi
+            .index()
+            .then(() => setHasBackend(true))
+            .finally(() => setIsConnecting(false))
+    })
 
     return (
         <section id='launch-screen'>
