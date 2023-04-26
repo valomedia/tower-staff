@@ -47,6 +47,18 @@ const LaunchScreen = () => {
             .index()
             .then(() => setHasBackend(true))
             .finally(() => setIsConnecting(false))
+
+        setInterval(
+            () => {
+                if (hasBackend) {
+                    TowerApi
+                        .poll()
+                        .then(() => setHasCustomer(true))
+                        .catch(() => setHasCustomer(false))
+                }
+            },
+            2000
+        )
     })
 
     return (

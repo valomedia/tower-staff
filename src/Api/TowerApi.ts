@@ -47,6 +47,9 @@ const request = async (method = 'GET', path: String) => {
             credentials: 'include',
         }
     )
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
     return response.json();
 }
 
