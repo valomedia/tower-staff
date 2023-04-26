@@ -43,27 +43,31 @@ const LaunchScreen = () => {
     const [customerName, setCustomerName] = useState('Theo Test');
 
     useEffect(() => {
-        TowerApi
-            .index()
-            .then(() => setHasBackend(true))
-            .finally(() => setIsConnecting(false))
-
-        setInterval(
+        const intervalId = window.setInterval(
             () => {
-                if (hasBackend) {
-                    TowerApi
-                        .poll()
-                        .then(() => setHasCustomer(true))
-                        .catch(() => setHasCustomer(false))
+                if (window.location.hash === "#launch-screen") {
+                    if (isConnecting) {
+                        TowerApi
+                            .index()
+                            .then(() => setHasBackend(true))
+                            .finally(() => setIsConnecting(false))
+                    }
+                    if (hasBackend) {
+                        TowerApi
+                            .poll()
+                            .then(() => setHasCustomer(true))
+                            .catch(() => setHasCustomer(false))
+                    }
                 }
             },
             2000
-        )
-    })
+        );
+        return () => window.clearInterval(intervalId);
+    });
 
     return (
         <section id='launch-screen'>
-            <img src={logo} className='App-logo' alt='logo'/>
+            <img src={logo} className='launch-screen-logo' alt='logo'/>
             <h1>Tower</h1>
             <p>
                 {
@@ -73,7 +77,10 @@ const LaunchScreen = () => {
                                 : 'Verbindung fehlgeschlagen!'
                 }
             </p>
-            <button className='accept-button' disabled={!hasCustomer}>
+            <button
+                    className='accept-button'
+                    disabled={!hasCustomer}
+                    onClick={() => window.location.hash = '#call-screen'}>
                 <FontAwesomeIcon icon={faPhone}/>
                 &nbsp;
                 Anfrage annehmen
