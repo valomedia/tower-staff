@@ -10,17 +10,21 @@ You can either run the app locally for development, or deploy to a webserver.
 
 ### Development
 
-In order to run this app locally, you need to provide api credentials in `.env.development.local`, by setting the value
-for `REACT_APP_BASIC_AUTH` to your username and password (for example `Aladdin:open sesame`). You might also need to
-override the value for `REACT_APP_TOWER_API_ENDPOINT`. Afterward you can run the app locally using the command
-`npm start`.
+In order to run this app locally, execute `npm start`. In order to avoid issues with cross-origin requests during
+development, the app is set to make all requests against the development server while running in development mode. The
+development server is configured to proxy the requests intended for the backend as needed. If needed, you can modify
+the backend the requests are send to by changing the value for the proxy-parameter in `package.json`. If the relative
+path to the api on your backend-server is non-standard, you will also need to override `REACT_APP_TOWER_API_ENDPOINT`,
+by creating `.env.development.local`.
 
 ### Deployment
 
-In order to deploy this app,  optionally configure the values in `.env` and `.env.production`, by adding overrides in
-`.env.local` and `.env.production.local`, then run `npm run build` to build the app. Afterward you can upload the build
-directory to any webserver. The backend expects the user to be pre-authorized through basic auth, so make sure to add
-basic authentication to your server.
+In order to deploy this app, optionally override `REACT_APP_TOWER_API_ENDPOINT`, by creating `.env.production.local`,
+then execute `npm run build` and upload the contents of the build directory to any webserver.
+
+If you have set `REACT_APP_TOWER_API_ENDPOINT` to some relative path, make sure your server proxies those requests to
+the actual backend. If you have instead configured it to reach out to the domain of the backend directly, make sure you
+have correctly configured the backend to allow these cross-origin requests.
 
 ## Available Scripts
 
