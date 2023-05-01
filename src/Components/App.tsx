@@ -26,9 +26,6 @@ const App = () => {
                 <LaunchScreen></LaunchScreen>
                 <CallScreen></CallScreen>
             </main>
-            <footer>
-                &nbsp;
-            </footer>
         </div>
     );
 }

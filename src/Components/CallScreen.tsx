@@ -50,6 +50,7 @@ const CallScreen = () => {
         <section id='call-screen'>
             <video></video>
             <audio></audio>
+            <footer></footer>
         </section>
     );
 }
