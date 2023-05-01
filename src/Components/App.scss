@@ -7,21 +7,8 @@
 
 @use '../Styles/colors';
 
-header {
-  position: fixed;
-  background-image: url('../Assets/header.svg');
-  background-size: cover;
-}
-
 header > img {
-  height: 3em;
-
-  //noinspection CssReplaceWithShorthandSafely
-  margin: .5em;
-
-  /* .5em + (3em+2*.5em)*tan(1/6*pi) */
-  //noinspection CssReplaceWithShorthandSafely
-  margin-right: 2.80940108em;
+  height: 100%;
 }
 
 footer {
