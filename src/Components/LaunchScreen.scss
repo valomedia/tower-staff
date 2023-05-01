@@ -30,6 +30,12 @@
   pointer-events: none;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  #launch-screen {
+    transition: top 400ms ease-in;
+  }
+}
+
 .accept-button {
   background-color: colors.$primary;
   color: white;
