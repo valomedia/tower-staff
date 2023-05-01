@@ -7,7 +7,7 @@
 //
 
 import { useEffect, useState } from 'react';
-import logo from '../Assets/logo.svg';
+import logoAnimated from '../Assets/logo-animated.svg';
 import './LaunchScreen.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
@@ -67,7 +67,7 @@ const LaunchScreen = () => {
 
     return (
         <section id='launch-screen'>
-            <img src={logo} className='launch-screen-logo' alt='logo'/>
+            <img src={logoAnimated} className='launch-screen-logo' alt='logo'/>
             <h1>Tower</h1>
             <p>
                 {
