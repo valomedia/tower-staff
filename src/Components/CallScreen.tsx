@@ -11,7 +11,8 @@ import './CallScreen.scss';
 import useHash from '../Hooks/useHash';
 import TowerApi from '../Api/TowerApi';
 import CallController from '../Controllers/CallController';
-import joinResponse from '../Models/JoinResponse';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMicrophoneSlash, faPhone, faVolumeXmark } from '@fortawesome/free-solid-svg-icons';
 
 /*
  * The in-call ui.
@@ -50,7 +51,19 @@ const CallScreen = () => {
         <section id='call-screen'>
             <video></video>
             <audio></audio>
-            <footer></footer>
+            <footer>
+                <button className="mute-input-button">
+                    <FontAwesomeIcon icon={faMicrophoneSlash}/>
+                </button>
+                <button className="mute-output-button">
+                    <FontAwesomeIcon icon={faVolumeXmark}/>
+                </button>
+                <button className="hangup-button">
+                    <FontAwesomeIcon icon={faPhone}/>
+                    &nbsp;
+                    Auflegen
+                </button>
+            </footer>
         </section>
     );
 }

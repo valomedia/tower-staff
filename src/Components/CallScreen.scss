@@ -7,3 +7,28 @@
 //
 
 @use '../Styles/colors';
+
+#call-screen {
+
+  button {
+    margin: 0 6.666px;
+    background-color: white;
+    width: 40px;
+    height: 40px;
+  }
+
+  button:first-child {
+    margin-left: 0;
+  }
+
+  button:last-child {
+    margin-right: 0;
+  }
+
+  .hangup-button {
+    background-color: red;
+    color: white;
+    width: initial;
+  }
+
+}

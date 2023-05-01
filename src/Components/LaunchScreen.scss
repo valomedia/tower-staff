@@ -19,41 +19,35 @@
   font-size: calc(10px + 2vmin);
   color: white;
   top: -100vh;
-}
 
-#launch-screen:target {
-  top: 0;
-}
-
-.launch-screen-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  #launch-screen {
-    transition: top 400ms ease-in;
+  &:target {
+    top: 0;
   }
-}
 
-.accept-button {
-  background-color: colors.$primary;
-  color: white;
-  border: 1em solid colors.$primary;
-  border-radius: 3em;
-}
+  .launch-screen-logo {
+    height: 40vmin;
+    pointer-events: none;
+  }
 
-.accept-button[disabled] {
-  background-color: darkgray;
-  border-color: darkgray;
-}
+  @media (prefers-reduced-motion: no-preference) {
+    #launch-screen {
+      transition: top 400ms ease-in;
+    }
+  }
 
-h1 {
-  font-family: "Dolce Vita", sans-serif;
-  font-size: 12.5vmin;
-  margin: 16px 0 0;
-}
+  .accept-button {
+    background-color: colors.$primary;
+    color: white;
+  }
 
-p {
-  margin: 16px 0;
+  h1 {
+    font-family: "Dolce Vita", sans-serif;
+    font-size: 12.5vmin;
+    margin: 16px 0 0;
+  }
+
+  p {
+    margin: 16px 0;
+  }
+
 }
