@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import './App.scss';
 import LaunchScreen from './LaunchScreen';
 import CallScreen from './CallScreen';
+import banner from '../Assets/banner.svg';
 
 const App = () => {
 
@@ -19,7 +20,7 @@ const App = () => {
     return (
         <div className='App'>
             <header>
-                &nbsp;
+                <img src={banner} alt='tower'/>
             </header>
             <main>
                 <LaunchScreen></LaunchScreen>
