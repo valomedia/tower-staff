@@ -10,6 +10,12 @@
 
 #call-screen {
 
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
   button {
     margin: 0 6.666px;
     background-color: white;
