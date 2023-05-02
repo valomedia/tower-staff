@@ -13,6 +13,7 @@ import TowerApi from '../Api/TowerApi';
 import CallController from '../Controllers/CallController';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophoneSlash, faPhone, faVolumeXmark } from '@fortawesome/free-solid-svg-icons';
+import { MeetingSessionStatus } from 'amazon-chime-sdk-js';
 
 /*
  * The in-call ui.
@@ -25,9 +26,9 @@ const CallScreen = () => {
     const [hash, setHash] = useHash();
 
     /*
-     * The controller for the current call.
+     * The session for the current call.
      */
-    const [callController, setCallController] = useState(null);
+    const [callController, setCallController] = useState<CallController|null>(null);
 
     useEffect(
         () => {
@@ -35,10 +36,17 @@ const CallScreen = () => {
                 TowerApi
                     .join()
                     .then((joinResponse) => {
-                        CallController(
-                            joinResponse,
-                            document.getElementsByTagName('audio')[0],
-                            document.getElementsByTagName('video')[0]
+                        setCallController(
+                            new CallController(
+                                joinResponse,
+                                document.getElementsByTagName('audio')[0],
+                                document.getElementsByTagName('video')[0],
+                                {
+                                    audioVideoDidStop: (sessionStatus: MeetingSessionStatus) => {
+                                        setHash('#launch-screen')
+                                    }
+                                }
+                            )
                         )
                     })
                     .catch(() => setHash('#launch-screen'))
@@ -58,7 +66,7 @@ const CallScreen = () => {
                 <button className="mute-output-button">
                     <FontAwesomeIcon icon={faVolumeXmark}/>
                 </button>
-                <button className="hangup-button">
+                <button className="hangup-button" onClick={TowerApi.end}>
                     <FontAwesomeIcon icon={faPhone}/>
                     &nbsp;
                     Auflegen
