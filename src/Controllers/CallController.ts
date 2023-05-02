@@ -64,7 +64,11 @@ class CallController {
         })()
     }
 
+    /*
+     * The Amazon Chime MeetingSession for the call.
+     */
     meetingSession: MeetingSession;
+
 }
 
 const logger = new ConsoleLogger('CallController', LogLevel.INFO);
