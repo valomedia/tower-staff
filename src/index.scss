@@ -6,6 +6,7 @@
  */
 
 @use "Styles/_fonts.scss";
+@use "Styles/_colors.scss";
 
 //noinspection ALL
 @import-normalize;
@@ -64,11 +65,12 @@ footer {
 }
 
 button {
+  background-color: white;
   border: 0;
   padding: 1em;
-  border-radius: 3em;
+  border-radius: 40px;
   line-height: 1;
-  height: 3em;
+  height: 40px;
 }
 
 button[disabled] {
@@ -76,3 +78,18 @@ button[disabled] {
   color: lightgray!important;
 }
 
+.accept-button {
+  background-color: colors.$primary;
+  color: white;
+}
+
+.modal {
+  position: fixed;
+  top: 50vh;
+  left: 50vw;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  z-index: 999;
+}

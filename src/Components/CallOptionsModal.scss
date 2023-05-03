@@ -1,0 +1,27 @@
+//
+//  CallOptionsModal.scss
+//  tower-assist
+//
+//  Created by Jean-Pierre Höhmann on 2023-05-02.
+//
+//
+
+#call-options-modal {
+
+  .preference {
+    margin-bottom: 16px;
+  }
+
+  form > * {
+    display: flex;
+  }
+
+  label {
+    flex-grow: 1;
+    margin-right: 16px;
+  }
+
+  button {
+    float: right;
+  }
+}
