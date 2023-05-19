@@ -18,6 +18,7 @@ import {
 } from 'amazon-chime-sdk-js';
 
 import JoinResponse from '../Models/JoinResponse';
+import DataMessageTopic from '../Models/DataMessageTopic';
 
 /*
  * Controller in charge of one call.
@@ -69,7 +70,44 @@ class CallController {
      */
     meetingSession: MeetingSession;
 
+    /*
+     * Tell the client to switch cameras.
+     */
+   async switchCamera() {
+       this.meetingSession.audioVideo.realtimeSendDataMessage(
+           DataMessageTopic.SwitchCameraRequest,
+           {},
+           dataMessageLifetimeMs
+       )
+       return new Promise<void>((resolve) => {
+           this.meetingSession.audioVideo.realtimeSubscribeToReceiveDataMessage(
+               DataMessageTopic.SwitchCameraResponse,
+               (_) => {
+                   this.meetingSession.audioVideo.realtimeUnsubscribeFromReceiveDataMessage(
+                       DataMessageTopic.SwitchCameraResponse
+                   );
+                   resolve();
+               }
+           );
+       });
+   }
+
 }
+
+/*
+ * How long the data messages are valid.
+ *
+ * Since the messages are always transmitted to the user in real time (there is no situation where messages are sent
+ * for a user that isn't on the call yet), the messages are usually delivered immediately.  The messages still have a
+ * lifetime of ten seconds however, in order to account for users who may be experiencing brief intermittent
+ * interruptions in their connection, due to a spotty network.
+ *
+ * If the message does not reach the user within ten seconds, the message will be quietly discarded.  This will
+ * currently result in actions in the ui becoming disabled for the duration of the call.  The inherent assumption
+ * being, that if the call hangs completely for more than ten seconds at a time, assistance will become impossible
+ * anyway, and there is no reasonable way to gracefully recover.
+ */
+const dataMessageLifetimeMs = 10_000;
 
 const logger = new ConsoleLogger('CallController', LogLevel.INFO);
 const deviceController = new DefaultDeviceController(logger);

@@ -13,6 +13,7 @@ import TowerApi from '../Api/TowerApi';
 import CallController from '../Controllers/CallController';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+    faCameraRotate,
     faGear,
     faMicrophone,
     faMicrophoneSlash,
@@ -57,6 +58,14 @@ const CallScreen = () => {
     const [isAudioOutputMuted, setIsAudioOutputMuted] = useState(true);
 
     /*
+     * Whether the camera is currently being switched.
+     *
+     * This is used to disable the camera switch button while waiting for the device to acknowledge the camera switch,
+     * to avoid a double switch due to the user thinking the switching didn't work.
+     */
+    const [isSwitchingCamera, setIsSwitchingCamera] = useState(false);
+
+    /*
      * The audio element.
      */
     const audioRef = useRef() as MutableRefObject<HTMLAudioElement>;
@@ -94,6 +103,14 @@ const CallScreen = () => {
     const handleOutputUnmute = () => {
         audioRef.current.muted = false;
         setIsAudioOutputMuted(false);
+    }
+
+    /*
+     * Switch cameras
+     */
+    const handleCameraSwitch = () => {
+        setIsSwitchingCamera(true);
+        callController?.switchCamera().then(() => setIsSwitchingCamera(false));
     }
 
     useEffect(
@@ -144,6 +161,9 @@ const CallScreen = () => {
                 <video ref={videoRef}></video>
                 <audio ref={audioRef}></audio>
                 <footer>
+                    <button id='camera-switch-button' onClick={handleCameraSwitch} disabled={isSwitchingCamera}>
+                        <FontAwesomeIcon icon={faCameraRotate}/>
+                    </button>
                     {isAudioInputMuted ? (
                         <button id='unmute-input-button' onClick={handleInputUnmute}>
                             <FontAwesomeIcon icon={faMicrophone}/>
