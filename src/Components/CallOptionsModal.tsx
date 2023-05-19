@@ -86,13 +86,17 @@ const CallOptionsModal = (
                 <div className='preference'>
                     <label htmlFor='audio-input-device'>Audioeingabegerät</label>
                     <select name='audio-input-device'>
-                        {audioInputDevices.map(x => <option value={x.deviceId}>{x.label}</option>)}
+                        {audioInputDevices.map(x =>
+                            <option value={x.deviceId} key={x.deviceId}>{x.label}</option>
+                        )}
                     </select>
                 </div>
                 <div className='preference'>
                     <label htmlFor='audio-output-device'>Audioausgabegerät</label>
                     <select name='audio-output-device'>
-                        {audioOutputDevices.map(x => <option value={x.deviceId}>{x.label}</option>)}
+                        {audioOutputDevices.map(x =>
+                            <option value={x.deviceId} key={x.deviceId}>{x.label}</option>
+                        )}
                     </select>
                 </div>
                 <button type='submit' className='accept-button'>
