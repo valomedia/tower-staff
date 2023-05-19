@@ -74,8 +74,13 @@ button {
 }
 
 button[disabled] {
-  background-color: darkgray!important;
-  color: lightgray!important;
+  background-color: lightgray!important;
+  color: darkgray!important;
+}
+
+button.inactive {
+  background-color: gray;
+  color: white;
 }
 
 .accept-button {

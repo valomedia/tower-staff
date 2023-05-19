@@ -208,26 +208,27 @@ const CallScreen = () => {
                     </button>
                     <button
                             id='torch-toggle-button'
+                            className={isUsingTorch ? 'active' : 'inactive'}
                             onClick={handleTorchToggle}
                             disabled={isTogglingTorch || isSwitchingCamera || isUsingFrontCamera || !callController}>
                         <FontAwesomeIcon icon={faLightbulb}/>
                     </button>
                     {isAudioInputMuted ? (
-                        <button id='unmute-input-button' onClick={handleInputUnmute}>
-                            <FontAwesomeIcon icon={faMicrophone}/>
+                        <button id='unmute-input-button' className='inactive' onClick={handleInputUnmute}>
+                            <FontAwesomeIcon icon={faMicrophoneSlash}/>
                         </button>
                     ) : (
-                        <button id='mute-input-button' onClick={handleInputMute}>
-                            <FontAwesomeIcon icon={faMicrophoneSlash}/>
+                        <button id='mute-input-button' className='active' onClick={handleInputMute}>
+                            <FontAwesomeIcon icon={faMicrophone}/>
                         </button>
                     )}
                     {isAudioOutputMuted ? (
-                        <button id='unmute-output-button' onClick={handleOutputUnmute}>
-                            <FontAwesomeIcon icon={faVolumeHigh}/>
+                        <button id='unmute-output-button' className='inactive' onClick={handleOutputUnmute}>
+                            <FontAwesomeIcon icon={faVolumeXmark}/>
                         </button>
                     ) : (
-                        <button id='mute-output-button' onClick={handleOutputMute}>
-                            <FontAwesomeIcon icon={faVolumeXmark}/>
+                        <button id='mute-output-button' className='active' onClick={handleOutputMute}>
+                            <FontAwesomeIcon icon={faVolumeHigh}/>
                         </button>
                     )}
                     <button id='option-button' onClick={() => setIsPresentingCallOptionsModal(true)}>
