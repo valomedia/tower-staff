@@ -124,7 +124,7 @@ const CallScreen = () => {
                             audioRef.current,
                             videoRef.current,
                             {
-                                audioVideoDidStop: (sessionStatus: MeetingSessionStatus) => {
+                                audioVideoDidStop: (_: MeetingSessionStatus) => {
                                     setHash('#launch-screen')
                                 },
                                 audioVideoDidStart: () => {
@@ -144,6 +144,7 @@ const CallScreen = () => {
                     .catch(() => setHash('#launch-screen'))
             }
         },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [hash, setHash]
     );
 
