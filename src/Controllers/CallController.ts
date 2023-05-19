@@ -58,7 +58,7 @@ class CallController {
                 }
             });
 
-            meetingSession.audioVideo.bindAudioElement(audioElement);
+            await meetingSession.audioVideo.bindAudioElement(audioElement);
             meetingSession.audioVideo.addObserver(observer);
             meetingSession.audioVideo.start();
         })()
