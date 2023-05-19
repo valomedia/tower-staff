@@ -10,9 +10,7 @@ import './CallOptionsModal.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import CallController from '../Controllers/CallController';
-import callScreen from './CallScreen';
 import { FormEvent, useEffect, useState } from 'react';
-import { AudioInputDevice } from 'amazon-chime-sdk-js';
 
 /*
  * The modal allowing the user to choose input and output devices.
