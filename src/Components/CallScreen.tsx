@@ -15,13 +15,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faCameraRotate,
     faGear,
+    faLightbulb,
     faMicrophone,
     faMicrophoneSlash,
     faPhone,
     faVolumeHigh,
     faVolumeXmark
 } from '@fortawesome/free-solid-svg-icons';
-import { MeetingSessionStatus } from 'amazon-chime-sdk-js';
 import CallOptionsModal from './CallOptionsModal';
 
 /*
@@ -50,12 +50,12 @@ const CallScreen = () => {
     /*
      * Whether audio input is currently muted.
      */
-    const [isAudioInputMuted, setIsAudioInputMuted] = useState(true);
+    const [isAudioInputMuted, setIsAudioInputMuted] = useState(false);
 
     /*
      * Whether audio output is currently muted.
      */
-    const [isAudioOutputMuted, setIsAudioOutputMuted] = useState(true);
+    const [isAudioOutputMuted, setIsAudioOutputMuted] = useState(false);
 
     /*
      * Whether the camera is currently being switched.
@@ -64,6 +64,25 @@ const CallScreen = () => {
      * to avoid a double switch due to the user thinking the switching didn't work.
      */
     const [isSwitchingCamera, setIsSwitchingCamera] = useState(false);
+
+    /*
+     * Whether the camera in use is the front camera.
+     */
+    const [isUsingFrontCamera, setIsUsingFrontCamera] = useState(false);
+
+    /*
+     * Whether the torch is currently being switched.
+     *
+     * This is used to disable the torch toggle button while waiting for the device to acknowledge the torch toggle, to
+     * avoid the user pressing the button again while the torch is already turning on, thereby turning it back off
+     * immediately.
+     */
+    const [isTogglingTorch, setIsTogglingTorch] = useState(false);
+
+    /*
+     * Whether the torch is currently on.
+     */
+    const [isUsingTorch, setIsUsingTorch] = useState(false);
 
     /*
      * The audio element.
@@ -109,8 +128,37 @@ const CallScreen = () => {
      * Switch cameras
      */
     const handleCameraSwitch = () => {
-        setIsSwitchingCamera(true);
-        callController?.switchCamera().then(() => setIsSwitchingCamera(false));
+        if (callController) {
+            setIsSwitchingCamera(true);
+            setIsUsingTorch(false);
+            setIsUsingFrontCamera(!isUsingFrontCamera);
+            callController.switchCamera().then(() => setIsSwitchingCamera(false));
+        }
+    }
+
+    /*
+     * Toggle torch
+     */
+    const handleTorchToggle = () => {
+        if (callController) {
+            setIsTogglingTorch(true);
+            setIsUsingTorch(!isUsingTorch);
+            callController.toggleTorch().then(() => setIsTogglingTorch(false));
+        }
+    }
+
+    /*
+     * Reset everything when the call ends.
+     */
+    const onCallEnd = () => {
+        setHash('#launch-screen');
+        setIsPresentingCallOptionsModal(false);
+        setIsAudioInputMuted(false);
+        setIsAudioOutputMuted(false);
+        setIsSwitchingCamera(false);
+        setIsUsingFrontCamera(false);
+        setIsTogglingTorch(false);
+        setIsUsingTorch(false);
     }
 
     useEffect(
@@ -123,17 +171,7 @@ const CallScreen = () => {
                             joinResponse,
                             audioRef.current,
                             videoRef.current,
-                            {
-                                audioVideoDidStop: (_: MeetingSessionStatus) => {
-                                    setHash('#launch-screen')
-                                },
-                                audioVideoDidStart: () => {
-                                    handleInputUnmute()
-                                    handleOutputUnmute()
-                                    setIsAudioInputMuted(false)
-                                    setIsAudioOutputMuted(false)
-                                }
-                            }
+                            {audioVideoDidStop: onCallEnd}
                         );
                         setCallController(callController);
                         callController
@@ -162,8 +200,17 @@ const CallScreen = () => {
                 <video ref={videoRef}></video>
                 <audio ref={audioRef}></audio>
                 <footer>
-                    <button id='camera-switch-button' onClick={handleCameraSwitch} disabled={isSwitchingCamera}>
+                    <button
+                            id='camera-switch-button'
+                            onClick={handleCameraSwitch}
+                            disabled={isSwitchingCamera || !callController}>
                         <FontAwesomeIcon icon={faCameraRotate}/>
+                    </button>
+                    <button
+                            id='torch-toggle-button'
+                            onClick={handleTorchToggle}
+                            disabled={isTogglingTorch || isSwitchingCamera || isUsingFrontCamera || !callController}>
+                        <FontAwesomeIcon icon={faLightbulb}/>
                     </button>
                     {isAudioInputMuted ? (
                         <button id='unmute-input-button' onClick={handleInputUnmute}>

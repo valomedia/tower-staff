@@ -73,24 +73,34 @@ class CallController {
     /*
      * Tell the client to switch cameras.
      */
-   async switchCamera() {
-       this.meetingSession.audioVideo.realtimeSendDataMessage(
-           DataMessageTopic.SwitchCameraRequest,
-           {},
-           dataMessageLifetimeMs
-       )
-       return new Promise<void>((resolve) => {
-           this.meetingSession.audioVideo.realtimeSubscribeToReceiveDataMessage(
-               DataMessageTopic.SwitchCameraResponse,
-               (_) => {
-                   this.meetingSession.audioVideo.realtimeUnsubscribeFromReceiveDataMessage(
-                       DataMessageTopic.SwitchCameraResponse
-                   );
-                   resolve();
-               }
-           );
-       });
-   }
+    async switchCamera() {
+        this.sendMessage(DataMessageTopic.SwitchCameraRequest);
+        return this.receiveMessage(DataMessageTopic.SwitchCameraResponse);
+    }
+
+    /*
+     * Tell the client to toggle the torch.
+     */
+    async toggleTorch() {
+        this.sendMessage(DataMessageTopic.ToggleTorchRequest);
+        return this.receiveMessage(DataMessageTopic.ToggleTorchResponse);
+    }
+
+    private sendMessage(topic: DataMessageTopic, data: Object = {}) {
+        this.meetingSession.audioVideo.realtimeSendDataMessage(topic, data, dataMessageLifetimeMs);
+    }
+
+    private async receiveMessage(topic: DataMessageTopic) {
+        return new Promise<Object>((resolve) => {
+            this.meetingSession.audioVideo.realtimeSubscribeToReceiveDataMessage(
+                topic,
+                (msg) => {
+                    this.meetingSession.audioVideo.realtimeUnsubscribeFromReceiveDataMessage(topic);
+                    resolve(msg.json())
+                }
+            )
+        })
+    }
 
 }
 
