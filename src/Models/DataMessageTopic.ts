@@ -1,0 +1,18 @@
+//
+//  DataMessageTopic.ts
+//  tower-assist
+//
+//  Created by Jean-Pierre Höhmann on 2023-05-19.
+//
+//
+
+
+/*
+ * The various messages that can be sent.
+ */
+enum DataMessageTopic {
+    SwitchCameraRequest = "switch-camera-request",
+    SwitchCameraResponse = "switch-camera-response"
+}
+
+export default DataMessageTopic;
