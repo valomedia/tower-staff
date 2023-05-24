@@ -14,7 +14,9 @@ enum DataMessageTopic {
     SwitchCameraRequest = "switch-camera-request",
     SwitchCameraResponse = "switch-camera-response",
     ToggleTorchRequest = "toggle-torch-request",
-    ToggleTorchResponse = "toggle-torch-response"
+    ToggleTorchResponse = "toggle-torch-response",
+    LocationRequest = "location-request",
+    LocationResponse = "location-response"
 }
 
 export default DataMessageTopic;
