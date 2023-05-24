@@ -11,24 +11,24 @@ interface JoinResponse {
     joinInfo: {
         meetingResponse: {
             Meeting: {
-                externalMeetingId: String | null,
-                primaryMeetingId: String | null,
+                externalMeetingId: string | null,
+                primaryMeetingId: string | null,
                 mediaPlacement: {
-                    audioFallbackUrl: String | null,
-                    audioHostUrl: String,
-                    signalingUrl: String,
-                    turnControlUrl: String | null,
-                    eventIngestionUrl: String | null
+                    audioFallbackUrl: string | null,
+                    audioHostUrl: string,
+                    signalingUrl: string,
+                    turnControlUrl: string | null,
+                    eventIngestionUrl: string | null
                 },
-                mediaRegion: String,
-                meetingId: String
+                mediaRegion: string,
+                meetingId: string
             }
         },
         attendeeResponse: {
             Attendee: {
-                attendeeId: String,
-                externalUserId: String,
-                joinToken: String
+                attendeeId: string,
+                externalUserId: string,
+                joinToken: string
             }
         }
     }
