@@ -9,6 +9,7 @@
 import {
     AudioVideoObserver,
     ConsoleLogger,
+    DataMessage,
     DefaultDeviceController,
     DefaultMeetingSession,
     LogLevel,
@@ -19,6 +20,7 @@ import {
 
 import JoinResponse from '../Models/JoinResponse';
 import DataMessageTopic from '../Models/DataMessageTopic';
+import LocationResponseData from '../Models/LocationResponseData';
 
 /*
  * Controller in charge of one call.
@@ -75,7 +77,7 @@ class CallController {
      */
     async switchCamera() {
         this.sendMessage(DataMessageTopic.SwitchCameraRequest);
-        return this.receiveMessage(DataMessageTopic.SwitchCameraResponse);
+        await this.receiveMessage(DataMessageTopic.SwitchCameraResponse);
     }
 
     /*
@@ -83,7 +85,15 @@ class CallController {
      */
     async toggleTorch() {
         this.sendMessage(DataMessageTopic.ToggleTorchRequest);
-        return this.receiveMessage(DataMessageTopic.ToggleTorchResponse);
+        await this.receiveMessage(DataMessageTopic.ToggleTorchResponse);
+    }
+
+    /*
+     * Request the current location from the client.
+     */
+    async requestLocation(): Promise<LocationResponseData> {
+        this.sendMessage(DataMessageTopic.LocationRequest);
+        return (await this.receiveMessage(DataMessageTopic.LocationResponse)).json();
     }
 
     private sendMessage(topic: DataMessageTopic, data: Object = {}) {
@@ -91,12 +101,12 @@ class CallController {
     }
 
     private async receiveMessage(topic: DataMessageTopic) {
-        return new Promise<Object>((resolve) => {
+        return new Promise<DataMessage>((resolve) => {
             this.meetingSession.audioVideo.realtimeSubscribeToReceiveDataMessage(
                 topic,
                 (msg) => {
                     this.meetingSession.audioVideo.realtimeUnsubscribeFromReceiveDataMessage(topic);
-                    resolve(msg.json())
+                    resolve(msg)
                 }
             )
         })
