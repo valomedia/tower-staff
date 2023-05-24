@@ -16,6 +16,7 @@ import {
     faCameraRotate,
     faGear,
     faLightbulb,
+    faLocationDot,
     faMicrophone,
     faMicrophoneSlash,
     faPhone,
@@ -23,6 +24,8 @@ import {
     faVolumeXmark
 } from '@fortawesome/free-solid-svg-icons';
 import CallOptionsModal from './CallOptionsModal';
+import Coordinate from '../Models/Coordinate';
+import MapComponent from './MapComponent';
 
 /*
  * The in-call ui.
@@ -83,6 +86,26 @@ const CallScreen = () => {
      * Whether the torch is currently on.
      */
     const [isUsingTorch, setIsUsingTorch] = useState(false);
+
+    /*
+     * Whether the location is currently being requested.
+     *
+     * This will become true when the assistant requests the location and remain true until the location data has
+     * either arrived, or is sure to never arrive.
+     */
+    const [isRequestingLocation, setIsRequestingLocation] = useState(false);
+
+    /*
+     * Whether requesting the location is currently possible.
+     *
+     * This is set to false, if the users devices cannot or will not produce a location.
+     */
+    const [isLocationAvailable, setIsLocationAvailable] = useState(true);
+
+    /*
+     * The location, that is currently shown on screen, if any.
+     */
+    const [location, setLocation] = useState<Coordinate|undefined>();
 
     /*
      * The audio element.
@@ -148,6 +171,20 @@ const CallScreen = () => {
     }
 
     /*
+     * Request location
+     */
+    const handleLocationRequest = () => {
+        if (callController) {
+            setIsRequestingLocation(true);
+            callController.requestLocation().then(res => {
+                setIsRequestingLocation(false)
+                setLocation(res.locationInfo?.coordinate)
+                if (!res.locationInfo) { setIsLocationAvailable(false); }
+            })
+        }
+    }
+
+    /*
      * Reset everything when the call ends.
      */
     const onCallEnd = () => {
@@ -159,6 +196,9 @@ const CallScreen = () => {
         setIsUsingFrontCamera(false);
         setIsTogglingTorch(false);
         setIsUsingTorch(false);
+        setIsRequestingLocation(false);
+        setIsLocationAvailable(true);
+        setLocation(undefined);
     }
 
     useEffect(
@@ -199,6 +239,7 @@ const CallScreen = () => {
             <section id='call-screen'>
                 <video ref={videoRef}></video>
                 <audio ref={audioRef}></audio>
+                {location && (<MapComponent coordinate={location}/>)}
                 <footer>
                     <button
                             id='camera-switch-button'
@@ -212,6 +253,12 @@ const CallScreen = () => {
                             onClick={handleTorchToggle}
                             disabled={isTogglingTorch || isSwitchingCamera || isUsingFrontCamera || !callController}>
                         <FontAwesomeIcon icon={faLightbulb}/>
+                    </button>
+                    <button
+                            id='request-location-button'
+                            onClick={handleLocationRequest}
+                            disabled={isRequestingLocation || !isLocationAvailable || !callController}>
+                        <FontAwesomeIcon icon={faLocationDot}/>
                     </button>
                     {isAudioInputMuted ? (
                         <button id='unmute-input-button' className='inactive' onClick={handleInputUnmute}>
