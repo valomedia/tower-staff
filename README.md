@@ -6,7 +6,10 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Usage
 
-You can either run the app locally for development, or deploy to a webserver.
+You can either run the app locally for development, or deploy to a webserver.  Either way you will need to supply an
+API token for Google Maps by creating `.env.local` and adding `REACT_APP_MAPS_API_KEY` (you can of course supply
+different keys, for testing, dev and prod, by adding them to `.env.test.local`, `.env.development.local` and
+`.env.production.local`, respectively).
 
 ### Development
 
