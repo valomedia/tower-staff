@@ -239,7 +239,9 @@ const CallScreen = () => {
             <section id='call-screen'>
                 <video ref={videoRef}></video>
                 <audio ref={audioRef}></audio>
-                {location && (<MapComponent coordinate={location}/>)}
+                <aside id='left-aside' className={location ? 'open' : 'closed'}>
+                    {location && (<MapComponent coordinate={location}/>)}
+                </aside>
                 <footer>
                     <button
                             id='camera-switch-button'

@@ -45,6 +45,7 @@ header, footer {
   background-size: cover;
   height: 40px;
   padding: 6.667px;
+  min-width: 400px;
 }
 
 header {
@@ -97,4 +98,47 @@ button.inactive {
   border-radius: 20px;
   padding: 20px;
   z-index: 999;
+}
+
+aside {
+  position: fixed;
+  width: 400px;
+  height: 600px;
+  border-color: colors.$primary;
+  border-style: solid;
+}
+
+aside#left-aside {
+  padding-top: 53.33px;
+  left: 0;
+  top: 0;
+  border-top-width: 0;
+  border-bottom-width: 2px;
+  border-left-width: 0;
+  border-right-width: 2px;
+}
+
+aside#left-aside.closed {
+  /* 400px + 2px */
+  left: -402px;
+}
+
+aside#right-aside {
+  padding-bottom: 53.33px;
+  right: 0;
+  bottom: 0;
+  border-top-width: 2px;
+  border-bottom-width: 0;
+  border-left-width: 2px;
+  border-right-width: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+
+  aside {
+    transition-property: left, right;
+    transition-duration: 400ms;
+    transition-timing-function: ease-out;
+  }
+
 }

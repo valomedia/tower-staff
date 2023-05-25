@@ -6,19 +6,5 @@
 //
 //
 
-@use "../Styles/_colors.scss";
 
-
-#map-component {
-  width: 400px;
-  height: 600px;
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  border-color: colors.$primary;
-  border-style: solid;
-  border-top-width: 2px;
-  border-right-width: 2px;
-  border-bottom-width: 0;
-  border-left-width: 0;
-}
+#map-component {}
