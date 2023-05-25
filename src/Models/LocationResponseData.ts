@@ -6,10 +6,13 @@
 //
 //
 
+import Coordinate from './Coordinate';
+
+
 /*
  * The data sent in a location-response realtime data message.
  */
-interface LocationResponseData {
+export default interface LocationResponseData {
     locationInfo: {
         coordinate: {
             latitude: number,
@@ -25,4 +28,11 @@ interface LocationResponseData {
     | null
 }
 
-export default LocationResponseData
+
+/*
+ * Reviver for LocationResponseData to be used when parsing LocationResponseData from JSON.
+ */
+export function locationResponseDataReviver(key: String, value: any): any {
+    return key === "coordinate" ? new Coordinate(value) : value
+}
+

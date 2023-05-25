@@ -20,7 +20,7 @@ import {
 
 import JoinResponse from '../Models/JoinResponse';
 import DataMessageTopic from '../Models/DataMessageTopic';
-import LocationResponseData from '../Models/LocationResponseData';
+import LocationResponseData, { locationResponseDataReviver } from '../Models/LocationResponseData';
 
 /*
  * Controller in charge of one call.
@@ -93,7 +93,10 @@ class CallController {
      */
     async requestLocation(): Promise<LocationResponseData> {
         this.sendMessage(DataMessageTopic.LocationRequest);
-        return (await this.receiveMessage(DataMessageTopic.LocationResponse)).json();
+        return JSON.parse(
+            (await this.receiveMessage(DataMessageTopic.LocationResponse)).text(),
+            locationResponseDataReviver
+        );
     }
 
     private sendMessage(topic: DataMessageTopic, data: Object = {}) {

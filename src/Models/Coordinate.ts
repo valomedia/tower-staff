@@ -9,9 +9,35 @@
 /*
  * A latitude and longitude
  */
-interface Coordinate {
-    latitude: number,
-    longitude: number
+class Coordinate {
+
+    constructor(
+        {
+            latitude,
+            longitude
+        }: {
+            latitude: number,
+            longitude: number
+        }
+    ) {
+        this.latitude = latitude
+        this.longitude = longitude
+    }
+
+    /*
+     * The latitude in degrees.
+     */
+    readonly latitude: number
+
+    /*
+     * The longitude in degrees.
+     */
+    readonly longitude: number
+
+    toString() {
+        return `${this.latitude},${this.longitude}`;
+    }
+
 }
 
 export default Coordinate
