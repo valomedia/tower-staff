@@ -20,17 +20,19 @@ const MapComponent = ({ coordinate }: { coordinate: Coordinate }) => {
 
     return (
         <>
-            <img
-                    id='map-component'
-                    src={
-                        MapsApi
-                            .staticMap({
-                                size: new Size({width: 400, height: 600}),
-                                markers: [new Marker({place: coordinate})]
-                            })
-                            .toString()
-                    }
-                    alt='A map of the current location of the user.'/>
+            <a href={MapsApi.seachUrl({query: coordinate}).toString()} target='_blank' rel="noopener noreferrer">
+                <img
+                        id='map-component'
+                        src={
+                            MapsApi
+                                .staticMap({
+                                    size: new Size({width: 400, height: 600}),
+                                    markers: [new Marker({place: coordinate})]
+                                })
+                                .toString()
+                        }
+                        alt='A map of the current location of the user.'/>
+            </a>
         </>
     );
 

@@ -50,7 +50,21 @@ const MapsApi = {
         if (zoom) {url.searchParams.append("zoom", String(zoom))}
         for (const marker of markers) {url.searchParams.append("markers", marker.toString());}
         return url
+    },
+
+    /*
+     * Get a link to open Google Maps with a speficic serach
+     *
+     * This generates a url that can be opened to launch maps with a map that has a pin for a specific location,
+     * specified either as a coordinate or a string encoding a place name or street address.
+     */
+    seachUrl({ query }: { query: Coordinate | string }) {
+        const url = new URL("https://www.google.com/maps/search/");
+        url.searchParams.append("api", "1");
+        url.searchParams.append("query", query.toString());
+        return url
     }
+
 }
 
 export default MapsApi;
