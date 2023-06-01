@@ -50,6 +50,7 @@ header, footer {
 
 header {
   background-image: url('Assets/header.svg');
+  z-index: 40;
 
   /* 6.667px + (40px+2*6.667px)*tan(1/6*pi) */
   padding-right: 37.459px;
@@ -60,6 +61,7 @@ footer {
   right: 0;
   background-image: url('Assets/footer.svg');
   background-position: bottom;
+  z-index: 20;
 
   /* 6.667px + (40px+2*6.667px)*tan(1/6*pi) */
   padding-left: 37.459px;

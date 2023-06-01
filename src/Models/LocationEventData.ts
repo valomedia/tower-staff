@@ -1,5 +1,5 @@
 //
-//  LocationResponseData.ts
+//  LocationEventData.ts
 //  tower-assist
 //
 //  Created by Jean-Pierre Höhmann on 2023-05-24.
@@ -12,27 +12,24 @@ import Coordinate from './Coordinate';
 /*
  * The data sent in a location-response realtime data message.
  */
-export default interface LocationResponseData {
-    locationInfo: {
-        coordinate: {
-            latitude: number,
-            longitude: number
-        },
+export default interface LocationEventData {
+    locationInfo?: {
+        coordinate: Coordinate,
         altitude: number | null,
         horizontalAccuracy: number | null,
         verticalAccuracy: number | null,
         course: number | null,
         courseAccuracy: number | null,
         timestamp: number
-    }
-    | null
+    },
+    message?: string
 }
 
 
 /*
- * Reviver for LocationResponseData to be used when parsing LocationResponseData from JSON.
+ * Reviver for LocationEventData to be used when parsing LocationEventData from JSON.
  */
-export function locationResponseDataReviver(key: String, value: any): any {
+export function locationEventDataReviver(key: String, value: any): any {
     return key === "coordinate" ? new Coordinate(value) : value
 }
 

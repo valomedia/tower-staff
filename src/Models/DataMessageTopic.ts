@@ -16,7 +16,8 @@ enum DataMessageTopic {
     ToggleTorchRequest = "toggle-torch-request",
     ToggleTorchResponse = "toggle-torch-response",
     LocationRequest = "location-request",
-    LocationResponse = "location-response"
+    LocationResponse = "location-response",
+    LocationEvent = "location-event"
 }
 
 export default DataMessageTopic;

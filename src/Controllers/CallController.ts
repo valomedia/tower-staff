@@ -20,7 +20,7 @@ import {
 
 import JoinResponse from '../Models/JoinResponse';
 import DataMessageTopic from '../Models/DataMessageTopic';
-import LocationResponseData, { locationResponseDataReviver } from '../Models/LocationResponseData';
+import RealtimeDataMessageObserver from '../Models/RealtimeDataMessageObserver';
 
 /*
  * Controller in charge of one call.
@@ -31,7 +31,8 @@ class CallController {
         joinResponse: JoinResponse,
         audioElement: HTMLAudioElement,
         videoElement: HTMLVideoElement,
-        observer: AudioVideoObserver = {}
+        observer: AudioVideoObserver = {},
+        dataMessageDidReceived: RealtimeDataMessageObserver
     ) {
         const meetingResponse = joinResponse.joinInfo.meetingResponse;
         const attendeeResponse = joinResponse.joinInfo.attendeeResponse;
@@ -63,6 +64,12 @@ class CallController {
 
             await meetingSession.audioVideo.bindAudioElement(audioElement);
             meetingSession.audioVideo.addObserver(observer);
+            for (let topic of Object.values(DataMessageTopic)) {
+                meetingSession.audioVideo.realtimeSubscribeToReceiveDataMessage(topic, dataMessageDidReceived);
+                meetingSession.audioVideo.realtimeSubscribeToReceiveDataMessage(topic, (msg) => {
+                    logger.info(`dataMessageDidReceived ${msg.timestampMs} ${msg.topic} ${msg.senderAttendeeId}`);
+                })
+            }
             meetingSession.audioVideo.start();
         })()
     }
@@ -77,7 +84,7 @@ class CallController {
      */
     async switchCamera() {
         this.sendMessage(DataMessageTopic.SwitchCameraRequest);
-        await this.receiveMessage(DataMessageTopic.SwitchCameraResponse);
+        await this.awaitMessage(DataMessageTopic.SwitchCameraResponse);
     }
 
     /*
@@ -85,25 +92,22 @@ class CallController {
      */
     async toggleTorch() {
         this.sendMessage(DataMessageTopic.ToggleTorchRequest);
-        await this.receiveMessage(DataMessageTopic.ToggleTorchResponse);
+        await this.awaitMessage(DataMessageTopic.ToggleTorchResponse);
     }
 
     /*
      * Request the current location from the client.
      */
-    async requestLocation(): Promise<LocationResponseData> {
+    async requestLocation() {
         this.sendMessage(DataMessageTopic.LocationRequest);
-        return JSON.parse(
-            (await this.receiveMessage(DataMessageTopic.LocationResponse)).text(),
-            locationResponseDataReviver
-        );
+        await this.awaitMessage(DataMessageTopic.LocationResponse);
     }
 
     private sendMessage(topic: DataMessageTopic, data: Object = {}) {
         this.meetingSession.audioVideo.realtimeSendDataMessage(topic, data, dataMessageLifetimeMs);
     }
 
-    private async receiveMessage(topic: DataMessageTopic) {
+    private async awaitMessage(topic: DataMessageTopic) {
         return new Promise<DataMessage>((resolve) => {
             this.meetingSession.audioVideo.realtimeSubscribeToReceiveDataMessage(
                 topic,

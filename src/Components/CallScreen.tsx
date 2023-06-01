@@ -26,6 +26,9 @@ import {
 import CallOptionsModal from './CallOptionsModal';
 import Coordinate from '../Models/Coordinate';
 import MapComponent from './MapComponent';
+import LocationEventData, { locationEventDataReviver } from '../Models/LocationEventData';
+import { DataMessage } from 'amazon-chime-sdk-js';
+import DataMessageTopic from '../Models/DataMessageTopic';
 
 /*
  * The in-call ui.
@@ -176,11 +179,22 @@ const CallScreen = () => {
     const handleLocationRequest = () => {
         if (callController) {
             setIsRequestingLocation(true);
-            callController.requestLocation().then(res => {
-                setIsRequestingLocation(false)
-                setLocation(res.locationInfo?.coordinate)
-                if (!res.locationInfo) { setIsLocationAvailable(false); }
-            })
+
+            // Needs error handling.
+            // noinspection JSIgnoredPromiseFromCall
+            callController.requestLocation();
+        }
+    }
+
+    /*
+     * Respond to a location event
+     */
+    const onLocationEvent = (locationEventData: LocationEventData) => {
+        console.log(locationEventData);
+        setIsRequestingLocation(false)
+        setLocation(locationEventData.locationInfo?.coordinate)
+        if (!locationEventData.locationInfo) {
+            setIsLocationAvailable(false);
         }
     }
 
@@ -211,7 +225,14 @@ const CallScreen = () => {
                             joinResponse,
                             audioRef.current,
                             videoRef.current,
-                            {audioVideoDidStop: onCallEnd}
+                            {audioVideoDidStop: onCallEnd},
+                            (msg: DataMessage) => {
+                                switch (msg.topic) {
+                                    case DataMessageTopic.LocationEvent:
+                                        onLocationEvent(JSON.parse(msg.text(), locationEventDataReviver));
+                                        break;
+                                }
+                            }
                         );
                         setCallController(callController);
                         callController
@@ -259,7 +280,7 @@ const CallScreen = () => {
                     <button
                             id='request-location-button'
                             onClick={handleLocationRequest}
-                            disabled={isRequestingLocation || !isLocationAvailable || !callController}>
+                            disabled={isRequestingLocation || !!location || !isLocationAvailable || !callController}>
                         <FontAwesomeIcon icon={faLocationDot}/>
                     </button>
                     {isAudioInputMuted ? (
