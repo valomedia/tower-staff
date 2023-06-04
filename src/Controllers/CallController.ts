@@ -63,6 +63,7 @@ class CallController {
             });
 
             await meetingSession.audioVideo.bindAudioElement(audioElement);
+            audioElement.muted = false
             meetingSession.audioVideo.addObserver(observer);
             for (let topic of Object.values(DataMessageTopic)) {
                 meetingSession.audioVideo.realtimeSubscribeToReceiveDataMessage(topic, dataMessageDidReceived);
