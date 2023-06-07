@@ -62,6 +62,8 @@ footer {
   background-image: url('Assets/footer.svg');
   background-position: bottom;
   z-index: 20;
+  text-align: right;
+  position: absolute;
 
   /* 6.667px + (40px+2*6.667px)*tan(1/6*pi) */
   padding-left: 37.459px;
