@@ -40,6 +40,10 @@ code {
             monospace;
 }
 
+header, footer, header:after, footer:before {
+  background-color: colors.$primary;
+}
+
 header, footer {
   position: fixed;
   background-size: cover;
@@ -48,25 +52,44 @@ header, footer {
   min-width: 400px;
 }
 
-header {
-  background-image: url('Assets/header.svg');
-  z-index: 40;
+header *, footer * {
+  position: relative;
+}
 
-  /* 6.667px + (40px+2*6.667px)*tan(1/6*pi) */
-  padding-right: 37.459px;
+/* Thanks to https://mat.dev */
+header:after, footer:before {
+  display: block;
+  content: '';
+  height: 100%;
+  aspect-ratio: 1;
+  position: absolute;
+}
+
+header {
+  z-index: 40;
+}
+
+header:after {
+  top: 0;
+  right: 0;
+
+  /* tan(1/6*pi)/2 */
+  transform: translate(28.87%) skew(-30deg);
 }
 
 footer {
   bottom: 0;
   right: 0;
-  background-image: url('Assets/footer.svg');
-  background-position: bottom;
   z-index: 20;
   text-align: right;
   position: absolute;
+}
 
-  /* 6.667px + (40px+2*6.667px)*tan(1/6*pi) */
-  padding-left: 37.459px;
+footer:before {
+  top: 0;
+  left: 0;
+
+  transform: translate(-28.87%) skew(-30deg);
 }
 
 button {
