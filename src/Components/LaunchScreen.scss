@@ -39,10 +39,27 @@
     margin: 16px 0;
   }
 
+  #april-fools-day-joke {
+    bottom: 53.33px;
+    right: 0;
+    position: absolute;
+    z-index: 999;
+    width: 288px;
+    height: 378px;
+
+    &.hidden {
+      right: -288px;
+    }
+  }
+
 }
 
 @media (prefers-reduced-motion: no-preference) {
   #launch-screen {
     transition: top 400ms ease-in;
+  }
+
+  #april-fools-day-joke {
+    transition: right 400ms ease-in-out;
   }
 }
