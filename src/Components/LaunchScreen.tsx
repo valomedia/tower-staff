@@ -11,7 +11,7 @@ import logoAnimated from '../Assets/logo-animated.svg';
 import videoChatCalling from '../Assets/video-chat-calling.m4a';
 import './LaunchScreen.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faMagicWandSparkles, faPhone } from '@fortawesome/free-solid-svg-icons';
+import { faBell, faPhone } from '@fortawesome/free-solid-svg-icons';
 import TowerApi from '../Api/TowerApi';
 
 /*
@@ -54,11 +54,6 @@ const LaunchScreen = () => {
      * Whether the ringtone is enabled.
      */
     const [isRingtoneEnabled, setIsRingtoneEnabled] = useState(false);
-
-    /*
-     * Whether the April Fools' Day joke is showing.
-     */
-    const [isAprilFoolsJokeShowing, setIsAprilFoolsJokeShowing] = useState(false);
 
     /*
      * The audio element for the ringtone.
@@ -126,12 +121,6 @@ const LaunchScreen = () => {
 
     return (
         <section id='launch-screen'>
-            <img
-                id='april-fools-day-joke'
-                className={isAprilFoolsJokeShowing ? '' : 'hidden'}
-                src='https://www.smbc-comics.com/comics/20120412.gif'
-                alt=""
-            />
             <img src={logoAnimated} className='launch-screen-logo' alt='logo'/>
             <h1>Tower</h1>
             <p>
@@ -150,25 +139,14 @@ const LaunchScreen = () => {
             </button>
             <audio src={videoChatCalling} ref={audioRef} muted loop></audio>
             <footer>
-                <button
-                    id='april-fools-day-joke-toggle-button'
-                    className={isAprilFoolsJokeShowing ? 'active' : 'inactive'}
-                    onClick={() => setIsAprilFoolsJokeShowing(!isAprilFoolsJokeShowing)}
-                >
-                    <FontAwesomeIcon icon={faMagicWandSparkles}/>
-                    &nbsp;
-                    Mysteriöser Knopf
-                </button>
-                &nbsp;
-                <button
-                    id='ringtone-toggle-button'
-                    className={isRingtoneEnabled ? 'active' : 'inactive'}
-                    onClick={handleRingtoneToggle}
-                >
-                    <FontAwesomeIcon icon={faBell}/>
-                    &nbsp;
-                    Klingelton ist <strong>{isRingtoneEnabled ? 'an' : 'aus'}</strong>
-                </button>
+                    <button
+                            id='ringtone-toggle-button'
+                            className={isRingtoneEnabled ? 'active' : 'inactive'}
+                            onClick={handleRingtoneToggle}>
+                        <FontAwesomeIcon icon={faBell}/>
+                        &nbsp;
+                        Klingelton ist <strong>{isRingtoneEnabled ? 'an' : 'aus'}</strong>
+                    </button>
             </footer>
         </section>
     );
