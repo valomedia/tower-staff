@@ -199,6 +199,16 @@ const CallScreen = () => {
     }
 
     /*
+     * End the call.
+     */
+    const handleHangup = () => {
+        const meetingId = callController?.meetingSession.configuration.meetingId;
+        if (meetingId) {
+            TowerApi.end(meetingId);
+        }
+    }
+
+    /*
      * Reset everything when the call ends.
      */
     const onCallEnd = () => {
@@ -304,7 +314,7 @@ const CallScreen = () => {
                     <button id='option-button' onClick={() => setIsPresentingCallOptionsModal(true)}>
                         <FontAwesomeIcon icon={faGear}/>
                     </button>
-                    <button id='hangup-button' onClick={TowerApi.end}>
+                    <button id='hangup-button' onClick={handleHangup}>
                         <FontAwesomeIcon icon={faPhone}/>
                         &nbsp;
                         Auflegen

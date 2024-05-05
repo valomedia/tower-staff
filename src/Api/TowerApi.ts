@@ -27,8 +27,8 @@ const TowerApi = {
     /*
      * Make a request to the end endpoint.
      */
-    end: async () => {
-        return await request('POST', '/end');
+    end: async (meetingId: string) => {
+        return await request('POST', '/end', new URLSearchParams({meetingId}));
     },
 
     /*
@@ -40,10 +40,10 @@ const TowerApi = {
 
 }
 
-const request = async (method = 'GET', path: String) => {
+const request = async (method = 'GET', path: String, params?: URLSearchParams) => {
     const response = await fetch(
         // @ts-ignore
-        process.env.REACT_APP_TOWER_API_ENDPOINT + path,
+        process.env.REACT_APP_TOWER_API_ENDPOINT + path + (params ? '?' + params: ''),
         {
             method,
             credentials: 'include',

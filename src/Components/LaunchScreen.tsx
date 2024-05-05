@@ -35,7 +35,7 @@ const LaunchScreen = () => {
      * This will become true, when the app is connected, and there is a user waiting for assistance or currently being
      * assisted.
      */
-    const [hasCustomer,setHasCustomer] = useState(false);
+    const [isRinging,setIsRinging] = useState(false);
 
     /*
      * The name of the user seeking assistance.
@@ -65,7 +65,6 @@ const LaunchScreen = () => {
      */
     const handleAccept = () => {
         window.location.hash = '#call-screen'
-        setIsOnCall(true);
     }
 
     /*
@@ -80,7 +79,10 @@ const LaunchScreen = () => {
     useEffect(() => {
         const intervalId = window.setInterval(
             () => {
-                if (window.location.hash === "#launch-screen") {
+                setIsOnCall(window.location.hash === "#call-screen");
+                if (isOnCall) {
+                    setIsRinging(false);
+                } else {
                     if (isConnecting) {
                         TowerApi
                             .index()
@@ -90,10 +92,9 @@ const LaunchScreen = () => {
                     if (hasBackend) {
                         TowerApi
                             .poll()
-                            .then(() => setHasCustomer(true))
+                            .then(() => setIsRinging(true))
                             .catch(() => {
-                                setHasCustomer(false);
-                                setIsOnCall(false);
+                                setIsRinging(false);
                             })
                     }
                 }
@@ -106,7 +107,7 @@ const LaunchScreen = () => {
     // Trigger ringtone.
     useEffect(
         () => {
-            if (hasCustomer && !isOnCall) {
+            if (isRinging && !isOnCall) {
                 if (audioRef.current.paused) {
                     audioRef.current.currentTime = 0;
                     audioRef.current.play();
@@ -117,7 +118,7 @@ const LaunchScreen = () => {
                 }
             }
         },
-        [hasCustomer, isOnCall]);
+        [isRinging, isOnCall]);
 
     return (
         <section id='launch-screen'>
@@ -126,13 +127,13 @@ const LaunchScreen = () => {
             <p>
                 {
                     isOnCall ? 'Verbindung hergestellt'
-                        : hasCustomer ? `Neue Anfrage von ${customerName}`
+                        : isRinging ? `Neue Anfrage von ${customerName}`
                             : hasBackend ? 'Warten auf Anfragen…'
                                 : isConnecting ? 'Verbindung wird hergestellt…'
                                     : 'Verbindung fehlgeschlagen!'
                 }
             </p>
-            <button className='accept-button' disabled={!hasCustomer || isOnCall} onClick={handleAccept}>
+            <button className='accept-button' disabled={!isRinging} onClick={handleAccept}>
                 <FontAwesomeIcon icon={faPhone}/>
                 &nbsp;
                 Anfrage annehmen
