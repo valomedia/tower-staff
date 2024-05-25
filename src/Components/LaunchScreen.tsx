@@ -71,7 +71,6 @@ const LaunchScreen = () => {
      * Toggle ringtone.
      */
     const handleRingtoneToggle = () => {
-        audioRef.current.muted = isRingtoneEnabled
         setIsRingtoneEnabled(!isRingtoneEnabled);
     }
 
@@ -107,7 +106,7 @@ const LaunchScreen = () => {
     // Trigger ringtone.
     useEffect(
         () => {
-            if (isRinging && !isOnCall) {
+            if (isRinging && isRingtoneEnabled && !isOnCall) {
                 if (audioRef.current.paused) {
                     audioRef.current.currentTime = 0;
                     audioRef.current.play();
@@ -118,7 +117,7 @@ const LaunchScreen = () => {
                 }
             }
         },
-        [isRinging, isOnCall]);
+        [isRinging, isOnCall, isRingtoneEnabled]);
 
     return (
         <section id='launch-screen'>
@@ -138,7 +137,7 @@ const LaunchScreen = () => {
                 &nbsp;
                 Anfrage annehmen
             </button>
-            <audio src={videoChatCalling} ref={audioRef} muted loop></audio>
+            <audio src={videoChatCalling} ref={audioRef} loop></audio>
             <footer>
                     <button
                             id='ringtone-toggle-button'
