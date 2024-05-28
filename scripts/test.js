@@ -1,3 +1,11 @@
+//
+//  test.js
+//  tower-assist
+//
+//  Created by Jean-Pierre Höhmann on 2024-05-26.
+//
+//
+
 'use strict';
 
 // Do this as the first thing so that any code reading it knows the right env.

@@ -1,3 +1,11 @@
+//
+//  cssTransform.js
+//  tower-assist
+//
+//  Created by Jean-Pierre Höhmann on 2024-05-26.
+//
+//
+
 'use strict';
 
 // This is a custom Jest transformer turning style imports into empty objects.

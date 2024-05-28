@@ -1,3 +1,11 @@
+//
+//  fileTransform.js
+//  tower-assist
+//
+//  Created by Jean-Pierre Höhmann on 2024-05-26.
+//
+//
+
 'use strict';
 
 const path = require('path');

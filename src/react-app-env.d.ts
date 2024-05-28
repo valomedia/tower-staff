@@ -1,3 +1,10 @@
+//
+//  react-app-env.d.ts
+//  tower-assist
+//
+//  Created by Jean-Pierre Höhmann on 2023-03-06.
+//
+
 /// <reference types="node" />
 /// <reference types="react" />
 /// <reference types="react-dom" />
@@ -69,10 +76,3 @@ declare module '*.module.sass' {
   const classes: { readonly [key: string]: string };
   export default classes;
 }
-
-//
-//  react-app-env.d.ts
-//  tower-assist
-//
-//  Created by Jean-Pierre Höhmann on 2023-03-06.
-//
