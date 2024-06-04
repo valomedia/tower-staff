@@ -8,5 +8,7 @@
 
 declare module "*.m4a" {
     const value: any;
+
+    // noinspection JSUnusedGlobalSymbols
     export default value;
 }

@@ -119,7 +119,9 @@ checkBrowsers(paths.appPath, isInteractive)
             port,
         };
         const devServer = new WebpackDevServer(serverConfig, compiler);
+
         // Launch WebpackDevServer.
+        // noinspection JSUnresolvedReference
         devServer.startCallback(() => {
             if (isInteractive) {
                 clearConsole();

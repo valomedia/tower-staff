@@ -23,6 +23,8 @@ module.exports = function (proxy, allowedHost) {
     // Check the HOST header iff the proxy is running and DANGEROUSLY_DISABLE_HOST_CHECK is not set.
     const disableFirewall =
         !proxy || process.env.DANGEROUSLY_DISABLE_HOST_CHECK === 'true';
+
+    // noinspection WebpackConfigHighlighting,JSUnusedGlobalSymbols
     return {
         // If checking the host header, allow the host set via allowedHost, falling back to "127.0.0.1", if no
         // allowedHost is specified. The values "localhost" and "127.0.0.1" are hard-coded as allowed in

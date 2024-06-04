@@ -36,6 +36,8 @@ const printBuildError = require('react-dev-utils/printBuildError');
 const measureFileSizesBeforeBuild =
     FileSizeReporter.measureFileSizesBeforeBuild;
 const printFileSizesAfterBuild = FileSizeReporter.printFileSizesAfterBuild;
+
+// noinspection JSUnresolvedReference
 const useYarn = fs.existsSync(paths.yarnLockFile);
 
 // These sizes are pretty large. We'll warn for bundles exceeding them.
@@ -164,6 +166,7 @@ function build(previousFileSizes) {
                     warnings: [],
                 });
             } else {
+                // noinspection JSUnresolvedReference
                 messages = formatWebpackMessages(
                     stats.toJson({all: false, warnings: true, errors: true})
                 );
@@ -204,6 +207,7 @@ function build(previousFileSizes) {
             };
 
             if (writeStatsJson) {
+                // noinspection JSUnresolvedReference
                 return bfj
                     .write(paths.appBuild + '/bundle-stats.json', stats.toJson())
                     .then(() => resolve(resolveArgs))

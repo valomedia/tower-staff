@@ -117,6 +117,8 @@ function getModules() {
         const ts = require(resolve.sync('typescript', {
             basedir: paths.appNodeModules,
         }));
+
+        // noinspection JSUnresolvedReference
         config = ts.readConfigFile(paths.appTsConfig, ts.sys.readFile).config;
         // Otherwise we'll check if there is jsconfig.json
         // for non TS projects.

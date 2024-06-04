@@ -54,5 +54,5 @@ if (
     argv.push(hasSourceControl ? '--watch' : '--watchAll');
 }
 
-
+// noinspection JSIgnoredPromiseFromCall
 jest.run(argv);
