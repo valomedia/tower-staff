@@ -75,8 +75,8 @@ if (process.env.HOST) {
 const {checkBrowsers} = require('react-dev-utils/browsersHelper');
 checkBrowsers(paths.appPath, isInteractive)
     .then(() => {
-        // We attempt to use the default port but if it is busy, we offer the user to
-        // run on a different port. `choosePort()` Promise resolves to the next free port.
+        // We attempt to use the default port, but if it is busy, we offer the user to run on a different port.
+        // `choosePort()` Promise resolves to the next free port.
         return choosePort(HOST, DEFAULT_PORT);
     })
     .then(port => {
@@ -96,7 +96,8 @@ checkBrowsers(paths.appPath, isInteractive)
             port,
             paths.publicUrlOrPath.slice(0, -1)
         );
-        // Create a webpack compiler that is configured with custom messages.
+
+        // Create a webpack compiler configured with custom messages.
         const compiler = createCompiler({
             appName,
             config,

@@ -48,8 +48,8 @@ const CallScreen = () => {
     /*
      * Whether to show the options-dialog.
      *
-     * This determines whether the options dialog should be displayed. Regardless of the value of this boolean, the
-     * options dialog will only show when the CallController becomes available.
+     * This determines whether the option dialog should be displayed. Regardless of the value of this boolean, the
+     * option dialog will only show when the CallController becomes available.
      */
     const [isPresentingCallOptionsModal, setIsPresentingCallOptionsModal] = useState(true);
 
@@ -79,9 +79,9 @@ const CallScreen = () => {
     /*
      * Whether the torch is currently being switched.
      *
-     * This is used to disable the torch toggle button while waiting for the device to acknowledge the torch toggle, to
-     * avoid the user pressing the button again while the torch is already turning on, thereby turning it back off
-     * immediately.
+     * This is used to disable the torch toggle button while waiting for the device to acknowledge the torch toggle.
+     * Without this, the user might grow impatient and click the button again, assuming it did not work the first time,
+     * causing the torch to turn back off immediately.
      */
     const [isTogglingTorch, setIsTogglingTorch] = useState(false);
 
@@ -101,7 +101,7 @@ const CallScreen = () => {
     /*
      * Whether requesting the location is currently possible.
      *
-     * This is set to false, if the users devices cannot or will not produce a location.
+     * This is set to false, if the user's devices cannot or will not produce a location.
      */
     const [isLocationAvailable, setIsLocationAvailable] = useState(true);
 

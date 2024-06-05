@@ -30,18 +30,18 @@ const LaunchScreen = () => {
     const [hasBackend, setHasBackend] = useState(false);
 
     /*
-     * Whether there is a user that can be assisted.
+     * Whether there is a user waiting for an assistant to pick up.
      *
-     * This will become true, when the app is connected, and there is a user waiting for assistance or currently being
-     * assisted.
+     * This will become true when the app is connected, and there is a user waiting for assistance or currently
+     * receiving assistance.
      */
     const [isRinging,setIsRinging] = useState(false);
 
     /*
      * The name of the user seeking assistance.
      *
-     * Once implemented, this will provide the assistant with the name of the user seeking assistance, or being
-     * assisted.
+     * Once implemented, this will provide the assistant with the name of the user seeking assistance, or receiving
+     * assistance.
      */
     const [customerName, setCustomerName] = useState('Theo Test');
 

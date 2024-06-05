@@ -53,9 +53,9 @@ const MapsApi = {
     },
 
     /*
-     * Get a link to open Google Maps with a speficic serach
+     * Get a link to open Google Maps with a specific search.
      *
-     * This generates a url that can be opened to launch maps with a map that has a pin for a specific location,
+     * This generates an url that can be opened to launch maps with a map that has a pin for a specific location,
      * specified either as a coordinate or a string encoding a place name or street address.
      */
     seachUrl({ query }: { query: Coordinate | string }) {

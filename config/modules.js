@@ -37,11 +37,9 @@ function getAdditionalModulePaths(options = {}) {
         return [paths.appSrc];
     }
 
-    // If the path is equal to the root directory we ignore it here.
-    // We don't want to allow importing from the root directly as source files are
-    // not transpiled outside of `src`. We do allow importing them with the
-    // absolute path (e.g. `src/Components/Button.js`) but we set that up with
-    // an alias.
+    // If the path is equal to the root directory, we ignore it here. We don't want to allow importing from the root
+    // directly as source files are not transpiled outside `src`. We do allow importing them with the absolute path
+    // (e.g. `src/Components/Button.js`), but we set that up with an alias.
     if (path.relative(paths.appPath, baseUrlResolved) === '') {
         return null;
     }
@@ -98,7 +96,7 @@ function getJestAliases(options = {}) {
 }
 
 function getModules() {
-    // Check if TypeScript is setup
+    // Check if TypeScript is set up.
     const hasTsConfig = fs.existsSync(paths.appTsConfig);
     const hasJsConfig = fs.existsSync(paths.appJsConfig);
 
@@ -110,19 +108,17 @@ function getModules() {
 
     let config;
 
-    // If there's a tsconfig.json we assume it's a
-    // TypeScript project and set up the config
-    // based on tsconfig.json
     if (hasTsConfig) {
+        // If there's a tsconfig.json, we assume it's a TypeScript project and set up the config based on tsconfig.json.
         const ts = require(resolve.sync('typescript', {
             basedir: paths.appNodeModules,
         }));
 
         // noinspection JSUnresolvedReference
         config = ts.readConfigFile(paths.appTsConfig, ts.sys.readFile).config;
-        // Otherwise we'll check if there is jsconfig.json
-        // for non TS projects.
+
     } else if (hasJsConfig) {
+        // Otherwise, we'll check if there is jsconfig.json for non TS projects.
         config = require(paths.appJsConfig);
     }
 

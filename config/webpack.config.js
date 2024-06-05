@@ -61,7 +61,7 @@ const imageInlineSizeLimit = parseInt(
     process.env.IMAGE_INLINE_SIZE_LIMIT || '10000'
 );
 
-// Check if TypeScript is setup
+// Check if TypeScript is set up.
 const useTypeScript = fs.existsSync(paths.appTsConfig);
 
 // Check if Tailwind config exists
@@ -150,8 +150,8 @@ module.exports = function (webpackEnv) {
                                     },
                                 ],
                                 // Adds PostCSS Normalize as the reset css with default options,
-                                // so that it honors browserslist config in package.json
-                                // which in turn let's users customize the target behavior as per their needs.
+                                // so that it honors browserslist config in package.json,
+                                // which in turn lets users customize the target behavior as per their needs.
                                 'postcss-normalize',
                             ]
                             : [
@@ -223,11 +223,11 @@ module.exports = function (webpackEnv) {
                 ? 'static/js/[name].[contenthash:8].chunk.js'
                 : isEnvDevelopment && 'static/js/[name].chunk.js',
             assetModuleFilename: 'static/media/[name].[hash][ext]',
-            // webpack uses `publicPath` to determine where the app is being served from.
+            // Webpack uses `publicPath` to determine where the app is being served from.
             // It requires a trailing slash, or the file assets will get an incorrect path.
             // We inferred the "public path" (such as / or /my-project) from homepage.
             publicPath: paths.publicUrlOrPath,
-            // Point sourcemap entries to original disk location (format as URL on Windows)
+            // Point sourcemap entries to the original disk location (format as URL on Windows).
             devtoolModuleFilenameTemplate: isEnvProduction
                 ? info =>
                     path
@@ -260,7 +260,7 @@ module.exports = function (webpackEnv) {
                     terserOptions: {
                         parse: {
                             // We want terser to parse ecma 8 code. However, we don't want it
-                            // to apply any minification steps that turns valid ecma 5 code
+                            // to apply any minification steps that turn valid ecma 5 code
                             // into invalid ecma 5 code. This is why the 'compress' and 'output'
                             // sections only apply transformations that are ecma 5 safe
                             // https://github.com/facebook/create-react-app/pull/4234
@@ -303,7 +303,7 @@ module.exports = function (webpackEnv) {
             // This allows you to set a fallback for where webpack should look for modules.
             // We placed these paths second because we want `node_modules` to "win"
             // if there are any conflicts. This matches Node resolution mechanism.
-            // https://github.com/facebook/create-react-app/issues/253
+            // See also: https://github.com/facebook/create-react-app/issues/253.
             modules: ['node_modules', paths.appNodeModules].concat(
                 modules.additionalModulePaths || []
             ),
@@ -354,8 +354,8 @@ module.exports = function (webpackEnv) {
                     loader: require.resolve('source-map-loader'),
                 },
                 {
-                    // "oneOf" will traverse all following loaders until one will
-                    // match the requirements. When no loader matches it will fall
+                    // "oneOf" will traverse all following loaders until one
+                    // matches the requirements. When no loader matches, it will fall
                     // back to the "file" loader at the end of the loader list.
                     oneOf: [
                         // TODO: Merge this config once `image/avif` is in the mime-db
@@ -370,8 +370,8 @@ module.exports = function (webpackEnv) {
                                 },
                             },
                         },
-                        // "url" loader works like "file" loader except that it embeds assets
-                        // smaller than specified limit in bytes as data URLs to avoid requests.
+                        // The "url" loader works like "file" loader except that it embeds assets
+                        // smaller than the specified limit in bytes as data URLs to avoid requests.
                         // A missing `test` is equivalent to a match.
                         {
                             test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
@@ -441,7 +441,7 @@ module.exports = function (webpackEnv) {
                                 compact: isEnvProduction,
                             },
                         },
-                        // Process any JS outside of the app with Babel.
+                        // Process any JS outside the app with Babel.
                         // Unlike the application JS, we only compile the standard ES features.
                         {
                             test: /\.(js|mjs)$/,
@@ -468,13 +468,14 @@ module.exports = function (webpackEnv) {
                                 inputSourceMap: shouldUseSourceMap,
                             },
                         },
-                        // "postcss" loader applies autoprefixer to our CSS.
-                        // "css" loader resolves paths in CSS and adds assets as dependencies.
-                        // "style" loader turns CSS into JS modules that inject <style> tags.
+                        // The "postcss" loader applies autoprefixer to our CSS.
+                        // The "css" loader resolves paths in CSS and adds assets as dependencies.
+                        // The "style" loader turns CSS into JS modules that inject <style> tags.
                         // In production, we use MiniCSSExtractPlugin to extract that CSS
                         // to a file, but in development "style" loader enables hot editing
                         // of CSS.
-                        // By default we support CSS Modules with the extension .module.css
+                        //
+                        // By default, we support CSS Modules with the extension .module.css
                         {
                             test: cssRegex,
                             exclude: cssModuleRegex,
@@ -509,7 +510,7 @@ module.exports = function (webpackEnv) {
                             }),
                         },
                         // Opt-in support for SASS (using .scss or .sass extensions).
-                        // By default we support SASS Modules with the
+                        // By default, we support SASS Modules with the
                         // extensions .module.scss or .module.sass
                         {
                             test: sassRegex,
@@ -550,7 +551,7 @@ module.exports = function (webpackEnv) {
                                 'sass-loader'
                             ),
                         },
-                        // "file" loader makes sure those assets get served by WebpackDevServer.
+                        // The "file" loader makes sure those assets get served by WebpackDevServer.
                         // When you `import` an asset, you get its (virtual) filename.
                         // In production, they would get copied to the `build` folder.
                         // This loader doesn't use a "test" so it will catch all modules
@@ -558,7 +559,7 @@ module.exports = function (webpackEnv) {
                         {
                             // Exclude `js` files to keep "css" loader working as it injects
                             // its runtime that would otherwise be processed through "file" loader.
-                            // Also exclude `html` and `json` extensions so they get processed
+                            // Also exclude `html` and `json` extensions, so they get processed
                             // by webpacks internal loaders.
                             exclude: [/^$/, /\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
                             type: 'asset/resource',
@@ -598,7 +599,7 @@ module.exports = function (webpackEnv) {
             ),
             // Inlines the webpack runtime script. This script is too small to warrant
             // a network request.
-            // https://github.com/facebook/create-react-app/issues/5358
+            // See also: https://github.com/facebook/create-react-app/issues/5358.
             isEnvProduction &&
             shouldInlineRuntimeChunk &&
             new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/runtime-.+[.]js/]),
@@ -613,20 +614,22 @@ module.exports = function (webpackEnv) {
             new ModuleNotFoundPlugin(paths.appPath),
             // Makes some environment variables available to the JS code, for example:
             // if (process.env.NODE_ENV === 'production') { ... }. See `./env.js`.
-            // It is absolutely essential that NODE_ENV is set to production
+            // It is essential that NODE_ENV is set to production
             // during a production build.
-            // Otherwise React will be compiled in the very slow development mode.
+            //
+            // Otherwise, React will be compiled in the very slow development mode.
             new webpack.DefinePlugin(env.stringified),
-            // Experimental hot reloading for React .
-            // https://github.com/facebook/react/tree/main/packages/react-refresh
+            // Experimental hot reloading for React.
+            // See: https://github.com/facebook/react/tree/main/packages/react-refresh.
             isEnvDevelopment &&
             shouldUseReactRefresh &&
             new ReactRefreshWebpackPlugin({
                 overlay: false,
             }),
-            // Watcher doesn't work well if you mistype casing in a path so we use
+            // Watcher doesn't work well if you mistype casing in a path, so we use
             // a plugin that prints an error when you attempt to do this.
-            // See https://github.com/facebook/create-react-app/issues/240
+            //
+            // See also: https://github.com/facebook/create-react-app/issues/240.
             isEnvDevelopment && new CaseSensitivePathsPlugin(),
             isEnvProduction &&
             new MiniCssExtractPlugin({
@@ -662,7 +665,7 @@ module.exports = function (webpackEnv) {
             // Moment.js is an extremely popular library that bundles large locale files
             // by default due to how webpack interprets its code. This is a practical
             // solution that requires the user to opt into importing specific locales.
-            // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
+            // See also: https://github.com/jmblog/how-to-optimize-momentjs-with-webpack.
             // You can remove this if you don't use Moment.js:
             new webpack.IgnorePlugin({
                 resourceRegExp: /^\.\/locale$/,
@@ -755,8 +758,8 @@ module.exports = function (webpackEnv) {
                 },
             }),
         ].filter(Boolean),
-        // Turn off performance processing because we utilize
-        // our own hints via the FileSizeReporter
+        // Turn off performance processing because we use
+        // our own hints via the FileSizeReporter.
         performance: false,
     };
 };
