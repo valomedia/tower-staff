@@ -58,7 +58,7 @@ const MapsApi = {
      * This generates an url that can be opened to launch maps with a map that has a pin for a specific location,
      * specified either as a coordinate or a string encoding a place name or street address.
      */
-    seachUrl({ query }: { query: Coordinate | string }) {
+    searchUrl({ query }: { query: Coordinate | string }) {
         const url = new URL("https://www.google.com/maps/search/");
         url.searchParams.append("api", "1");
         url.searchParams.append("query", query.toString());

@@ -20,7 +20,7 @@ const MapComponent = ({ coordinate }: { coordinate: Coordinate }) => {
 
     return (
         <>
-            <a href={MapsApi.seachUrl({query: coordinate}).toString()} target='_blank' rel="noopener noreferrer">
+            <a href={MapsApi.searchUrl({query: coordinate}).toString()} target='_blank' rel="noopener noreferrer">
                 <img
                         id='map-component'
                         src={
