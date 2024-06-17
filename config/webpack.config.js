@@ -1,6 +1,6 @@
 //
 //  webpack.config.js
-//  tower-assist
+//  tower-staff
 //
 //  Created by Jean-Pierre Höhmann on 2024-05-26.
 //

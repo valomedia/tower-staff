@@ -1,6 +1,6 @@
 //
 //  LocationEventData.ts
-//  tower-assist
+//  tower-staff
 //
 //  Created by Jean-Pierre Höhmann on 2023-05-24.
 //

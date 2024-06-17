@@ -1,6 +1,6 @@
 //
 //  asset.d.ts
-//  tower-assist
+//  tower-staff
 //
 //  Created by Jean-Pierre Höhmann on 2023-06-07.
 //
