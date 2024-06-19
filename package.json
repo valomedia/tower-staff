@@ -90,7 +90,7 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://tower-backend.valo-dev.de",
+  "proxy": "https://staff.dev.tower-assist.de",
   "jest": {
     "roots": [
       "<rootDir>/src"
