@@ -81,6 +81,14 @@ class CallController {
     meetingSession: MeetingSession;
 
     /*
+     * Tell the client to capture a photo.
+     */
+    async capturePhoto() {
+        this.sendMessage(DataMessageTopic.CapturePhotoRequest);
+        await this.awaitMessage(DataMessageTopic.CapturePhotoResponse);
+    }
+
+    /*
      * Tell the client to switch cameras.
      */
     async switchCamera() {
