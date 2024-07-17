@@ -11,6 +11,8 @@
  * The various messages that can be sent.
  */
 enum DataMessageTopic {
+    CapturePhotoRequest = "capture-photo-request",
+    CapturePhotoResponse = "capture-photo-response",
     SwitchCameraRequest = "switch-camera-request",
     SwitchCameraResponse = "switch-camera-response",
     ToggleTorchRequest = "toggle-torch-request",
