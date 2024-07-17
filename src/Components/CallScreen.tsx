@@ -15,6 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faCameraRotate,
     faGear,
+    faImage,
     faLightbulb,
     faLocationDot,
     faMicrophone,
@@ -62,6 +63,14 @@ const CallScreen = () => {
      * Whether audio output is currently muted.
      */
     const [isAudioOutputMuted, setIsAudioOutputMuted] = useState(false);
+
+    /*
+     * Whether a photo is currently being taken.
+     *
+     * This is used to disable the shutter button while waiting for the device to take a photo, to avoid the user
+     * triggering multiple photo capture requests in rapid succession when the photo takes a while to show.
+     */
+    const [isCapturingPhoto, setIsCapturingPhoto] = useState(false);
 
     /*
      * Whether the camera is currently being switched.
@@ -148,6 +157,16 @@ const CallScreen = () => {
     const handleOutputUnmute = () => {
         audioRef.current.muted = false;
         setIsAudioOutputMuted(false);
+    }
+
+    /*
+     * Capture a photo.
+     */
+    const handlePhotoCapture = () => {
+        if (callController) {
+            setIsCapturingPhoto(true);
+            callController.capturePhoto().then(() => setIsCapturingPhoto(false));
+        }
     }
 
     /*
@@ -274,6 +293,12 @@ const CallScreen = () => {
                     {location && (<MapComponent coordinate={location}/>)}
                 </aside>
                 <footer>
+                    <button
+                            id='capture-photo-button'
+                            onClick={handlePhotoCapture}
+                            disabled={isCapturingPhoto || !callController}>
+                        <FontAwesomeIcon icon={faImage}/>
+                    </button>
                     <button
                             id='camera-switch-button'
                             onClick={handleCameraSwitch}
