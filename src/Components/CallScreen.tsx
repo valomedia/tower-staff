@@ -235,6 +235,7 @@ const CallScreen = () => {
         setIsPresentingCallOptionsModal(false);
         setIsAudioInputMuted(false);
         setIsAudioOutputMuted(false);
+        setIsCapturingPhoto(false);
         setIsSwitchingCamera(false);
         setIsUsingFrontCamera(false);
         setIsTogglingTorch(false);
