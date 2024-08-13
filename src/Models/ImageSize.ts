@@ -1,0 +1,41 @@
+//
+//  ImageSize.ts
+//  tower-staff
+//
+//  Created by Jean-Pierre Höhmann on 2024-08-07.
+//  Copyright © 2024 valo.media GmbH. All rights reserved.
+//
+
+/**
+ * A width and height.
+ */
+export default class ImageSize {
+
+    constructor(
+        {
+            width,
+            height
+        }: {
+            width: number,
+            height: number
+        }
+    ) {
+        this.width = width
+        this.height = height
+    }
+
+    /**
+     * The width in pixels.
+     */
+    readonly width: number
+
+    /**
+     * The height in pixels.
+     */
+    readonly height: number
+
+    toString() {
+        return `${this.width}x${this.height}`;
+    }
+
+}
