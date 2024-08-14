@@ -133,6 +133,7 @@ aside {
   height: 600px;
   border-color: colors.$primary;
   border-style: solid;
+  background-color: black;
 }
 
 aside#left-aside {
@@ -158,6 +159,11 @@ aside#right-aside {
   border-bottom-width: 0;
   border-left-width: 2px;
   border-right-width: 0;
+}
+
+aside#right-aside.closed {
+  /* 400px + 2px */
+  right: -402px;
 }
 
 @media (prefers-reduced-motion: no-preference) {
