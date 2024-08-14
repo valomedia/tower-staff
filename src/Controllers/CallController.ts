@@ -21,6 +21,8 @@ import {
 import JoinResponse from '../Models/JoinResponse';
 import DataMessageTopic from '../Models/DataMessageTopic';
 import RealtimeDataMessageObserver from '../Models/RealtimeDataMessageObserver';
+import CapturePhotoResponseData, { capturePhotoResponseDataReviver } from '../Models/CapturePhotoResponseData';
+import PhotoResource from '../Models/PhotoResource';
 
 /*
  * Controller in charge of one call.
@@ -85,7 +87,25 @@ class CallController {
      */
     async capturePhoto() {
         this.sendMessage(DataMessageTopic.CapturePhotoRequest);
-        await this.awaitMessage(DataMessageTopic.CapturePhotoResponse);
+        const response = await this.awaitCapturePhotoResponse();
+        if (!response.photoData) { return; }
+        const imageSize = response.photoData.imageSize;
+        const chunkCount = response.photoData.chunkingInfo.count;
+        const photoUUID = response.photoData.chunkingInfo.uuid;
+        const chunks: string[] = new Array(chunkCount);
+        chunks[response.photoData.chunkingInfo.index] = response.photoData.imageData;
+        while (chunks.flat().length < response.photoData.chunkingInfo.count) {
+            const chunk = await this.awaitCapturePhotoResponse();
+            if (
+                chunk.photoData
+                    && chunk.photoData.imageSize.toString() === imageSize.toString()
+                    && chunk.photoData.chunkingInfo.uuid === photoUUID
+                    && chunk.photoData.chunkingInfo.count === chunkCount
+            ) {
+                chunks[chunk.photoData.chunkingInfo.index] = chunk.photoData.imageData;
+            }
+        }
+        return new PhotoResource(new URL('data:image/jpeg;base64,' + chunks.join('')), imageSize);
     }
 
     /*
@@ -126,6 +146,13 @@ class CallController {
                 }
             )
         })
+    }
+
+    private async awaitCapturePhotoResponse(): Promise<CapturePhotoResponseData> {
+        return JSON.parse(
+            (await this.awaitMessage(DataMessageTopic.CapturePhotoResponse)).text(),
+            capturePhotoResponseDataReviver
+        );
     }
 
 }
