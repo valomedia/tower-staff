@@ -30,6 +30,7 @@ import MapComponent from './MapComponent';
 import LocationEventData, { locationEventDataReviver } from '../Models/LocationEventData';
 import { DataMessage } from 'amazon-chime-sdk-js';
 import DataMessageTopic from '../Models/DataMessageTopic';
+import PhotoResource from '../Models/PhotoResource';
 
 /*
  * The in-call ui.
@@ -120,6 +121,11 @@ const CallScreen = () => {
     const [location, setLocation] = useState<Coordinate|undefined>();
 
     /*
+     * The most recently captured photo, if any.
+     */
+    const [photo, setPhoto] = useState<PhotoResource|undefined>();
+
+    /*
      * The audio element.
      */
     const audioRef = useRef() as MutableRefObject<HTMLAudioElement>;
@@ -165,7 +171,10 @@ const CallScreen = () => {
     const handlePhotoCapture = () => {
         if (callController) {
             setIsCapturingPhoto(true);
-            callController.capturePhoto().then(() => setIsCapturingPhoto(false));
+            callController.capturePhoto().then(photo => {
+                setIsCapturingPhoto(false);
+                if (photo) {setPhoto(photo);}
+            });
         }
     }
 
@@ -292,6 +301,9 @@ const CallScreen = () => {
                 <audio ref={audioRef}></audio>
                 <aside id='left-aside' className={location ? 'open' : 'closed'}>
                     {location && (<MapComponent coordinate={location}/>)}
+                </aside>
+                <aside id='right-aside' className={photo ? 'open' : 'closed'}>
+                    {photo && (<img src={photo.imageURL.href} alt='Vom Gerät der Benutzer:in aufgenommenes Foto' />)}
                 </aside>
                 <footer>
                     <button
