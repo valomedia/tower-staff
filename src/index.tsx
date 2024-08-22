@@ -11,11 +11,13 @@ import './index.scss';
 import App from './Routes/App';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import ErrorPage from './error-page';
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <App/>
+        element: <App/>,
+        errorElement: <ErrorPage/>
     }
 ]);
 
