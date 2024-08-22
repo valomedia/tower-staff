@@ -30,7 +30,7 @@ import LocationEventData, { locationEventDataReviver } from '../Models/LocationE
 import { DataMessage } from 'amazon-chime-sdk-js';
 import DataMessageTopic from '../Models/DataMessageTopic';
 import PhotoResource from '../Models/PhotoResource';
-import { AppContext } from './App';
+import { AppContext } from '../Routes/App';
 
 /*
  * The in-call ui.

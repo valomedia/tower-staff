@@ -7,8 +7,8 @@
 
 import { Context, createContext, Dispatch, SetStateAction, useState } from 'react';
 import './App.scss';
-import LaunchScreen from './LaunchScreen';
-import CallScreen from './CallScreen';
+import LaunchScreen from '../Components/LaunchScreen';
+import CallScreen from '../Components/CallScreen';
 import banner from '../Assets/banner.svg';
 
 const App = () => {

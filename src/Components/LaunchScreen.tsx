@@ -13,7 +13,7 @@ import './LaunchScreen.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faPhone } from '@fortawesome/free-solid-svg-icons';
 import TowerApi from '../Api/TowerApi';
-import { AppContext } from './App';
+import { AppContext } from '../Routes/App';
 
 /*
  * The screen presented to the user upon opening the app.
