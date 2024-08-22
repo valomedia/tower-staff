@@ -20,7 +20,7 @@
   color: white;
   top: -100vh;
 
-  &:target {
+  &.active {
     top: 0;
   }
 

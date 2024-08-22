@@ -6,9 +6,8 @@
 //
 //
 
-import { MutableRefObject, useEffect, useRef, useState } from 'react';
+import { MutableRefObject, useContext, useEffect, useRef, useState } from 'react';
 import './CallScreen.scss';
-import useHash from '../Hooks/useHash';
 import TowerApi from '../Api/TowerApi';
 import CallController from '../Controllers/CallController';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -31,6 +30,7 @@ import LocationEventData, { locationEventDataReviver } from '../Models/LocationE
 import { DataMessage } from 'amazon-chime-sdk-js';
 import DataMessageTopic from '../Models/DataMessageTopic';
 import PhotoResource from '../Models/PhotoResource';
+import { AppContext } from '../Routes/App';
 
 /*
  * The in-call ui.
@@ -38,9 +38,9 @@ import PhotoResource from '../Models/PhotoResource';
 const CallScreen = () => {
 
     /*
-     * The current screen
+     * Whether a call is ongoing.
      */
-    const [hash, setHash] = useHash();
+    const {isOnCall, setIsOnCall} = useContext(AppContext);
 
     /*
      * The session for the current call.
@@ -240,7 +240,7 @@ const CallScreen = () => {
      * Reset everything when the call ends.
      */
     const onCallEnd = () => {
-        setHash('#launch-screen');
+        setIsOnCall(false);
         setIsPresentingCallOptionsModal(false);
         setIsAudioInputMuted(false);
         setIsAudioOutputMuted(false);
@@ -256,7 +256,7 @@ const CallScreen = () => {
 
     useEffect(
         () => {
-            if (hash === "#call-screen") {
+            if (isOnCall) {
                 TowerApi
                     .join()
                     .then((joinResponse) => {
@@ -279,11 +279,11 @@ const CallScreen = () => {
                             .audioVideo
                             .realtimeSubscribeToMuteAndUnmuteLocalAudio(setIsAudioInputMuted)
                     })
-                    .catch(() => setHash('#launch-screen'))
+                    .catch(onCallEnd);
             }
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [hash, setHash]
+        [isOnCall, setIsOnCall]
     );
 
     return (
@@ -296,7 +296,7 @@ const CallScreen = () => {
                                 callController={callController}
                                 onSubmit={() => setIsPresentingCallOptionsModal(false)}/>
             }
-            <section id='call-screen'>
+            <section id='call-screen' className={isOnCall ? 'active' : 'inactive'}>
                 <video ref={videoRef}></video>
                 <audio ref={audioRef}></audio>
                 <aside id='left-aside' className={location ? 'open' : 'closed'}>

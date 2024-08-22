@@ -6,18 +6,24 @@
 //
 //
 
-import { MutableRefObject, useEffect, useRef, useState } from 'react';
+import { MutableRefObject, useContext, useEffect, useRef, useState } from 'react';
 import logoAnimated from '../Assets/logo-animated.svg';
 import videoChatCalling from '../Assets/video-chat-calling.m4a';
 import './LaunchScreen.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faPhone } from '@fortawesome/free-solid-svg-icons';
 import TowerApi from '../Api/TowerApi';
+import { AppContext } from '../Routes/App';
 
 /*
  * The screen presented to the user upon opening the app.
  */
 const LaunchScreen = () => {
+
+    /*
+     * Whether a call is ongoing.
+     */
+    const {isOnCall, setIsOnCall} = useContext(AppContext);
 
     /*
      * Whether the application is still trying to reach the backend.
@@ -46,11 +52,6 @@ const LaunchScreen = () => {
     const [customerName, setCustomerName] = useState('Theo Test');
 
     /*
-     * Whether a call is ongoing.
-     */
-    const [isOnCall, setIsOnCall] = useState(false);
-
-    /*
      * Whether the ringtone is enabled.
      */
     const [isRingtoneEnabled, setIsRingtoneEnabled] = useState(false);
@@ -64,7 +65,8 @@ const LaunchScreen = () => {
      * Join call.
      */
     const handleAccept = () => {
-        window.location.hash = '#call-screen'
+        setIsOnCall(true);
+        setIsRinging(false);
     }
 
     /*
@@ -78,10 +80,7 @@ const LaunchScreen = () => {
     useEffect(() => {
         const intervalId = window.setInterval(
             () => {
-                setIsOnCall(window.location.hash === "#call-screen");
-                if (isOnCall) {
-                    setIsRinging(false);
-                } else {
+                if (!isOnCall) {
                     if (isConnecting) {
                         TowerApi
                             .index()
@@ -120,7 +119,7 @@ const LaunchScreen = () => {
         [isRinging, isOnCall, isRingtoneEnabled]);
 
     return (
-        <section id='launch-screen'>
+        <section id='launch-screen' className={isOnCall ? 'inactive' : 'active'}>
             <img src={logoAnimated} className='launch-screen-logo' alt='logo'/>
             <h1>Tower</h1>
             <p>
