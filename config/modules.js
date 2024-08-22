@@ -21,7 +21,7 @@ function getAdditionalModulePaths(options = {}) {
     const baseUrl = options.baseUrl;
 
     if (!baseUrl) {
-        return '';
+        return [];
     }
 
     const baseUrlResolved = path.resolve(paths.appPath, baseUrl);
@@ -29,7 +29,7 @@ function getAdditionalModulePaths(options = {}) {
     // We don't need to do anything if `baseUrl` is set to `node_modules`. This is
     // the default behavior.
     if (path.relative(paths.appNodeModules, baseUrlResolved) === '') {
-        return null;
+        return [];
     }
 
     // Allow the user set the `baseUrl` to `appSrc`.
@@ -41,7 +41,7 @@ function getAdditionalModulePaths(options = {}) {
     // directly as source files are not transpiled outside `src`. We do allow importing them with the absolute path
     // (e.g. `src/Components/Button.js`), but we set that up with an alias.
     if (path.relative(paths.appPath, baseUrlResolved) === '') {
-        return null;
+        return [];
     }
 
     // Otherwise, throw an error.
@@ -71,6 +71,8 @@ function getWebpackAliases(options = {}) {
         return {
             src: paths.appSrc,
         };
+    } else {
+        return {};
     }
 }
 
@@ -92,6 +94,8 @@ function getJestAliases(options = {}) {
         return {
             '^src/(.*)$': '<rootDir>/src/$1',
         };
+    } else {
+        return {};
     }
 }
 
