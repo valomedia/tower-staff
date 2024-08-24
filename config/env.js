@@ -66,6 +66,22 @@ process.env.NODE_PATH = (process.env.NODE_PATH || '')
 // injected into the application via DefinePlugin in webpack configuration.
 const REACT_APP = /^REACT_APP_/i;
 
+/**
+ * Get the environment for the client.
+ *
+ * This will pull all environment variables prefixed with `REACT_APP_` from the environment, along with NODE_ENV
+ * (defaulting to 'development'), WDS_SOCKET_HOST, WDS_SOCKET_PATH, WDS_SOCKET_PORT, and FAST_REFRESH (defaulting to
+ * 'true'). These will be returned as an object to be passed to the client, along with the provided value for
+ * PUBLIC_URL (which can't be read straight from the environment, as it will need some preprocessing).
+ *
+ * @typedef {object} ClientEnvironment An environment to be passed to the client.
+ * @property {Object.<string, any>}                         raw             The env represented using native types.
+ * @property {{"process.env": Object.<string, string>}}     stringified     The env with each parameter stringified.
+ *
+ * @param publicUrl     {string}    The value to be used for PUBLIC_URL.
+ *
+ * @returns {ClientEnvironment}     The environment to be passed to the client.
+ */
 function getClientEnvironment(publicUrl) {
     const raw = Object.keys(process.env)
         .filter(key => REACT_APP.test(key))
@@ -98,6 +114,7 @@ function getClientEnvironment(publicUrl) {
                 FAST_REFRESH: process.env.FAST_REFRESH !== 'false',
             }
         );
+
     // Stringify all values so we can feed into webpack DefinePlugin
     const stringified = {
         'process.env': Object.keys(raw).reduce((env, key) => {

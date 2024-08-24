@@ -15,7 +15,9 @@ const resolve = require('resolve');
 /**
  * Get additional module paths based on the baseUrl of a compilerOptions object.
  *
- * @param {Object} options
+ * @param {{"baseUrl": string}}     options     The compilerOptions object containing the baseUrl.
+ *
+ * @returns {string[]}  The additional module paths to use.
  */
 function getAdditionalModulePaths(options = {}) {
     const baseUrl = options.baseUrl;
@@ -56,7 +58,9 @@ function getAdditionalModulePaths(options = {}) {
 /**
  * Get webpack aliases based on the baseUrl of a compilerOptions object.
  *
- * @param {*} options
+ * @param {{"baseUrl": string?}}    options     The compilerOptions object containing the baseUrl.
+ *
+ * @returns {{"src": string?}} The path to the src directory, if it could be resolved.
  */
 function getWebpackAliases(options = {}) {
     const baseUrl = options.baseUrl;
@@ -79,7 +83,9 @@ function getWebpackAliases(options = {}) {
 /**
  * Get jest aliases based on the baseUrl of a compilerOptions object.
  *
- * @param {*} options
+ * @param {{"baseUrl": string?}}    options     The compilerOptions object containing the baseUrl.
+ *
+ * @returns {{"^src/(.*)$": string?}} The path to the src directory, if it could be resolved.
  */
 function getJestAliases(options = {}) {
     const baseUrl = options.baseUrl;
@@ -99,6 +105,20 @@ function getJestAliases(options = {}) {
     }
 }
 
+/**
+ * Get the additional module paths, webpack aliases, and jest aliases for the project.
+ *
+ * This will parse either tsconfig.json or jsconfig.json (whichever exists) to find the additional module paths, jest
+ * aliases, and webpack aliases for the project.
+ *
+ * @typedef {object} ModuleConfiguration The configuration parameters needed to configure module resolution.
+ * @property {string[]}                 additionalModulePaths   A list of additional paths to search for modules.
+ * @property {{"^src/(.*)$": string?}}  jestAliases             The path to the src directory as an alias for jest.
+ * @property {boolean}                  hasTsConfig             Whether a tsconfig.json was used for the configuration.
+ * @property {{src: string?}}           webpackAliases          The path to the src directory as an alias for webpack.
+ *
+ * @returns {ModuleConfiguration} The configuration to be used for resolving modules.
+ */
 function getModules() {
     // Check if TypeScript is set up.
     const hasTsConfig = fs.existsSync(paths.appTsConfig);

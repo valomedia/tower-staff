@@ -91,8 +91,15 @@ const hasJsxRuntime = (() => {
     }
 })();
 
-// This is the production and development configuration.
-// It is focused on developer experience, fast rebuilds, and a minimal bundle.
+/**
+ * Build the webpack configuration.
+ *
+ * This is used to build both the production and development configuration, depending on which value is passed in.
+ *
+ * @param {"development"|"production"}  webpackEnv  The environment the project is being built for.
+ *
+ * @returns {object} The configuration for webpack.
+ */
 module.exports = function (webpackEnv) {
     const isEnvDevelopment = webpackEnv === 'development';
     const isEnvProduction = webpackEnv === 'production';
@@ -116,7 +123,7 @@ module.exports = function (webpackEnv) {
             isEnvDevelopment && require.resolve('style-loader'),
             isEnvProduction && {
                 loader: MiniCssExtractPlugin.loader,
-                // css is located in `static/css`, use '../../' to locate index.html folder
+                // CSS is located in `static/css`, use '../../' to locate index.html folder
                 // in production `paths.publicUrlOrPath` can be a relative path
                 options: paths.publicUrlOrPath.startsWith('.')
                     ? {publicPath: '../../'}
@@ -149,7 +156,7 @@ module.exports = function (webpackEnv) {
                                         stage: 3,
                                     },
                                 ],
-                                // Adds PostCSS Normalize as the reset css with default options,
+                                // Adds PostCSS Normalize as the reset CSS with default options,
                                 // so that it honors browserslist config in package.json,
                                 // which in turn lets users customize the target behavior as per their needs.
                                 'postcss-normalize',
@@ -213,7 +220,7 @@ module.exports = function (webpackEnv) {
             path: paths.appBuild,
             // Add /* filename */ comments to generated require()s in the output.
             pathinfo: isEnvDevelopment,
-            // There will be one main bundle, and one file per asynchronous chunk.
+            // There will be one main bundle and one file per asynchronous chunk.
             // In development, it does not produce real files.
             filename: isEnvProduction
                 ? 'static/js/[name].[contenthash:8].js'
@@ -358,8 +365,6 @@ module.exports = function (webpackEnv) {
                     // matches the requirements. When no loader matches, it will fall
                     // back to the "file" loader at the end of the loader list.
                     oneOf: [
-                        // TODO: Merge this config once `image/avif` is in the mime-db
-                        // https://github.com/jshttp/mime-db
                         {
                             test: [/\.avif$/],
                             type: 'asset',
@@ -461,7 +466,7 @@ module.exports = function (webpackEnv) {
                                 // See #6846 for context on why cacheCompression is disabled
                                 cacheCompression: false,
 
-                                // Babel sourcemaps are needed for debugging into node_modules
+                                // Babel sourcemaps are for debugging into node_modules
                                 // code.  Without the options below, debuggers like VSCode
                                 // show incorrect code and set breakpoints on the wrong lines.
                                 sourceMaps: shouldUseSourceMap,
