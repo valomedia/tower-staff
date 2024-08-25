@@ -3,7 +3,7 @@
 //  tower-staff
 //
 //  Created by Jean-Pierre Höhmann on 2024-05-26.
-//
+//  Copyright © 2024 valo.media GmbH. All rights reserved.
 //
 
 const fs = require('fs');
@@ -19,6 +19,14 @@ const sockHost = process.env.WDS_SOCKET_HOST;
 const sockPath = process.env.WDS_SOCKET_PATH; // default: '/ws'
 const sockPort = process.env.WDS_SOCKET_PORT;
 
+/**
+ * Build the configuration for the webpack-dev-server.
+ *
+ * @param {object[]}    proxy           Proxy configuration for webpack-dev-server.
+ * @param {string}      allowedHost     The allowed host for CORS.
+ *
+ * @returns {object} The configuration for webpack-dev-server.
+ */
 module.exports = function (proxy, allowedHost) {
     // Check the HOST header iff the proxy is running and DANGEROUSLY_DISABLE_HOST_CHECK is not set.
     const disableFirewall =
@@ -41,7 +49,7 @@ module.exports = function (proxy, allowedHost) {
         static: {
             // By default, WebpackDevServer serves physical files from the current directory in addition to all the
             // virtual build products that it serves from memory. This is confusing because those files won’t
-            // automatically be available in production build folder unless we copy them. However, copying the whole
+            // automatically be available in the production build folder unless we copy them. However, copying the whole
             // project directory is dangerous because we may expose sensitive files. Instead, we establish a convention
             // that only files in `public` directory get served. Our build script will copy `public` into the `build`
             // folder. In `index.html`, you can get URL of `public` folder with %PUBLIC_URL%: <link rel="icon"

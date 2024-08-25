@@ -3,18 +3,23 @@
 //  tower-staff
 //
 //  Created by Jean-Pierre Höhmann on 2024-05-26.
-//
+//  Copyright © 2024 valo.media GmbH. All rights reserved.
 //
 
 const path = require('path');
 const camelcase = require('camelcase');
 
-// This is a custom Jest transformer turning file imports into filenames.
 //
-// See also: http://facebook.github.io/jest/docs/en/webpack.html.
-
+//
+/**
+ * This is a custom Jest transformer turning file imports into filenames.
+ *
+ * See also: http://facebook.github.io/jest/docs/en/webpack.html.
+ *
+ * @type {{process(any, string): string}}
+ */
 module.exports = {
-    process(src, filename) {
+    process(_, filename) {
         const assetFilename = JSON.stringify(path.basename(filename));
 
         if (filename.match(/\.svg$/)) {
@@ -24,22 +29,27 @@ module.exports = {
                 pascalCase: true,
             });
             const componentName = `Svg${pascalCaseFilename}`;
-            return `const React = require('react');
-      module.exports = {
-        __esModule: true,
-        default: ${assetFilename},
-        ReactComponent: React.forwardRef(function ${componentName}(props, ref) {
-          return {
-            $$typeof: Symbol.for('react.element'),
-            type: 'svg',
-            ref: ref,
-            key: null,
-            props: Object.assign({}, props, {
-              children: ${assetFilename}
-            })
-          };
-        }),
-      };`;
+            return `
+                const React = require('react');
+                module.exports = {
+                    __esModule: true,
+                    default: ${assetFilename},
+                    ReactComponent: React.forwardRef(function ${componentName}(props, ref) {
+                        return {
+                            $$typeof: Symbol.for('react.element'),
+                            type: 'svg',
+                            ref: ref,
+                            key: null,
+                            props: Object.assign(
+                                {},
+                                props, 
+                                {
+                                    children: ${assetFilename}
+                                }
+                            )
+                        };
+                    }),
+                };`;
         }
 
         return `module.exports = ${assetFilename};`;

@@ -3,7 +3,7 @@
 //  tower-staff
 //
 //  Created by Jean-Pierre Höhmann on 2024-05-26.
-//
+//  Copyright © 2024 valo.media GmbH. All rights reserved.
 //
 
 // Do this as the first thing so that any code reading it knows the right env.
@@ -55,19 +55,10 @@ const HOST = process.env.HOST || '0.0.0.0';
 
 if (process.env.HOST) {
     console.log(
-        chalk.cyan(
-            `Attempting to bind to HOST environment variable: ${chalk.yellow(
-                chalk.bold(process.env.HOST)
-            )}`
-        )
+        chalk.cyan(`Attempting to bind to HOST environment variable: ${chalk.yellow(chalk.bold(process.env.HOST))}`)
     );
-    console.log(
-        `If this was unintentional, check that you haven't mistakenly set it in your shell.`
-    );
-    console.log(
-        `Learn more here: ${chalk.yellow('https://cra.link/advanced-config')}`
-    );
-    console.log();
+    console.log(`If this was unintentional, check that you haven't mistakenly set it in your shell.`);
+    console.log(`Learn more here: ${chalk.yellow('https://cra.link/advanced-config')}\n`);
 }
 
 // We require that you explicitly set browsers and do not fall back to

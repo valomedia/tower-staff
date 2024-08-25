@@ -3,7 +3,7 @@
 //  tower-staff
 //
 //  Created by Jean-Pierre Höhmann on 2024-05-26.
-//
+//  Copyright © 2024 valo.media GmbH. All rights reserved.
 //
 
 const path = require('path');
@@ -29,6 +29,11 @@ const publicUrlOrPath = getPublicUrlOrPath(
 
 const buildPath = process.env.BUILD_PATH || 'build';
 
+/**
+ * The list of extensions for module files.
+ *
+ * @type {string[]}
+ */
 const moduleFileExtensions = [
     'web.mjs',
     'mjs',
@@ -58,23 +63,95 @@ const resolveModule = (resolveFn, filePath) => {
 
 // config after eject: we're in ./config/
 module.exports = {
+
+    /**
+     * The path to the main env file.
+     */
     dotenv: resolveApp('.env'),
+
+    /**
+     * The path to the root of the project.
+     */
     appPath: resolveApp('.'),
+
+    /**
+     * The path to the build directory.
+     */
     appBuild: resolveApp(buildPath),
+
+    /**
+     * The path to the directory for public static files.
+     */
     appPublic: resolveApp('public'),
+
+    /**
+     * The path to the index.html used to bootstrap the app.
+     */
     appHtml: resolveApp('public/index.html'),
+
+    /**
+     * The path to the module that contains the entry point for the app.
+     */
     appIndexJs: resolveModule(resolveApp, 'src/index'),
+
+    /**
+     * The path to the package.json that defines the dependencies for the app.
+     */
     appPackageJson: resolveApp('package.json'),
+
+    /**
+     * The path to the directory containing the sources for the app.
+     */
     appSrc: resolveApp('src'),
+
+    /**
+     * The path to the TypeScript configuration.
+     */
     appTsConfig: resolveApp('tsconfig.json'),
+
+    /**
+     * The path to the JavaScript configuration (unused).
+     */
     appJsConfig: resolveApp('jsconfig.json'),
+
+    /**
+     * The path to the yarn lock file (unused).
+     */
     yarnLockFile: resolveApp('yarn.lock'),
+
+    /**
+     * The path to the module for setting up the tests.
+     */
     testsSetup: resolveModule(resolveApp, 'src/setupTests'),
+
+    /**
+     * The path to the script for setting up the development proxy (unused).
+     */
     proxySetup: resolveApp('src/setupProxy.js'),
+
+    /**
+     * The path to the node modules repository.
+     */
     appNodeModules: resolveApp('node_modules'),
+
+    /**
+     * The path to the webpack cache.
+     */
     appWebpackCache: resolveApp('node_modules/.cache'),
+
+    /**
+     * The path to the typescript build information.
+     */
     appTsBuildInfoFile: resolveApp('node_modules/.cache/tsconfig.tsbuildinfo'),
+
+    /**
+     * The path to the module that contains the service workers (unused).
+     */
     swSrc: resolveModule(resolveApp, 'src/service-worker'),
+
+    /**
+     * The public url the app is available under (if any).
+     */
     publicUrlOrPath,
 };
 

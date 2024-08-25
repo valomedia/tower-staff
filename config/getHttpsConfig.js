@@ -3,7 +3,7 @@
 //  tower-staff
 //
 //  Created by Jean-Pierre Höhmann on 2024-05-26.
-//
+//  Copyright © 2024 valo.media GmbH. All rights reserved.
 //
 
 const fs = require('fs');
@@ -49,9 +49,17 @@ function readEnvFile(file, type) {
     return fs.readFileSync(file);
 }
 
-// Get the https config.
-//
-// Return cert files if provided in env, otherwise true or false.
+/**
+ * Get the https config.
+ *
+ * Return cert files if provided in env, otherwise true or false.
+ *
+ * @typedef {object} HttpsConfig A configuration for a HTTPs server.
+ * @property {Buffer}   cert    The certificate to use for HTTPs connections.
+ * @property {Buffer}   key     The key to user for HTTPs connections.
+ *
+ * @returns {HttpsConfig|boolean} The configuration for HTTPs if any, or a boolean indicating whether to use HTTPs.
+ */
 function getHttpsConfig() {
     const {SSL_CRT_FILE, SSL_KEY_FILE, HTTPS} = process.env;
     const isHttps = HTTPS === 'true';
