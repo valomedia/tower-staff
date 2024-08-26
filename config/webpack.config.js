@@ -359,6 +359,11 @@ module.exports = function (webpackEnv) {
                     exclude: /@babel(?:\/|\\{1,2})runtime/,
                     test: /\.(js|mjs|jsx|ts|tsx|css)$/,
                     loader: require.resolve('source-map-loader'),
+                    options: {
+                        // Workaround for https://github.com/aws/amazon-chime-sdk-js/issues/2594
+                        filterSourceMappingUrl: (_, resourcePath) =>
+                            !/\/node_modules\/amazon-chime-sdk-js\//.test(resourcePath)
+                    }
                 },
                 {
                     // "oneOf" will traverse all following loaders until one
