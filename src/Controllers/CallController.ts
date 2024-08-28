@@ -23,6 +23,7 @@ import DataMessageTopic from '../Models/DataMessageTopic';
 import RealtimeDataMessageObserver from '../Models/RealtimeDataMessageObserver';
 import CapturePhotoResponseData, { capturePhotoResponseDataReviver } from '../Models/CapturePhotoResponseData';
 import PhotoResource from '../Models/PhotoResource';
+import TowerApi from '../Api/TowerApi';
 
 /*
  * Controller in charge of one call.
@@ -54,6 +55,7 @@ class CallController {
             })
 
             meetingSession.audioVideo.addObserver({
+                // Add the video, once the caller is connected.
                 videoTileDidUpdate: (tileState: VideoTileState) => {
                     // Ignore a tile without attendee ID or tile ID, a local tile, and a content share.
                     if (!tileState.tileId || !tileState.boundAttendeeId || tileState.localTile || tileState.isContent) {
@@ -61,6 +63,12 @@ class CallController {
                     }
 
                     meetingSession.audioVideo.bindVideoElement(tileState.tileId, videoElement);
+                },
+
+                // If the caller unexpectedly drops, signal the backend to cleanly end the call.
+                videoTileWasRemoved: () => {
+                    const meetingId = meetingSession.configuration.meetingId;
+                    if (meetingId) {TowerApi.end(meetingId);}
                 }
             });
 
