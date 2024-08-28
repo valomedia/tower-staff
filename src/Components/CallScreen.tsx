@@ -231,9 +231,8 @@ const CallScreen = () => {
      */
     const handleHangup = () => {
         const meetingId = callController?.meetingSession.configuration.meetingId;
-        if (meetingId) {
-            TowerApi.end(meetingId);
-        }
+        if (meetingId) {TowerApi.end(meetingId);}
+        onCallEnd();
     }
 
     /*
@@ -252,6 +251,7 @@ const CallScreen = () => {
         setIsRequestingLocation(false);
         setIsLocationAvailable(true);
         setLocation(undefined);
+        setCallController(undefined);
     }
 
     useEffect(
