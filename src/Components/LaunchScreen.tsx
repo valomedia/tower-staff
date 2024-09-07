@@ -49,7 +49,7 @@ const LaunchScreen = () => {
      * Once implemented, this will provide the assistant with the name of the user seeking assistance, or receiving
      * assistance.
      */
-    const [customerName, setCustomerName] = useState('Theo Test');
+    const [customerName, setCustomerName] = useState<string|undefined>();
 
     /*
      * Whether the ringtone is enabled.
@@ -90,7 +90,10 @@ const LaunchScreen = () => {
                     if (hasBackend) {
                         TowerApi
                             .poll()
-                            .then(() => setIsRinging(true))
+                            .then(meetingResponse => {
+                                setCustomerName(meetingResponse.Meeting.ExternalMeetingId || undefined);
+                                setIsRinging(true);
+                            })
                             .catch(() => {
                                 setIsRinging(false);
                             })
@@ -125,7 +128,7 @@ const LaunchScreen = () => {
             <p>
                 {
                     isOnCall ? 'Verbindung hergestellt'
-                        : isRinging ? `Neue Anfrage von ${customerName}`
+                        : isRinging ? `Neue Anfrage von ${customerName || "Unbekannter Anrufer"}`
                             : hasBackend ? 'Warten auf Anfragen…'
                                 : isConnecting ? 'Verbindung wird hergestellt…'
                                     : 'Verbindung fehlgeschlagen!'
