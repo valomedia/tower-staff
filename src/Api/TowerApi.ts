@@ -7,6 +7,7 @@
 //
 
 import JoinResponse from '../Models/JoinResponse';
+import MeetingResponse from '../Models/MeetingResponse';
 
 const TowerApi = {
 
@@ -34,7 +35,7 @@ const TowerApi = {
     /*
      * Make a request to the poll endpoint.
      */
-    poll: async () => {
+    poll: async (): Promise<MeetingResponse> => {
         return await request('GET', '/poll');
     }
 
