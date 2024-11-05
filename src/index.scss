@@ -49,7 +49,7 @@ header, footer {
   background-size: cover;
   height: 40px;
   padding: 6.667px;
-  min-width: 400px;
+  min-width: 30vw;
 }
 
 header *, footer * {
@@ -129,11 +129,11 @@ button.inactive {
 
 aside {
   position: fixed;
-  width: 400px;
-  height: 600px;
+  width: 30vw;
+  height: calc(100vh - 53.33px);
   border-color: colors.$primary;
   border-style: solid;
-  background-color: black;
+  background: white;
 }
 
 aside#left-aside {
@@ -147,8 +147,7 @@ aside#left-aside {
 }
 
 aside#left-aside.closed {
-  /* 400px + 2px */
-  left: -402px;
+  left: -30vw;
 }
 
 aside#right-aside {
@@ -162,8 +161,7 @@ aside#right-aside {
 }
 
 aside#right-aside.closed {
-  /* 400px + 2px */
-  right: -402px;
+  right: -30vw;
 }
 
 @media (prefers-reduced-motion: no-preference) {

@@ -17,6 +17,7 @@ import {
     faImage,
     faLightbulb,
     faLocationDot,
+    faMaximize,
     faMicrophone,
     faMicrophoneSlash,
     faPhone,
@@ -125,6 +126,11 @@ const CallScreen = () => {
      * The most recently captured photo, if any.
      */
     const [photo, setPhoto] = useState<PhotoResource|undefined>();
+
+    /*
+     * Whether the assistant currently has the video maximized (and zoomed in).
+     */
+    const [isVideoMaximized, setIsVideoMaximized] = useState(false);
 
     /*
      * The audio element.
@@ -252,6 +258,7 @@ const CallScreen = () => {
         setIsRequestingLocation(false);
         setIsLocationAvailable(true);
         setLocation(undefined);
+        setIsVideoMaximized(false);
         setCallController(undefined);
     }
 
@@ -298,16 +305,22 @@ const CallScreen = () => {
                                 onSubmit={() => setIsPresentingCallOptionsModal(false)}/>
             }
             <section id='call-screen' className={isOnCall ? 'active' : 'inactive'}>
-                <video ref={videoRef}></video>
                 <div className='video-background'><FontAwesomeIcon icon={faVideoSlash}/></div>
+                <video ref={videoRef} className={isVideoMaximized ? 'maximized' : ''}></video>
                 <audio ref={audioRef}></audio>
-                <aside id='left-aside' className={location ? 'open' : 'closed'}>
+                <aside id='left-aside' className={isVideoMaximized ? 'closed' : 'open'}>
                     {location && (<MapComponent coordinate={location}/>)}
                 </aside>
-                <aside id='right-aside' className={photo ? 'open' : 'closed'}>
-                    {photo && (<img src={photo.imageURL.href} alt='Vom Gerät der Benutzer:in aufgenommenes Foto' />)}
+                <aside id='right-aside' className={isVideoMaximized ? 'closed' : 'open'}>
+                    {photo && (<img src={photo.imageURL.href} alt='Vom Gerät der Benutzer:in aufgenommenes Foto'/>)}
                 </aside>
                 <footer>
+                    <button
+                            id='maximize-video-button'
+                            onClick={() => setIsVideoMaximized(!isVideoMaximized)}
+                            className={isVideoMaximized ? 'active' : 'inactive'}>
+                        <FontAwesomeIcon icon={faMaximize}/>
+                    </button>
                     <button
                             id='capture-photo-button'
                             onClick={handlePhotoCapture}
