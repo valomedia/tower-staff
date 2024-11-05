@@ -26,8 +26,25 @@
   }
 
   video {
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    left: 30vw;
+    top: 0;
+    width: 40vw;
+    height: 100vh;
+    object-fit: contain;
+  }
+
+  video.inactive {
+    background: transparent;
+  }
+
+  video.active {
+    background: black;
+  }
+
+  video.maximized {
+    width: 100vw;
+    left: 0;
     object-fit: cover;
   }
 
@@ -51,11 +68,18 @@
     width: initial;
   }
 
-  #right-aside > img {
+  #left-aside img {
     width: 100%;
     height: 100%;
     object-position: center;
     object-fit: none;
+  }
+
+  #right-aside img {
+    width: 100%;
+    height: 100%;
+    object-position: center;
+    object-fit: cover;
   }
 
 }
