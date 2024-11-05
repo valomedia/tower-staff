@@ -23,7 +23,6 @@ import DataMessageTopic from '../Models/DataMessageTopic';
 import RealtimeDataMessageObserver from '../Models/RealtimeDataMessageObserver';
 import CapturePhotoResponseData, { capturePhotoResponseDataReviver } from '../Models/CapturePhotoResponseData';
 import PhotoResource from '../Models/PhotoResource';
-import TowerApi from '../Api/TowerApi';
 
 /*
  * Controller in charge of one call.
@@ -61,14 +60,19 @@ class CallController {
                     if (!tileState.tileId || !tileState.boundAttendeeId || tileState.localTile || tileState.isContent) {
                         return;
                     }
-
+                    logger.info('videoTileDidUpdate')
                     meetingSession.audioVideo.bindVideoElement(tileState.tileId, videoElement);
+                    videoElement.classList.remove('inactive')
+                    videoElement.classList.add('active')
                 },
 
-                // If the caller unexpectedly drops, signal the backend to cleanly end the call.
-                videoTileWasRemoved: () => {
-                    const meetingId = meetingSession.configuration.meetingId;
-                    if (meetingId) {TowerApi.end(meetingId);}
+                // If a video tile is removed, unbind the stream from the element, but keep the element around in case
+                // the video resumes.
+                videoTileWasRemoved: (tileId: number) => {
+                    logger.info('videoTileWasRemoved')
+                    meetingSession.audioVideo.unbindVideoElement(tileId, false)
+                    videoElement.classList.remove('active')
+                    videoElement.classList.add('inactive')
                 }
             });
 
