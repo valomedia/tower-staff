@@ -20,6 +20,7 @@ import {
     faMicrophone,
     faMicrophoneSlash,
     faPhone,
+    faVideoSlash,
     faVolumeHigh,
     faVolumeXmark
 } from '@fortawesome/free-solid-svg-icons';
@@ -298,6 +299,7 @@ const CallScreen = () => {
             }
             <section id='call-screen' className={isOnCall ? 'active' : 'inactive'}>
                 <video ref={videoRef}></video>
+                <div className='video-background'><FontAwesomeIcon icon={faVideoSlash}/></div>
                 <audio ref={audioRef}></audio>
                 <aside id='left-aside' className={location ? 'open' : 'closed'}>
                     {location && (<MapComponent coordinate={location}/>)}
