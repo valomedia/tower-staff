@@ -144,6 +144,14 @@ class CallController {
         await this.awaitMessage(DataMessageTopic.LocationResponse);
     }
 
+    /*
+     * Tell the client to restart the video.
+     */
+    async restartVideo() {
+        this.sendMessage(DataMessageTopic.RestartVideoRequest);
+        await this.awaitMessage(DataMessageTopic.RestartVideoResponse);
+    }
+
     private sendMessage(topic: DataMessageTopic, data: Object = {}) {
         this.meetingSession.audioVideo.realtimeSendDataMessage(topic, data, dataMessageLifetimeMs);
     }
