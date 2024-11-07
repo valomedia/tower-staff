@@ -14,6 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faCameraRotate,
     faGear,
+    faHeartPulse,
     faImage,
     faLightbulb,
     faLocationDot,
@@ -133,6 +134,11 @@ const CallScreen = () => {
     const [isVideoMaximized, setIsVideoMaximized] = useState(false);
 
     /*
+     * Whether the video feed is currently being restarted.
+     */
+    const [isRestartingVideo, setIsRestartingVideo] = useState(false);
+
+    /*
      * The audio element.
      */
     const audioRef = useRef() as MutableRefObject<HTMLAudioElement>;
@@ -234,6 +240,16 @@ const CallScreen = () => {
     }
 
     /*
+     * Restart the video.
+     */
+    const handleVideoRestart = () => {
+        if (callController) {
+            setIsRestartingVideo(true);
+            callController.restartVideo().then(() => setIsRestartingVideo(false));
+        }
+    }
+
+    /*
      * End the call.
      */
     const handleHangup = () => {
@@ -259,6 +275,7 @@ const CallScreen = () => {
         setIsLocationAvailable(true);
         setLocation(undefined);
         setIsVideoMaximized(false);
+        setIsRestartingVideo(false);
         setCallController(undefined);
     }
 
@@ -332,6 +349,12 @@ const CallScreen = () => {
                             onClick={handleCameraSwitch}
                             disabled={isSwitchingCamera || !callController}>
                         <FontAwesomeIcon icon={faCameraRotate}/>
+                    </button>
+                    <button
+                            id='restart-video-button'
+                            onClick={handleVideoRestart}
+                            disabled={isRestartingVideo || !callController}>
+                        <FontAwesomeIcon icon={faHeartPulse}/>
                     </button>
                     <button
                             id='torch-toggle-button'
