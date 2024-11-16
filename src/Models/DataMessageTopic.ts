@@ -21,7 +21,9 @@ enum DataMessageTopic {
     LocationResponse = "location-response",
     LocationEvent = "location-event",
     RestartVideoRequest = "restart-video-request",
-    RestartVideoResponse = "restart-video-response"
+    RestartVideoResponse = "restart-video-response",
+    AssistantReadyEvent = "assistant-ready-event",
+    AssistantBusyEvent = "assistant-busy-event"
 }
 
 export default DataMessageTopic;
