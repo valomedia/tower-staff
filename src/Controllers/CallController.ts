@@ -152,6 +152,20 @@ class CallController {
         await this.awaitMessage(DataMessageTopic.RestartVideoResponse);
     }
 
+    /**
+     * Tell the client that the assistant is ready.
+     */
+    sendAssistantReadyEvent() {
+        this.sendMessage(DataMessageTopic.AssistantReadyEvent);
+    }
+
+    /**
+     * Tell the client that the assistant is busy.
+     */
+    sendAssistantBusyEvent() {
+        this.sendMessage(DataMessageTopic.AssistantBusyEvent);
+    }
+
     private sendMessage(topic: DataMessageTopic, data: Object = {}) {
         this.meetingSession.audioVideo.realtimeSendDataMessage(topic, data, dataMessageLifetimeMs);
     }
