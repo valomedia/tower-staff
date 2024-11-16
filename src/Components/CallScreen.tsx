@@ -258,6 +258,26 @@ const CallScreen = () => {
         onCallEnd();
     }
 
+    /**
+     * Put the caller on the line.
+     */
+    const handleAssistantReady = () => {
+        handleInputUnmute()
+        handleOutputUnmute()
+        callController?.sendAssistantReadyEvent()
+        setIsAssistantReady(true)
+    }
+
+    /**
+     * Put the caller on hold.
+     */
+    const handleAssistantBusy = () => {
+        handleInputMute()
+        handleOutputMute()
+        callController?.sendAssistantBusyEvent()
+        setIsAssistantReady(false)
+    }
+
     /*
      * Reset everything when the call ends.
      */
