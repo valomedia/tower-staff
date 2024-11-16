@@ -76,8 +76,9 @@ class CallController {
                 }
             });
 
+            audioElement.muted = true
+            meetingSession.audioVideo.realtimeMuteLocalAudio();
             await meetingSession.audioVideo.bindAudioElement(audioElement);
-            audioElement.muted = false
             meetingSession.audioVideo.addObserver(observer);
             for (let topic of Object.values(DataMessageTopic)) {
                 meetingSession.audioVideo.realtimeSubscribeToReceiveDataMessage(topic, dataMessageDidReceived);

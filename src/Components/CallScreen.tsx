@@ -13,7 +13,6 @@ import CallController from '../Controllers/CallController';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faCameraRotate,
-    faGear,
     faHeartPulse,
     faImage,
     faLightbulb,
@@ -21,12 +20,13 @@ import {
     faMaximize,
     faMicrophone,
     faMicrophoneSlash,
+    faPause,
     faPhone,
     faVideoSlash,
     faVolumeHigh,
     faVolumeXmark
 } from '@fortawesome/free-solid-svg-icons';
-import CallOptionsModal from './CallOptionsModal';
+import CallOptionsDialog from './CallOptionsDialog';
 import Coordinate from '../Models/Coordinate';
 import MapComponent from './MapComponent';
 import LocationEventData, { locationEventDataReviver } from '../Models/LocationEventData';
@@ -51,22 +51,22 @@ const CallScreen = () => {
     const [callController, setCallController] = useState<CallController>();
 
     /*
-     * Whether to show the options-dialog.
+     * Whether the assistant can currently speak to the user.
      *
-     * This determines whether the option dialog should be displayed. Regardless of the value of this boolean, the
-     * option dialog will only show when the CallController becomes available.
+     * This is false initially while the assistant is reading the user profile and will be set to false again if the
+     * assistant puts the call on hold. It determines whether the call option dialog should be displayed.
      */
-    const [isPresentingCallOptionsModal, setIsPresentingCallOptionsModal] = useState(true);
+    const [isAssistantReady, setIsAssistantReady] = useState(false);
 
     /*
      * Whether audio input is currently muted.
      */
-    const [isAudioInputMuted, setIsAudioInputMuted] = useState(false);
+    const [isAudioInputMuted, setIsAudioInputMuted] = useState(true);
 
     /*
      * Whether audio output is currently muted.
      */
-    const [isAudioOutputMuted, setIsAudioOutputMuted] = useState(false);
+    const [isAudioOutputMuted, setIsAudioOutputMuted] = useState(true);
 
     /*
      * Whether a photo is currently being taken.
@@ -283,9 +283,9 @@ const CallScreen = () => {
      */
     const onCallEnd = () => {
         setIsOnCall(false);
-        setIsPresentingCallOptionsModal(false);
-        setIsAudioInputMuted(false);
-        setIsAudioOutputMuted(false);
+        setIsAssistantReady(false);
+        setIsAudioInputMuted(true);
+        setIsAudioOutputMuted(true);
         setIsCapturingPhoto(false);
         setIsSwitchingCamera(false);
         setIsUsingFrontCamera(false);
@@ -334,16 +334,14 @@ const CallScreen = () => {
     return (
         <>
             {
-                isPresentingCallOptionsModal
+                !isAssistantReady
                     && callController
-                    &&
-                        <CallOptionsModal
-                                callController={callController}
-                                onSubmit={() => setIsPresentingCallOptionsModal(false)}/>
+                    && <CallOptionsDialog callController={callController} onSubmit={handleAssistantReady}/>
             }
             <section id='call-screen' className={isOnCall ? 'active' : 'inactive'}>
-                <div className='video-background'><FontAwesomeIcon icon={faVideoSlash}/></div>
+                <div id='video-background'><FontAwesomeIcon icon={faVideoSlash}/></div>
                 <video ref={videoRef} className={isVideoMaximized ? 'maximized' : ''}></video>
+                {!isAssistantReady && <div id='hold-indicator'><FontAwesomeIcon icon={faPause}/></div>}
                 <audio ref={audioRef}></audio>
                 <aside id='left-aside' className={isVideoMaximized ? 'closed' : 'open'}>
                     {location && (<MapComponent coordinate={location}/>)}
@@ -355,42 +353,59 @@ const CallScreen = () => {
                     <button
                             id='maximize-video-button'
                             onClick={() => setIsVideoMaximized(!isVideoMaximized)}
-                            className={isVideoMaximized ? 'active' : 'inactive'}>
+                            className={isVideoMaximized ? 'active' : 'inactive'}
+                            disabled={!isAssistantReady}>
                         <FontAwesomeIcon icon={faMaximize}/>
                     </button>
                     <button
                             id='capture-photo-button'
                             onClick={handlePhotoCapture}
-                            disabled={isCapturingPhoto || !callController}>
+                            disabled={isCapturingPhoto || !callController || !isAssistantReady}>
                         <FontAwesomeIcon icon={faImage}/>
                     </button>
                     <button
                             id='camera-switch-button'
                             onClick={handleCameraSwitch}
-                            disabled={isSwitchingCamera || !callController}>
+                            disabled={isSwitchingCamera || !callController || !isAssistantReady}>
                         <FontAwesomeIcon icon={faCameraRotate}/>
                     </button>
                     <button
                             id='restart-video-button'
                             onClick={handleVideoRestart}
-                            disabled={isRestartingVideo || !callController}>
+                            disabled={isRestartingVideo || !callController || !isAssistantReady}>
                         <FontAwesomeIcon icon={faHeartPulse}/>
                     </button>
                     <button
                             id='torch-toggle-button'
                             className={isUsingTorch ? 'active' : 'inactive'}
                             onClick={handleTorchToggle}
-                            disabled={isTogglingTorch || isSwitchingCamera || isUsingFrontCamera || !callController}>
+                            disabled={
+                                isTogglingTorch
+                                    || isSwitchingCamera
+                                    || isUsingFrontCamera
+                                    || !callController
+                                    || !isAssistantReady
+                            }>
                         <FontAwesomeIcon icon={faLightbulb}/>
                     </button>
                     <button
                             id='request-location-button'
                             onClick={handleLocationRequest}
-                            disabled={isRequestingLocation || !!location || !isLocationAvailable || !callController}>
+                            disabled={
+                                isRequestingLocation
+                                    || !!location
+                                    || !isLocationAvailable
+                                    || !callController
+                                    || !isAssistantReady
+                            }>
                         <FontAwesomeIcon icon={faLocationDot}/>
                     </button>
                     {isAudioInputMuted ? (
-                        <button id='unmute-input-button' className='inactive' onClick={handleInputUnmute}>
+                        <button
+                                id='unmute-input-button'
+                                className='inactive'
+                                onClick={handleInputUnmute}
+                                disabled={!isAssistantReady}>
                             <FontAwesomeIcon icon={faMicrophoneSlash}/>
                         </button>
                     ) : (
@@ -399,7 +414,11 @@ const CallScreen = () => {
                         </button>
                     )}
                     {isAudioOutputMuted ? (
-                        <button id='unmute-output-button' className='inactive' onClick={handleOutputUnmute}>
+                        <button
+                                id='unmute-output-button'
+                                className='inactive'
+                                onClick={handleOutputUnmute}
+                                disabled={!isAssistantReady}>
                             <FontAwesomeIcon icon={faVolumeXmark}/>
                         </button>
                     ) : (
@@ -407,9 +426,15 @@ const CallScreen = () => {
                             <FontAwesomeIcon icon={faVolumeHigh}/>
                         </button>
                     )}
-                    <button id='option-button' onClick={() => setIsPresentingCallOptionsModal(true)}>
-                        <FontAwesomeIcon icon={faGear}/>
-                    </button>
+                    {isAssistantReady ? (
+                        <button id="hold-button" className='inactive' onClick={handleAssistantBusy}>
+                            <FontAwesomeIcon icon={faPause}/>
+                        </button>
+                    ) : (
+                        <button id="ready-button" className='active' onClick={handleAssistantReady}>
+                            <FontAwesomeIcon icon={faPause}/>
+                        </button>
+                    )}
                     <button id='hangup-button' onClick={handleHangup}>
                         <FontAwesomeIcon icon={faPhone}/>
                         &nbsp;

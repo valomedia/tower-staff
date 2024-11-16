@@ -116,7 +116,7 @@ button.inactive {
   color: white;
 }
 
-.modal {
+.dialog {
   position: fixed;
   top: 50vh;
   left: 50vw;
@@ -125,6 +125,7 @@ button.inactive {
   border-radius: 20px;
   padding: 20px;
   z-index: 999;
+  max-width: 30vw;
 }
 
 aside {
