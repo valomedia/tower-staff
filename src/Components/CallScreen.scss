@@ -7,22 +7,32 @@
 //
 
 #call-screen {
-  background-color: black;
 
-  .video-background {
+  #video-background,
+  #hold-indicator {
+    background-color: black;
     color: lightgrey;
     position: absolute;
     width: 100vw;
     height: 100vh;
     left: 0;
     top: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
-  .video-background > svg {
-    height: 32px;
+  #video-background > svg,
+  #hold-indicator > svg {
+    height: 64px;
+    position: absolute;
+    left: 50vw;
+    transform: translate(-50%, -50%);
+  }
+
+  #video-background > svg {
+    top: 50vh;
+  }
+
+  #hold-indicator > svg {
+    top: 12.5vh;
   }
 
   video {

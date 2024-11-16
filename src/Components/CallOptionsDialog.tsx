@@ -1,12 +1,12 @@
 //
-//  CallOptionsModal.tsx
+//  CallOptionsDialog.tsx
 //  tower-staff
 //
 //  Created by Jean-Pierre Höhmann on 2023-05-02.
 //
 //
 
-import './CallOptionsModal.scss';
+import './CallOptionsDialog.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import CallController from '../Controllers/CallController';
@@ -15,7 +15,7 @@ import { FormEvent, useEffect, useState } from 'react';
 /*
  * The modal allowing the user to choose input and output devices.
  */
-const CallOptionsModal = (
+const CallOptionsDialog = (
     {
         callController,
         onSubmit
@@ -80,7 +80,7 @@ const CallOptionsModal = (
     );
 
     return (
-        <div id='call-options-modal' className='modal'>
+        <div id="call-options-dialog" className='dialog'>
             <h1>Anrufoptionen</h1>
             <form onSubmit={handleSubmit}>
                 <div className='preference'>
@@ -100,7 +100,7 @@ const CallOptionsModal = (
                     </select>
                 </div>
                 <button type='submit' className='accept-button'>
-                    Auswahl bestätigen
+                    Anruf beitreten
                     &nbsp;
                     <FontAwesomeIcon icon={faCheck}></FontAwesomeIcon>
                 </button>
@@ -109,4 +109,4 @@ const CallOptionsModal = (
     );
 };
 
-export default CallOptionsModal;
+export default CallOptionsDialog;

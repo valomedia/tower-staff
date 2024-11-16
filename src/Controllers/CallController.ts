@@ -76,8 +76,9 @@ class CallController {
                 }
             });
 
+            audioElement.muted = true
+            meetingSession.audioVideo.realtimeMuteLocalAudio();
             await meetingSession.audioVideo.bindAudioElement(audioElement);
-            audioElement.muted = false
             meetingSession.audioVideo.addObserver(observer);
             for (let topic of Object.values(DataMessageTopic)) {
                 meetingSession.audioVideo.realtimeSubscribeToReceiveDataMessage(topic, dataMessageDidReceived);
@@ -150,6 +151,20 @@ class CallController {
     async restartVideo() {
         this.sendMessage(DataMessageTopic.RestartVideoRequest);
         await this.awaitMessage(DataMessageTopic.RestartVideoResponse);
+    }
+
+    /**
+     * Tell the client that the assistant is ready.
+     */
+    sendAssistantReadyEvent() {
+        this.sendMessage(DataMessageTopic.AssistantReadyEvent);
+    }
+
+    /**
+     * Tell the client that the assistant is busy.
+     */
+    sendAssistantBusyEvent() {
+        this.sendMessage(DataMessageTopic.AssistantBusyEvent);
     }
 
     private sendMessage(topic: DataMessageTopic, data: Object = {}) {
