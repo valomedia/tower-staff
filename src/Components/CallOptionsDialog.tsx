@@ -11,23 +11,28 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import CallController from '../Controllers/CallController';
 import { FormEvent, useEffect, useState } from 'react';
+import CallQualityLevel from '../Models/CallQualityLevel';
 
-/*
- * The modal allowing the user to choose input and output devices.
+/**
+ * The dialog box allowing the assistant to set various options for the call.
  */
 const CallOptionsDialog = (
     {
         callController,
+        callQualityLevel,
         onSubmit
     }: {
         callController: CallController,
+        callQualityLevel: CallQualityLevel|undefined,
         onSubmit: (
             {
                 audioInputDeviceInfo,
-                audioOutputDeviceInfo
+                audioOutputDeviceInfo,
+                callQualityLevel
             }: {
                 audioInputDeviceInfo: MediaDeviceInfo,
-                audioOutputDeviceInfo: MediaDeviceInfo
+                audioOutputDeviceInfo: MediaDeviceInfo,
+                callQualityLevel: CallQualityLevel
             }
         )
             => void
@@ -59,16 +64,33 @@ const CallOptionsDialog = (
         const form = e.currentTarget;
         const formData = new FormData(form);
 
-        const audioInputDeviceInfo
+        const newAudioInputDeviceInfo
             = audioInputDevices.filter(x => x.deviceId === formData.get('audio-input-device'))[0];
-        const audioOutputDeviceInfo
+        const newAudioOutputDeviceInfo
             = audioOutputDevices.filter(x => x.deviceId === formData.get('audio-output-device'))[0];
+        const newCallQualityLevel = CallQualityLevel[formData.get('call-quality-level') as keyof typeof CallQualityLevel];
 
-        callController.meetingSession.audioVideo.startAudioInput(audioInputDeviceInfo.deviceId);
-        callController.meetingSession.audioVideo.chooseAudioOutput(audioOutputDeviceInfo.deviceId);
+        // noinspection JSIgnoredPromiseFromCall
+        callController.meetingSession.audioVideo.startAudioInput(newAudioInputDeviceInfo.deviceId);
 
-        console.log({ audioInputDeviceInfo, audioOutputDeviceInfo });
-        onSubmit({ audioInputDeviceInfo, audioOutputDeviceInfo });
+        // noinspection JSIgnoredPromiseFromCall
+        callController.meetingSession.audioVideo.chooseAudioOutput(newAudioOutputDeviceInfo.deviceId);
+
+        if (callQualityLevel !== newCallQualityLevel) {
+            // noinspection JSIgnoredPromiseFromCall
+            callController.changeCallQuality(newCallQualityLevel);
+        }
+
+        console.log({
+            audioInputDeviceInfo: newAudioInputDeviceInfo,
+            audioOutputDeviceInfo: newAudioOutputDeviceInfo,
+            callQualityLevel: newCallQualityLevel
+        });
+        onSubmit({
+            audioInputDeviceInfo: newAudioInputDeviceInfo,
+            audioOutputDeviceInfo: newAudioOutputDeviceInfo,
+            callQualityLevel: newCallQualityLevel
+        });
     }
 
     useEffect(
@@ -97,6 +119,42 @@ const CallOptionsDialog = (
                         {audioOutputDevices.map(x =>
                             <option value={x.deviceId} key={x.deviceId}>{x.label}</option>
                         )}
+                    </select>
+                </div>
+                <div className='preference'>
+                    <label htmlFor='call-quality-level'>Anrufqualität</label>
+                    <select name='call-quality-level'>
+                        <option
+                                hidden
+                                disabled
+                                value={undefined}
+                                selected={callQualityLevel === undefined}>
+                        </option>
+                        <option
+                                value={CallQualityLevel[CallQualityLevel.VeryLow]}
+                                selected={callQualityLevel === CallQualityLevel.VeryLow}>
+                            Sehr niedrig
+                        </option>
+                        <option
+                                value={CallQualityLevel[CallQualityLevel.Low]}
+                                selected={callQualityLevel === CallQualityLevel.Low}>
+                            Niedrig
+                        </option>
+                        <option
+                                value={CallQualityLevel[CallQualityLevel.Medium]}
+                                selected={callQualityLevel === CallQualityLevel.Medium}>
+                            Mittel
+                        </option>
+                        <option
+                                value={CallQualityLevel[CallQualityLevel.High]}
+                                selected={callQualityLevel === CallQualityLevel.High}>
+                            Hoch
+                        </option>
+                        <option
+                                value={CallQualityLevel[CallQualityLevel.VeryHigh]}
+                                selected={callQualityLevel === CallQualityLevel.VeryHigh}>
+                            Sehr hoch
+                        </option>
                     </select>
                 </div>
                 <button type='submit' className='accept-button'>

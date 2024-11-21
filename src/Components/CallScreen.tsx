@@ -34,6 +34,8 @@ import { DataMessage } from 'amazon-chime-sdk-js';
 import DataMessageTopic from '../Models/DataMessageTopic';
 import PhotoResource from '../Models/PhotoResource';
 import { AppContext } from '../Routes/App';
+import CallQualityLevel from '../Models/CallQualityLevel';
+import CallQualityData from '../Models/CallQualityData';
 
 /*
  * The in-call ui.
@@ -138,6 +140,11 @@ const CallScreen = () => {
      */
     const [isRestartingVideo, setIsRestartingVideo] = useState(false);
 
+    /**
+     * The call quality level as reported by the client app.
+     */
+    const [callQualityLevel, setCallQualityLevel] = useState<CallQualityLevel|undefined>();
+
     /*
      * The audio element.
      */
@@ -239,6 +246,14 @@ const CallScreen = () => {
         }
     }
 
+    /**
+     * Respond to a call quality event.
+     */
+    const onCallQualityEvent = (callQualityData: CallQualityData) => {
+        console.log(callQualityData);
+        if (callQualityData.callQualityLevel) { setCallQualityLevel(callQualityData.callQualityLevel); }
+    }
+
     /*
      * Restart the video.
      */
@@ -315,6 +330,9 @@ const CallScreen = () => {
                                     case DataMessageTopic.LocationEvent:
                                         onLocationEvent(JSON.parse(msg.text(), locationEventDataReviver));
                                         break;
+                                    case DataMessageTopic.CallQualityEvent:
+                                        onCallQualityEvent(JSON.parse(msg.text()));
+                                        break;
                                 }
                             }
                         );
@@ -336,7 +354,10 @@ const CallScreen = () => {
             {
                 !isAssistantReady
                     && callController
-                    && <CallOptionsDialog callController={callController} onSubmit={handleAssistantReady}/>
+                    && <CallOptionsDialog
+                            callController={callController}
+                            callQualityLevel={callQualityLevel}
+                            onSubmit={handleAssistantReady}/>
             }
             <section id='call-screen' className={isOnCall ? 'active' : 'inactive'}>
                 <div id='video-background'><FontAwesomeIcon icon={faVideoSlash}/></div>
