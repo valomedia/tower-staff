@@ -309,6 +309,7 @@ const CallScreen = () => {
         setIsRequestingLocation(false);
         setIsLocationAvailable(true);
         setLocation(undefined);
+        setPhoto(undefined);
         setIsVideoMaximized(false);
         setIsRestartingVideo(false);
         setCallController(undefined);
