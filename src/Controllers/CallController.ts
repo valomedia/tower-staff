@@ -23,6 +23,8 @@ import DataMessageTopic from '../Models/DataMessageTopic';
 import RealtimeDataMessageObserver from '../Models/RealtimeDataMessageObserver';
 import CapturePhotoResponseData, { capturePhotoResponseDataReviver } from '../Models/CapturePhotoResponseData';
 import PhotoResource from '../Models/PhotoResource';
+import CallQualityLevel from '../Models/CallQualityLevel';
+import CallQualityData from '../Models/CallQualityData';
 
 /*
  * Controller in charge of one call.
@@ -151,6 +153,11 @@ class CallController {
     async restartVideo() {
         this.sendMessage(DataMessageTopic.RestartVideoRequest);
         await this.awaitResponse(DataMessageTopic.RestartVideoResponse);
+    }
+
+    async changeCallQuality(callQualityLevel: CallQualityLevel): Promise<CallQualityData> {
+        this.sendMessage(DataMessageTopic.ChangeCallQualityRequest, {callQualityLevel});
+        return JSON.parse((await this.awaitResponse(DataMessageTopic.ChangeCallQualityResponse)).text());
     }
 
     /**
