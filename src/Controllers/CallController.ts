@@ -126,7 +126,7 @@ class CallController {
      */
     async switchCamera() {
         this.sendMessage(DataMessageTopic.SwitchCameraRequest);
-        await this.awaitMessage(DataMessageTopic.SwitchCameraResponse);
+        await this.awaitResponse(DataMessageTopic.SwitchCameraResponse);
     }
 
     /*
@@ -134,7 +134,7 @@ class CallController {
      */
     async toggleTorch() {
         this.sendMessage(DataMessageTopic.ToggleTorchRequest);
-        await this.awaitMessage(DataMessageTopic.ToggleTorchResponse);
+        await this.awaitResponse(DataMessageTopic.ToggleTorchResponse);
     }
 
     /*
@@ -142,7 +142,7 @@ class CallController {
      */
     async requestLocation() {
         this.sendMessage(DataMessageTopic.LocationRequest);
-        await this.awaitMessage(DataMessageTopic.LocationResponse);
+        await this.awaitResponse(DataMessageTopic.LocationResponse);
     }
 
     /*
@@ -150,7 +150,7 @@ class CallController {
      */
     async restartVideo() {
         this.sendMessage(DataMessageTopic.RestartVideoRequest);
-        await this.awaitMessage(DataMessageTopic.RestartVideoResponse);
+        await this.awaitResponse(DataMessageTopic.RestartVideoResponse);
     }
 
     /**
@@ -171,7 +171,7 @@ class CallController {
         this.meetingSession.audioVideo.realtimeSendDataMessage(topic, data, dataMessageLifetimeMs);
     }
 
-    private async awaitMessage(topic: DataMessageTopic) {
+    private async awaitResponse(topic: DataMessageTopic) {
         return new Promise<DataMessage>((resolve) => {
             this.meetingSession.audioVideo.realtimeSubscribeToReceiveDataMessage(
                 topic,
@@ -185,7 +185,7 @@ class CallController {
 
     private async awaitCapturePhotoResponse(): Promise<CapturePhotoResponseData> {
         return JSON.parse(
-            (await this.awaitMessage(DataMessageTopic.CapturePhotoResponse)).text(),
+            (await this.awaitResponse(DataMessageTopic.CapturePhotoResponse)).text(),
             capturePhotoResponseDataReviver
         );
     }
