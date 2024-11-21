@@ -23,7 +23,10 @@ enum DataMessageTopic {
     RestartVideoRequest = "restart-video-request",
     RestartVideoResponse = "restart-video-response",
     AssistantReadyEvent = "assistant-ready-event",
-    AssistantBusyEvent = "assistant-busy-event"
+    AssistantBusyEvent = "assistant-busy-event",
+    ChangeCallQualityRequest = "change-call-quality-request",
+    ChangeCallQualityResponse = "change-call-quality-response",
+    CallQualityEvent = "call-quality-event"
 }
 
 export default DataMessageTopic;

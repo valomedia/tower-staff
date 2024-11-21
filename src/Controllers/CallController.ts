@@ -23,6 +23,8 @@ import DataMessageTopic from '../Models/DataMessageTopic';
 import RealtimeDataMessageObserver from '../Models/RealtimeDataMessageObserver';
 import CapturePhotoResponseData, { capturePhotoResponseDataReviver } from '../Models/CapturePhotoResponseData';
 import PhotoResource from '../Models/PhotoResource';
+import CallQualityLevel from '../Models/CallQualityLevel';
+import CallQualityData from '../Models/CallQualityData';
 
 /*
  * Controller in charge of one call.
@@ -126,7 +128,7 @@ class CallController {
      */
     async switchCamera() {
         this.sendMessage(DataMessageTopic.SwitchCameraRequest);
-        await this.awaitMessage(DataMessageTopic.SwitchCameraResponse);
+        await this.awaitResponse(DataMessageTopic.SwitchCameraResponse);
     }
 
     /*
@@ -134,7 +136,7 @@ class CallController {
      */
     async toggleTorch() {
         this.sendMessage(DataMessageTopic.ToggleTorchRequest);
-        await this.awaitMessage(DataMessageTopic.ToggleTorchResponse);
+        await this.awaitResponse(DataMessageTopic.ToggleTorchResponse);
     }
 
     /*
@@ -142,7 +144,7 @@ class CallController {
      */
     async requestLocation() {
         this.sendMessage(DataMessageTopic.LocationRequest);
-        await this.awaitMessage(DataMessageTopic.LocationResponse);
+        await this.awaitResponse(DataMessageTopic.LocationResponse);
     }
 
     /*
@@ -150,7 +152,12 @@ class CallController {
      */
     async restartVideo() {
         this.sendMessage(DataMessageTopic.RestartVideoRequest);
-        await this.awaitMessage(DataMessageTopic.RestartVideoResponse);
+        await this.awaitResponse(DataMessageTopic.RestartVideoResponse);
+    }
+
+    async changeCallQuality(callQualityLevel: CallQualityLevel): Promise<CallQualityData> {
+        this.sendMessage(DataMessageTopic.ChangeCallQualityRequest, {callQualityLevel});
+        return JSON.parse((await this.awaitResponse(DataMessageTopic.ChangeCallQualityResponse)).text());
     }
 
     /**
@@ -171,7 +178,7 @@ class CallController {
         this.meetingSession.audioVideo.realtimeSendDataMessage(topic, data, dataMessageLifetimeMs);
     }
 
-    private async awaitMessage(topic: DataMessageTopic) {
+    private async awaitResponse(topic: DataMessageTopic) {
         return new Promise<DataMessage>((resolve) => {
             this.meetingSession.audioVideo.realtimeSubscribeToReceiveDataMessage(
                 topic,
@@ -185,7 +192,7 @@ class CallController {
 
     private async awaitCapturePhotoResponse(): Promise<CapturePhotoResponseData> {
         return JSON.parse(
-            (await this.awaitMessage(DataMessageTopic.CapturePhotoResponse)).text(),
+            (await this.awaitResponse(DataMessageTopic.CapturePhotoResponse)).text(),
             capturePhotoResponseDataReviver
         );
     }
