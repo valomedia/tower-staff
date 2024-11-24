@@ -8,7 +8,7 @@
 
 import { MutableRefObject, useContext, useEffect, useRef, useState } from 'react';
 import './CallScreen.scss';
-import TowerApi from '../Api/TowerApi';
+import * as TowerApi from '../Api/TowerApi';
 import CallController from '../Controllers/CallController';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {

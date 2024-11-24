@@ -9,39 +9,35 @@
 import JoinResponse from '../Models/JoinResponse';
 import MeetingResponse from '../Models/MeetingResponse';
 
-const TowerApi = {
-
-    /*
-     * Make a request to the index endpoint.
-     */
-    index: async () => {
-        return await request('GET', '/');
-    },
-
-    /*
-     * Make a request to the join endpoint.
-     */
-    join: async (): Promise<JoinResponse> => {
-        return await request('POST', '/join');
-    },
-
-    /*
-     * Make a request to the end endpoint.
-     */
-    end: async (meetingId: string) => {
-        return await request('POST', '/end', new URLSearchParams({meetingId}));
-    },
-
-    /*
-     * Make a request to the poll endpoint.
-     */
-    poll: async (): Promise<MeetingResponse> => {
-        return await request('GET', '/poll');
-    }
-
+/*
+ * Make a request to the index endpoint.
+ */
+export async function index() {
+    return await request('GET', '/');
 }
 
-const request = async (method = 'GET', path: String, params?: URLSearchParams) => {
+/*
+ * Make a request to the join endpoint.
+ */
+export async function join(): Promise<JoinResponse> {
+    return await request('POST', '/join');
+}
+
+/*
+ * Make a request to the end endpoint.
+ */
+export async function end(meetingId: string) {
+    return await request('POST', '/end', new URLSearchParams({meetingId}));
+}
+
+/*
+ * Make a request to the poll endpoint.
+ */
+export async function poll(): Promise<MeetingResponse> {
+    return await request('GET', '/poll');
+}
+
+async function request(method = 'GET', path: String, params?: URLSearchParams) {
     const response = await fetch(
         // @ts-ignore
         process.env.REACT_APP_TOWER_API_ENDPOINT + path + (params ? '?' + params: ''),
@@ -55,5 +51,3 @@ const request = async (method = 'GET', path: String, params?: URLSearchParams) =
     }
     return response.json();
 }
-
-export default TowerApi;

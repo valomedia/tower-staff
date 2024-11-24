@@ -12,7 +12,7 @@ import videoChatCalling from '../Assets/video-chat-calling.m4a';
 import './LaunchScreen.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faPhone } from '@fortawesome/free-solid-svg-icons';
-import TowerApi from '../Api/TowerApi';
+import * as TowerApi from '../Api/TowerApi';
 import { AppContext } from '../Routes/App';
 
 /*

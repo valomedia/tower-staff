@@ -8,7 +8,7 @@
 
 
 import Coordinate from '../Models/Coordinate';
-import MapsApi from '../Api/MapsApi';
+import * as MapsApi from '../Api/MapsApi';
 import './MapComponent.scss';
 import Marker from '../Models/Marker';
 import Size from '../Models/Size';
