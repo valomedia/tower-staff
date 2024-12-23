@@ -9,45 +9,12 @@
 import './CallOptionsDialog.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import CallController from '../Controllers/CallController';
-import { FormEvent, useEffect, useState } from 'react';
-import CallQualityLevel from '../Models/CallQualityLevel';
+import { FormEvent } from 'react';
 
 /**
  * The dialog box allowing the assistant to set various options for the call.
  */
-const CallOptionsDialog = (
-    {
-        callController,
-        callQualityLevel,
-        onSubmit
-    }: {
-        callController: CallController,
-        callQualityLevel: CallQualityLevel|undefined,
-        onSubmit: (
-            {
-                audioInputDeviceInfo,
-                audioOutputDeviceInfo,
-                callQualityLevel
-            }: {
-                audioInputDeviceInfo: MediaDeviceInfo,
-                audioOutputDeviceInfo: MediaDeviceInfo,
-                callQualityLevel: CallQualityLevel
-            }
-        )
-            => void
-    }
-) => {
-
-    /*
-     * The available input devices.
-     */
-    const [audioInputDevices, setAudioInputDevices] = useState<MediaDeviceInfo[]>([]);
-
-    /*
-     * The available output devices.
-     */
-    const [audioOutputDevices, setAudioOutputDevices] = useState<MediaDeviceInfo[]>([]);
+const CallOptionsDialog = ({onSubmit}: {onSubmit: () => void}) => {
 
     /*
      * Handle form submission.
@@ -56,107 +23,16 @@ const CallOptionsDialog = (
      * the selected devices.
      */
     function handleSubmit(e: FormEvent<HTMLFormElement>) {
-        console.log("Handle submit")
         // Prevent the browser from reloading the page.
         e.preventDefault();
 
-        // Read the form data.
-        const form = e.currentTarget;
-        const formData = new FormData(form);
-
-        const newAudioInputDeviceInfo
-            = audioInputDevices.filter(x => x.deviceId === formData.get('audio-input-device'))[0];
-        const newAudioOutputDeviceInfo
-            = audioOutputDevices.filter(x => x.deviceId === formData.get('audio-output-device'))[0];
-        const newCallQualityLevel = CallQualityLevel[formData.get('call-quality-level') as keyof typeof CallQualityLevel];
-
-        // noinspection JSIgnoredPromiseFromCall
-        callController.meetingSession.audioVideo.startAudioInput(newAudioInputDeviceInfo.deviceId);
-
-        // noinspection JSIgnoredPromiseFromCall
-        callController.meetingSession.audioVideo.chooseAudioOutput(newAudioOutputDeviceInfo.deviceId);
-
-        if (callQualityLevel !== newCallQualityLevel) {
-            // noinspection JSIgnoredPromiseFromCall
-            callController.changeCallQuality(newCallQualityLevel);
-        }
-
-        console.log({
-            audioInputDeviceInfo: newAudioInputDeviceInfo,
-            audioOutputDeviceInfo: newAudioOutputDeviceInfo,
-            callQualityLevel: newCallQualityLevel
-        });
-        onSubmit({
-            audioInputDeviceInfo: newAudioInputDeviceInfo,
-            audioOutputDeviceInfo: newAudioOutputDeviceInfo,
-            callQualityLevel: newCallQualityLevel
-        });
+        onSubmit();
     }
-
-    useEffect(
-        () => {
-            callController.meetingSession.audioVideo.listAudioInputDevices().then(setAudioInputDevices);
-            callController.meetingSession.audioVideo.listAudioOutputDevices().then(setAudioOutputDevices);
-        },
-        [callController]
-    );
 
     return (
         <div id="call-options-dialog" className='dialog'>
             <h1>Anrufoptionen</h1>
             <form onSubmit={handleSubmit}>
-                <div className='preference'>
-                    <label htmlFor='audio-input-device'>Audioeingabegerät</label>
-                    <select name='audio-input-device'>
-                        {audioInputDevices.map(x =>
-                            <option value={x.deviceId} key={x.deviceId}>{x.label}</option>
-                        )}
-                    </select>
-                </div>
-                <div className='preference'>
-                    <label htmlFor='audio-output-device'>Audioausgabegerät</label>
-                    <select name='audio-output-device'>
-                        {audioOutputDevices.map(x =>
-                            <option value={x.deviceId} key={x.deviceId}>{x.label}</option>
-                        )}
-                    </select>
-                </div>
-                <div className='preference'>
-                    <label htmlFor='call-quality-level'>Anrufqualität</label>
-                    <select name='call-quality-level'>
-                        <option
-                                hidden
-                                disabled
-                                value={undefined}
-                                selected={callQualityLevel === undefined}>
-                        </option>
-                        <option
-                                value={CallQualityLevel[CallQualityLevel.VeryLow]}
-                                selected={callQualityLevel === CallQualityLevel.VeryLow}>
-                            Sehr niedrig
-                        </option>
-                        <option
-                                value={CallQualityLevel[CallQualityLevel.Low]}
-                                selected={callQualityLevel === CallQualityLevel.Low}>
-                            Niedrig
-                        </option>
-                        <option
-                                value={CallQualityLevel[CallQualityLevel.Medium]}
-                                selected={callQualityLevel === CallQualityLevel.Medium}>
-                            Mittel
-                        </option>
-                        <option
-                                value={CallQualityLevel[CallQualityLevel.High]}
-                                selected={callQualityLevel === CallQualityLevel.High}>
-                            Hoch
-                        </option>
-                        <option
-                                value={CallQualityLevel[CallQualityLevel.VeryHigh]}
-                                selected={callQualityLevel === CallQualityLevel.VeryHigh}>
-                            Sehr hoch
-                        </option>
-                    </select>
-                </div>
                 <button type='submit' className='accept-button'>
                     Anruf beitreten
                     &nbsp;
