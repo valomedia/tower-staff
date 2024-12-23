@@ -14,7 +14,7 @@
     display: block;
   }
 
-  #remote-video-container > * {
+  main > * {
     background-color: black;
     color: lightgrey;
     position: absolute;
@@ -24,7 +24,7 @@
     top: 0;
   }
 
-  #remote-video-container.maximized > * {
+  main.maximized > * {
     width: 100vw;
     left: 0;
   }
@@ -59,7 +59,7 @@
     background: black;
   }
 
-  #remote-video-container.maximized video {
+  main.maximized video {
     object-fit: cover!important;
   }
 

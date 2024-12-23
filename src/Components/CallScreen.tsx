@@ -375,13 +375,11 @@ const CallScreen = () => {
 
         const createViewIfAvailable = async () => {
             if (remoteVideoStream.isAvailable) {
-                const element = document.createElement('div');
                 const view = await renderer.createView({scalingMode: 'Fit'});
-                element.appendChild(view.target);
-                videoContainer.appendChild(element);
+                videoContainer.appendChild(view.target);
                 const disposeViewIfUnavailable = async () => {
                     if (!remoteVideoStream.isAvailable) {
-                        if (view.target.parentElement) {videoContainer.removeChild(view.target.parentElement);}
+                        videoContainer.removeChild(view.target);
                         view.dispose();
                         remoteVideoStream.off("isAvailableChanged", disposeViewIfUnavailable);
                     }
@@ -395,6 +393,7 @@ const CallScreen = () => {
 
         remoteVideoStream.on('isAvailableChanged', createViewIfAvailable);
         await createViewIfAvailable();
+        setIsVideoAvailable(remoteVideoStream.isAvailable);
     };
 
     const endCall = () => {
@@ -492,14 +491,19 @@ const CallScreen = () => {
         <>
             {isCallOnHold && call && <CallOptionsDialog onSubmit={resumeCall}/>}
             <div id='call-screen' className='screen' hidden={!isOnCall}>
-                <main ref={videoContainerRef} id='remote-video-container' className={isVideoMaximized ? 'maximized' : ''}>
+                <main className={isVideoMaximized ? 'maximized' : ''}>
                     <div id='no-video-indicator'><FontAwesomeIcon icon={faVideoSlash}/></div>
-                    {isCallOnHold && <div id='hold-indicator'><FontAwesomeIcon icon={faPause}/></div>}
-                    {!isVideoReceiving && isVideoAvailable && (
-                        <div id='loading-indicator'>
-                            <div><div className='loading-spinner'/></div>
+                    <div id='hold-indicator' hidden={!isCallOnHold}><FontAwesomeIcon icon={faPause}/></div>
+                    <div id='loading-indicator' hidden={isVideoReceiving || !isVideoAvailable}>
+                        <div>
+                            <div className='loading-spinner'/>
                         </div>
-                    )}
+                    </div>
+                    <div
+                            ref={videoContainerRef}
+                            id='video-container'
+                            hidden={!isVideoReceiving || !isVideoAvailable || isCallOnHold}>
+                    </div>
                 </main>
                 <aside id='left-aside' className={isVideoMaximized ? 'closed' : 'open'}>
                 {location && (<MapComponent coordinate={location}/>)}
