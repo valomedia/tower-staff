@@ -123,3 +123,10 @@
   }
 
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  #video-container {
+    transition-property: top, left, width, height, transform;
+    transition-duration: 400ms;
+  }
+}
