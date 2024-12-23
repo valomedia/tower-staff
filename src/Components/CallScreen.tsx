@@ -47,6 +47,7 @@ import { ErrorMessage } from '../Models/Message';
 import ErrorInfo, { isErrorInfo } from '../Models/ErrorInfo';
 import PhotoDataChunk from '../Models/PhotoDataChunk';
 import Orientation from '../Models/Orientation';
+import usePhoto from '../Hooks/usePhoto';
 
 /*
  * The in-call ui.
@@ -144,7 +145,7 @@ const CallScreen = () => {
     /*
      * The most recently captured photo, if any.
      */
-    const [photo, setPhoto] = useState<PhotoResource|undefined>();
+    const {photo, storePhotoDataChunk, clearPhoto} = usePhoto();
 
     /*
      * Whether the assistant currently has the video maximized (and zoomed in).
@@ -245,7 +246,7 @@ const CallScreen = () => {
     };
 
     const handlePhotoDataEvent = (photoDataEvent: PhotoDataChunk) => {
-        console.log(photoDataEvent);
+        storePhotoDataChunk(photoDataEvent);
     };
 
     /*
@@ -466,7 +467,7 @@ const CallScreen = () => {
         setIsRequestingLocation(false);
         setIsLocationAvailable(true);
         setLocation(undefined);
-        setPhoto(undefined);
+        clearPhoto();
         setIsVideoMaximized(false);
     };
 
