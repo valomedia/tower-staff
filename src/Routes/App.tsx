@@ -19,15 +19,15 @@ const App = () => {
     const [isOnCall, setIsOnCall] = useState(false);
 
     return (
-        <div className='App'>
+        <div className='app'>
             <AppContext.Provider value={{isOnCall, setIsOnCall}}>
                 <header>
                     <img src={banner} alt='tower'/>
                 </header>
-                <main>
+                <div>
                     <LaunchScreen></LaunchScreen>
                     <CallScreen></CallScreen>
-                </main>
+                </div>
             </AppContext.Provider>
         </div>
     );

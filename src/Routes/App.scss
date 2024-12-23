@@ -9,16 +9,16 @@ header > img {
   height: 100%;
 }
 
-section {
+.screen {
   width: 100vw;
   height: 100vh;
   position: fixed;
 }
 
-section:nth-child(1) {
+#launch-screen {
   z-index: -1;
 }
 
-section:nth-child(2) {
+#call-screen {
   z-index: -2;
 }

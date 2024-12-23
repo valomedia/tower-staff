@@ -491,8 +491,8 @@ const CallScreen = () => {
     return (
         <>
             {isCallOnHold && call && <CallOptionsDialog onSubmit={resumeCall}/>}
-            <section id='call-screen' className={isOnCall ? 'active' : 'inactive'}>
-                <div ref={videoContainerRef} id='remote-video-container' className={isVideoMaximized ? 'maximized' : ''}>
+            <div id='call-screen' className='screen' hidden={!isOnCall}>
+                <main ref={videoContainerRef} id='remote-video-container' className={isVideoMaximized ? 'maximized' : ''}>
                     <div id='no-video-indicator'><FontAwesomeIcon icon={faVideoSlash}/></div>
                     {isCallOnHold && <div id='hold-indicator'><FontAwesomeIcon icon={faPause}/></div>}
                     {!isVideoReceiving && isVideoAvailable && (
@@ -500,7 +500,7 @@ const CallScreen = () => {
                             <div><div className='loading-spinner'/></div>
                         </div>
                     )}
-                </div>
+                </main>
                 <aside id='left-aside' className={isVideoMaximized ? 'closed' : 'open'}>
                 {location && (<MapComponent coordinate={location}/>)}
                 </aside>
@@ -593,7 +593,7 @@ const CallScreen = () => {
                         Auflegen
                     </button>
                 </footer>
-            </section>
+            </div>
         </>
     );
 };

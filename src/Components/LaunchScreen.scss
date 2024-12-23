@@ -18,10 +18,11 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-  top: -100vh;
+  top: 0;
 
-  &.active {
-    top: 0;
+  &[hidden] {
+    display: flex;
+    top: -100vh;
   }
 
   .launch-screen-logo {

@@ -124,24 +124,26 @@ const LaunchScreen = () => {
         [isRinging, isOnCall, isRingtoneEnabled]);
 
     return (
-        <section id='launch-screen' className={isOnCall ? 'inactive' : 'active'}>
-            <img src={logoAnimated} className='launch-screen-logo' alt='logo'/>
-            <h1>Tower</h1>
-            <p>
-                {
-                    isOnCall ? 'Verbindung hergestellt'
-                        : isRinging ? `Neue Anfrage von ${customerName || "Unbekannter Anrufer"}`
-                            : hasBackend ? 'Warten auf Anfragen…'
-                                : isConnecting ? 'Verbindung wird hergestellt…'
-                                    : 'Verbindung fehlgeschlagen!'
-                }
-            </p>
-            <button className='accept-button' disabled={!isRinging} onClick={handleAccept}>
-                <FontAwesomeIcon icon={faPhone}/>
-                &nbsp;
-                Anfrage annehmen
-            </button>
-            <audio src={videoChatCalling} ref={audioRef} loop></audio>
+        <div id='launch-screen' className='screen' hidden={isOnCall}>
+            <main>
+                <img src={logoAnimated} className='launch-screen-logo' alt='logo'/>
+                <h1>Tower</h1>
+                <p>
+                    {
+                        isOnCall ? 'Verbindung hergestellt'
+                            : isRinging ? `Neue Anfrage von ${customerName || "Unbekannter Anrufer"}`
+                                : hasBackend ? 'Warten auf Anfragen…'
+                                    : isConnecting ? 'Verbindung wird hergestellt…'
+                                        : 'Verbindung fehlgeschlagen!'
+                    }
+                </p>
+                <button className='accept-button' disabled={!isRinging} onClick={handleAccept}>
+                    <FontAwesomeIcon icon={faPhone}/>
+                    &nbsp;
+                    Anfrage annehmen
+                </button>
+                <audio src={videoChatCalling} ref={audioRef} loop></audio>
+            </main>
             <footer>
                     <button
                             id='ringtone-toggle-button'
@@ -152,7 +154,7 @@ const LaunchScreen = () => {
                         Klingelton ist <strong>{isRingtoneEnabled ? 'an' : 'aus'}</strong>
                     </button>
             </footer>
-        </section>
+        </div>
     );
 
 }
