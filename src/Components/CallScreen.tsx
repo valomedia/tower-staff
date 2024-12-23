@@ -46,7 +46,7 @@ import { DataMessage, Message, messageReviver } from '../Models/Message';
 import { ErrorMessage } from '../Models/Message';
 import ErrorInfo, { isErrorInfo } from '../Models/ErrorInfo';
 import PhotoDataEvent from '../Models/PhotoDataEvent';
-import OrientationEvent from '../Models/OrientationEvent';
+import Orientation from '../Models/Orientation';
 
 /*
  * The in-call ui.
@@ -260,7 +260,7 @@ const CallScreen = () => {
         }
     };
 
-    const handleOrientationEvent = (orientationEvent: OrientationEvent) => {
+    const handleOrientationEvent = (orientationEvent: Orientation) => {
         console.log(orientationEvent);
     };
 
