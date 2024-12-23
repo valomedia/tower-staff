@@ -61,6 +61,8 @@ const CallScreen = () => {
 
     const [isCallConnected, setIsCallConnected] = useState(false);
 
+    const [isDataChannelAvailable, setIsDataChannelAvailable] = useState(false);
+
     const [isVideoReceiving, setIsVideoReceiving] = useState(false);
 
     const [isVideoAvailable, setIsVideoAvailable] = useState(false);
@@ -444,6 +446,9 @@ const CallScreen = () => {
                 console.log(`data channel id = ${receiver.channelId} is closed`);
             });
             receiver.on("messageReady", () => {
+                // The client is sending messages, so it's also able to receive them.
+                setIsDataChannelAvailable(true);
+
                 const message: Message
                     = JSON.parse((new TextDecoder()).decode(receiver.readMessage()!.data), messageReviver);
                 if ("capturePhotoResponse" in message) { handleCapturePhotoResponse(message.capturePhotoResponse); }
@@ -470,6 +475,7 @@ const CallScreen = () => {
 
         setIsOnCall(false);
         setIsCallConnected(false);
+        setIsDataChannelAvailable(false);
         setIsHangingUp(false);
         setIsVideoReceiving(false);
         setIsVideoAvailable(false);
@@ -539,19 +545,19 @@ const CallScreen = () => {
                             id='maximize-video-button'
                             onClick={() => setIsVideoMaximized(!isVideoMaximized)}
                             className={isVideoMaximized ? 'active' : 'inactive'}
-                            disabled={isCallOnHold}>
+                            disabled={isHangingUp}>
                         <FontAwesomeIcon icon={faMaximize}/>
                     </button>
                     <button
                             id='capture-photo-button'
                             onClick={capturePhoto}
-                            disabled={isCapturingPhoto || !isCallConnected || isCallOnHold}>
+                            disabled={isCapturingPhoto || !isDataChannelAvailable || isCallOnHold || isHangingUp}>
                         <FontAwesomeIcon icon={faImage}/>
                     </button>
                     <button
                             id='camera-switch-button'
                             onClick={switchCamera}
-                            disabled={isSwitchingCamera || !isCallConnected || isCallOnHold}>
+                            disabled={isSwitchingCamera || !isDataChannelAvailable || isCallOnHold || isHangingUp}>
                         <FontAwesomeIcon icon={faCameraRotate}/>
                     </button>
                     <button
@@ -562,8 +568,9 @@ const CallScreen = () => {
                                 isTogglingTorch
                                     || isSwitchingCamera
                                     || isUsingFrontCamera
-                                    || !isCallConnected
+                                    || !isDataChannelAvailable
                                     || isCallOnHold
+                                    || isHangingUp
                             }>
                         <FontAwesomeIcon icon={faLightbulb}/>
                     </button>
@@ -574,8 +581,9 @@ const CallScreen = () => {
                                 isRequestingLocation
                                     || !!location
                                     || !isLocationAvailable
-                                    || !isCallConnected
+                                    || !isDataChannelAvailable
                                     || isCallOnHold
+                                    || isHangingUp
                             }>
                         <FontAwesomeIcon icon={faLocationDot}/>
                     </button>
@@ -584,11 +592,15 @@ const CallScreen = () => {
                                 id='unmute-input-button'
                                 className='inactive'
                                 onClick={unmuteInput}
-                                disabled={isCallOnHold}>
+                                disabled={isCallOnHold || !isCallConnected || isHangingUp}>
                             <FontAwesomeIcon icon={faMicrophoneSlash}/>
                         </button>
                     ) : (
-                        <button id='mute-input-button' className='active' onClick={muteInput}>
+                        <button
+                                id='mute-input-button'
+                                className='active'
+                                onClick={muteInput}
+                                disabled={!isCallConnected || isHangingUp}>
                             <FontAwesomeIcon icon={faMicrophone}/>
                         </button>
                     )}
@@ -597,20 +609,32 @@ const CallScreen = () => {
                                 id='unmute-output-button'
                                 className='inactive'
                                 onClick={unmuteOutput}
-                                disabled={isCallOnHold}>
+                                disabled={isCallOnHold || !isCallConnected || isHangingUp}>
                             <FontAwesomeIcon icon={faVolumeXmark}/>
                         </button>
                     ) : (
-                        <button id='mute-output-button' className='active' onClick={muteOutput}>
+                        <button
+                                id='mute-output-button'
+                                className='active'
+                                onClick={muteOutput}
+                                disabled={!isCallConnected || isHangingUp}>
                             <FontAwesomeIcon icon={faVolumeHigh}/>
                         </button>
                     )}
                     {isCallOnHold ? (
-                        <button id='resume-button' className='active' onClick={resumeCall}>
+                        <button
+                                id='resume-button'
+                                className='active'
+                                onClick={resumeCall}
+                                disabled={!isDataChannelAvailable || isHangingUp}>
                             <FontAwesomeIcon icon={faPause}/>
                         </button>
                     ) : (
-                        <button id='hold-button' className='inactive' onClick={holdCall}>
+                        <button
+                                id='hold-button'
+                                className='inactive'
+                                onClick={holdCall}
+                                disabled={!isDataChannelAvailable || isHangingUp}>
                             <FontAwesomeIcon icon={faPause}/>
                         </button>
                     )}
