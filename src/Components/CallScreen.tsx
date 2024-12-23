@@ -286,8 +286,8 @@ const CallScreen = () => {
     /*
      * End the call.
      */
-    const handleHangup = () => {
-        endCall();
+    const hangUp = () => {
+        call?.hangUp({forEveryone: true});
         onCallEnd();
     };
 
@@ -351,7 +351,7 @@ const CallScreen = () => {
                     console.log('Call started');
                     break;
                 case 'Disconnected':
-                    onCallEnd();
+                    hangUp();
                     console.log(`Call ended, call end reason=${JSON.stringify(call.callEndReason)}`);
                     break;
             }
@@ -417,7 +417,6 @@ const CallScreen = () => {
     };
 
     const endCall = () => {
-        call?.hangUp({forEveryone: true});
     };
 
     const onCallStart = (call: Call) => {
@@ -611,7 +610,7 @@ const CallScreen = () => {
                             <FontAwesomeIcon icon={faPause}/>
                         </button>
                     )}
-                    <button id='hangup-button' onClick={handleHangup}>
+                    <button id='hangup-button' onClick={hangUp}>
                         <FontAwesomeIcon icon={faPhone}/>
                         &nbsp;
                         Auflegen
