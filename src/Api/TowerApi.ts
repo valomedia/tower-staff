@@ -6,38 +6,22 @@
 //
 //
 
-import JoinResponse from '../Models/JoinResponse';
-import MeetingResponse from '../Models/MeetingResponse';
+import OfferAssistanceResponse, { offerAssistanceResponseReviver } from '../Models/OfferAssistanceResponse';
+import BeginAssistanceResponse, { beginAssistanceResponseReviver } from '../Models/BeginAssistanceResponse';
 
 /*
  * Make a request to the index endpoint.
  */
-export async function index() {
-    return await request('GET', '/');
-}
+export const index = async () =>
+    JSON.parse(await request('GET', '/'));
 
-/*
- * Make a request to the join endpoint.
- */
-export async function join(): Promise<JoinResponse> {
-    return await request('POST', '/join');
-}
+export const offerAssistance = async (): Promise<OfferAssistanceResponse> =>
+    JSON.parse(await request('GET', '/offerAssistance'), offerAssistanceResponseReviver);
 
-/*
- * Make a request to the end endpoint.
- */
-export async function end(meetingId: string) {
-    return await request('POST', '/end', new URLSearchParams({meetingId}));
-}
+export const beginAssistance = async (): Promise<BeginAssistanceResponse> =>
+    JSON.parse(await request('POST', '/beginAssistance'), beginAssistanceResponseReviver);
 
-/*
- * Make a request to the poll endpoint.
- */
-export async function poll(): Promise<MeetingResponse> {
-    return await request('GET', '/poll');
-}
-
-async function request(method = 'GET', path: String, params?: URLSearchParams) {
+const request = async (method = 'GET', path: String, params?: URLSearchParams) => {
     const response = await fetch(
         // @ts-ignore
         process.env.REACT_APP_TOWER_API_ENDPOINT + path + (params ? '?' + params: ''),
@@ -45,9 +29,9 @@ async function request(method = 'GET', path: String, params?: URLSearchParams) {
             method,
             credentials: 'include',
         }
-    )
+    );
     if (!response.ok) {
         throw new Error(response.statusText);
     }
-    return response.json();
-}
+    return response.text();
+};

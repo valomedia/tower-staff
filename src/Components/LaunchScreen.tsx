@@ -89,14 +89,16 @@ const LaunchScreen = () => {
                     }
                     if (hasBackend) {
                         TowerApi
-                            .poll()
-                            .then(meetingResponse => {
-                                setCustomerName(meetingResponse.Meeting.ExternalMeetingId || undefined);
-                                setIsRinging(true);
+                            .offerAssistance()
+                            .then(offerAssistanceResponse => {
+                                if (offerAssistanceResponse.assistanceRequest) {
+                                    setCustomerName(offerAssistanceResponse.assistanceRequest.user.username);
+                                    setIsRinging(true);
+                                } else {
+                                    setIsRinging(false);
+                                }
                             })
-                            .catch(() => {
-                                setIsRinging(false);
-                            })
+                            .catch(() => setIsRinging(false));
                     }
                 }
             },

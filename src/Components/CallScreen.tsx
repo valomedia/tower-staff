@@ -9,11 +9,9 @@
 import { MutableRefObject, useContext, useEffect, useRef, useState } from 'react';
 import './CallScreen.scss';
 import * as TowerApi from '../Api/TowerApi';
-import CallController from '../Controllers/CallController';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faCameraRotate,
-    faHeartPulse,
     faImage,
     faLightbulb,
     faLocationDot,
@@ -29,13 +27,26 @@ import {
 import CallOptionsDialog from './CallOptionsDialog';
 import Coordinate from '../Models/Coordinate';
 import MapComponent from './MapComponent';
-import LocationEventData, { locationEventDataReviver } from '../Models/LocationEventData';
-import { DataMessage } from 'amazon-chime-sdk-js';
-import DataMessageTopic from '../Models/DataMessageTopic';
+import LocationEvent from '../Models/LocationEvent';
 import PhotoResource from '../Models/PhotoResource';
 import { AppContext } from '../Routes/App';
-import CallQualityLevel from '../Models/CallQualityLevel';
-import CallQualityData from '../Models/CallQualityData';
+import {
+    Call,
+    CallAgent,
+    CallClient, DataChannelSender,
+    DeviceManager, Features,
+    RemoteParticipant,
+    RemoteVideoStream,
+    VideoStreamRenderer
+} from '@azure/communication-calling';
+import UserToken from '../Models/UserToken';
+import AssistanceRequest from '../Models/AssistanceRequest';
+import { AzureCommunicationTokenCredential } from '@azure/communication-common';
+import { DataMessage, Message, messageReviver } from '../Models/Message';
+import { ErrorMessage } from '../Models/Message';
+import ErrorInfo, { isErrorInfo } from '../Models/ErrorInfo';
+import PhotoDataEvent from '../Models/PhotoDataEvent';
+import OrientationEvent from '../Models/OrientationEvent';
 
 /*
  * The in-call ui.
@@ -47,28 +58,33 @@ const CallScreen = () => {
      */
     const {isOnCall, setIsOnCall} = useContext(AppContext);
 
-    /*
-     * The session for the current call.
-     */
-    const [callController, setCallController] = useState<CallController>();
+    const [isCallConnected, setIsCallConnected] = useState(false);
 
-    /*
-     * Whether the assistant can currently speak to the user.
-     *
-     * This is false initially while the assistant is reading the user profile and will be set to false again if the
-     * assistant puts the call on hold. It determines whether the call option dialog should be displayed.
-     */
-    const [isAssistantReady, setIsAssistantReady] = useState(false);
+    const [isVideoReceiving, setIsVideoReceiving] = useState(false);
+
+    const [isVideoAvailable, setIsVideoAvailable] = useState(false);
+
+    const [callClient, setCallClient] = useState<CallClient|undefined>();
+
+    const [callAgent, setCallAgent] = useState<CallAgent|undefined>();
+
+    const [deviceManager, setDeviceManager] = useState<DeviceManager|undefined>();
+
+    const [call, setCall] = useState<Call|undefined>();
+
+    const [messageSender, setMessageSender] = useState<DataChannelSender|undefined>();
+
+    const [isCallOnHold, setIsCallOnHold] = useState(false);
 
     /*
      * Whether audio input is currently muted.
      */
-    const [isAudioInputMuted, setIsAudioInputMuted] = useState(true);
+    const [isAudioInputMuted, setIsAudioInputMuted] = useState(false);
 
     /*
      * Whether audio output is currently muted.
      */
-    const [isAudioOutputMuted, setIsAudioOutputMuted] = useState(true);
+    const [isAudioOutputMuted, setIsAudioOutputMuted] = useState(false);
 
     /*
      * Whether a photo is currently being taken.
@@ -109,7 +125,7 @@ const CallScreen = () => {
      * Whether the location is currently being requested.
      *
      * This will become true when the assistant requests the location and remain true until the location data has
-     * either arrived, or is sure to never arrive.
+     * either arrived or is sure to never arrive.
      */
     const [isRequestingLocation, setIsRequestingLocation] = useState(false);
 
@@ -135,172 +151,313 @@ const CallScreen = () => {
      */
     const [isVideoMaximized, setIsVideoMaximized] = useState(false);
 
-    /*
-     * Whether the video feed is currently being restarted.
-     */
-    const [isRestartingVideo, setIsRestartingVideo] = useState(false);
-
     /**
-     * The call quality level as reported by the client app.
+     * The remote video container.
      */
-    const [callQualityLevel, setCallQualityLevel] = useState<CallQualityLevel|undefined>();
-
-    /*
-     * The audio element.
-     */
-    const audioRef = useRef() as MutableRefObject<HTMLAudioElement>;
-
-    /*
-     * The video element.
-     */
-    const videoRef = useRef() as MutableRefObject<HTMLVideoElement>;
+    const videoContainerRef = useRef() as MutableRefObject<HTMLDivElement>;
 
     /*
      * Mute the microphone.
      */
-    const handleInputMute = () => {
-        callController?.meetingSession.audioVideo.realtimeMuteLocalAudio();
-    }
+    const muteInput = () => {
+        if (!call) { return; }
+        call.mute();
+        setIsAudioInputMuted(true);
+    };
 
     /*
      * Unmute the microphone.
      */
-    const handleInputUnmute = () => {
-        callController?.meetingSession.audioVideo.realtimeUnmuteLocalAudio();
-    }
+    const unmuteInput = () => {
+        if (!call) { return; }
+        call.unmute();
+        setIsAudioInputMuted(false);
+    };
 
     /*
      * Mute the output.
      */
-    const handleOutputMute = () => {
-        audioRef.current.muted = true;
-        setIsAudioOutputMuted(true)
-    }
+    const muteOutput = () => {
+        if (!call) { return; }
+        call.muteIncomingAudio();
+        setIsAudioOutputMuted(true);
+    };
 
     /*
      * Unmute the output.
      */
-    const handleOutputUnmute = () => {
-        audioRef.current.muted = false;
+    const unmuteOutput = () => {
+        if (!call) { return; }
+        call.unmuteIncomingAudio();
         setIsAudioOutputMuted(false);
-    }
+    };
 
     /*
      * Capture a photo.
      */
-    const handlePhotoCapture = () => {
-        if (callController) {
-            setIsCapturingPhoto(true);
-            callController.capturePhoto().then(photo => {
-                setIsCapturingPhoto(false);
-                if (photo) {setPhoto(photo);}
-            });
-        }
-    }
+    const capturePhoto = () => {
+        setIsCapturingPhoto(true);
+        sendMessage({capturePhotoRequest: {}});
+    };
 
     /*
      * Switch cameras
      */
-    const handleCameraSwitch = () => {
-        if (callController) {
-            setIsSwitchingCamera(true);
-            setIsUsingTorch(false);
-            setIsUsingFrontCamera(!isUsingFrontCamera);
-            callController.switchCamera().then(() => setIsSwitchingCamera(false));
-        }
-    }
+    const switchCamera = () => {
+        setIsSwitchingCamera(true);
+        setIsUsingTorch(false);
+        sendMessage({switchCameraRequest: {}});
+    };
 
     /*
      * Toggle torch
      */
-    const handleTorchToggle = () => {
-        if (callController) {
-            setIsTogglingTorch(true);
-            setIsUsingTorch(!isUsingTorch);
-            callController.toggleTorch().then(() => setIsTogglingTorch(false));
-        }
-    }
+    const toggleTorch = () => {
+        setIsTogglingTorch(true);
+        sendMessage({toggleTorchRequest: {}});
+    };
 
     /*
      * Request location
      */
-    const handleLocationRequest = () => {
-        if (callController) {
-            setIsRequestingLocation(true);
+    const requestLocation = () => {
+        setIsRequestingLocation(true);
+        sendMessage({locationRequest: {}});
+    };
 
-            // Needs error handling.
-            // noinspection JSIgnoredPromiseFromCall
-            callController.requestLocation();
-        }
-    }
+    const handleCapturePhotoResponse = (capturePhotoResponse: {}|ErrorInfo) => {
+        setIsCapturingPhoto(false);
+    };
+
+    const handleSwitchCameraResponse = (switchCameraResponse: {}|ErrorInfo) => {
+        setIsSwitchingCamera(false);
+        if (!isErrorInfo(switchCameraResponse)) { setIsUsingFrontCamera(!isUsingFrontCamera); }
+    };
+
+    const handleToggleTorchResponse = (toggleTorchResponse: {}|ErrorInfo) => {
+        setIsTogglingTorch(false);
+        if (!isErrorInfo(toggleTorchResponse)) { setIsUsingTorch(!isUsingTorch); }
+    };
+
+    const handleLocationResponse = (locationResponse: {}|ErrorInfo) => {
+        setIsRequestingLocation(false);
+        if (isErrorInfo(locationResponse)) {setIsLocationAvailable(false);}
+    };
+
+    const handlePhotoDataEvent = (photoDataEvent: PhotoDataEvent) => {
+        console.log(photoDataEvent);
+    };
 
     /*
      * Respond to a location event
      */
-    const onLocationEvent = (locationEventData: LocationEventData) => {
-        console.log(locationEventData);
-        setIsRequestingLocation(false)
-        setLocation(locationEventData.locationInfo?.coordinate)
-        if (!locationEventData.locationInfo) {
+    const handleLocationEvent = (locationEvent: LocationEvent|ErrorInfo) => {
+        setIsRequestingLocation(false);
+        if (!isErrorInfo(locationEvent)) {
+            setLocation(locationEvent.coordinate);
+        } else {
             setIsLocationAvailable(false);
         }
-    }
+    };
 
-    /**
-     * Respond to a call quality event.
-     */
-    const onCallQualityEvent = (callQualityData: CallQualityData) => {
-        console.log(callQualityData);
-        if (callQualityData.callQualityLevel) { setCallQualityLevel(callQualityData.callQualityLevel); }
-    }
+    const handleOrientationEvent = (orientationEvent: OrientationEvent) => {
+        console.log(orientationEvent);
+    };
 
-    /*
-     * Restart the video.
-     */
-    const handleVideoRestart = () => {
-        if (callController) {
-            setIsRestartingVideo(true);
-            callController.restartVideo().then(() => setIsRestartingVideo(false));
-        }
-    }
+    const handleErrorEvent = (errorEvent: ErrorInfo) => {
+        console.warn(errorEvent.error);
+    };
 
     /*
      * End the call.
      */
     const handleHangup = () => {
-        const meetingId = callController?.meetingSession.configuration.meetingId;
-        if (meetingId) {TowerApi.end(meetingId);}
+        endCall();
         onCallEnd();
-    }
-
-    /**
-     * Put the caller on the line.
-     */
-    const handleAssistantReady = () => {
-        handleInputUnmute()
-        handleOutputUnmute()
-        callController?.sendAssistantReadyEvent()
-        setIsAssistantReady(true)
-    }
+    };
 
     /**
      * Put the caller on hold.
      */
-    const handleAssistantBusy = () => {
-        handleInputMute()
-        handleOutputMute()
-        callController?.sendAssistantBusyEvent()
-        setIsAssistantReady(false)
-    }
+    const holdCall = () => {
+        muteInput();
+        muteOutput();
+        setIsCallOnHold(true);
+        sendMessage({holdEvent: {}})
+    };
+
+    /**
+     * Put the caller on the line.
+     */
+    const resumeCall = () => {
+        unmuteInput();
+        unmuteOutput();
+        setIsCallOnHold(false);
+        sendMessage({resumeEvent: {}})
+    };
+
+    const startCall = async (
+        {userToken, assistanceRequest}: {userToken: UserToken, assistanceRequest: AssistanceRequest}
+    ): Promise<{call: Call, assistanceRequest: AssistanceRequest}> => {
+        const token = userToken.token;
+        const tokenCredential = new AzureCommunicationTokenCredential(token);
+
+        const callClient = new CallClient();
+        const callAgent = await callClient.createCallAgent(tokenCredential);
+        const deviceManager = await callClient.getDeviceManager();
+
+        await deviceManager.askDevicePermission({audio: true, video: true});
+        const call = callAgent.join({groupId: crypto.randomUUID()});
+
+        setCallClient(callClient);
+        setCallAgent(callAgent);
+        setDeviceManager(deviceManager);
+        setCall(call);
+        setIsVideoReceiving(true);
+
+        return {call, assistanceRequest};
+    };
+
+    const subscribeToCall = ({call, assistanceRequest}: {call: Call, assistanceRequest: AssistanceRequest}): void => {
+        console.log(`Call Id: ${call.id}`);
+        console.log(`Call state: ${call.state}`);
+
+        call.on('idChanged', () =>
+            console.log(`Call Id changed: ${call.id}`)
+        );
+
+        call.on('stateChanged', async () => {
+            console.log(`Call state changed: ${call.state}`);
+            switch (call.state) {
+                case 'Connected':
+                    console.log("Adding user:", assistanceRequest.user);
+                    call?.addParticipant(assistanceRequest.user);
+                    onCallStart(call);
+                    console.log('Call started');
+                    break;
+                case 'Disconnected':
+                    onCallEnd();
+                    console.log(`Call ended, call end reason=${JSON.stringify(call.callEndReason)}`);
+                    break;
+            }
+        });
+
+        call.remoteParticipants.forEach(subscribeToRemoteParticipant);
+        call.on('remoteParticipantsUpdated', ({added, removed}) => {
+            added.forEach(subscribeToRemoteParticipant);
+            if (removed.length) {
+                console.warn('Remote participant unexpectedly removed from call.');
+                endCall();
+            }
+        });
+
+    };
+
+    const subscribeToRemoteParticipant = (remoteParticipant: RemoteParticipant): void => {
+        console.log(`Remote participant state: ${remoteParticipant.state}`);
+
+        remoteParticipant.on('stateChanged', () =>
+            console.log(`Remote participant state changed: ${remoteParticipant.state}`)
+        );
+
+        remoteParticipant.videoStreams.forEach(subscribeToRemoteVideoStream);
+        remoteParticipant.on('videoStreamsUpdated', ({added, removed}) => {
+            added.forEach(() => console.log('Remote participant video stream was added.'));
+            added.forEach(subscribeToRemoteVideoStream);
+            removed.forEach(() => console.log('Remote participant video stream was removed.'));
+        });
+    };
+
+    const subscribeToRemoteVideoStream = async (remoteVideoStream: RemoteVideoStream): Promise<void> => {
+        const renderer = new VideoStreamRenderer(remoteVideoStream);
+        const videoContainer = videoContainerRef.current;
+
+        const createViewIfAvailable = async () => {
+            if (remoteVideoStream.isAvailable) {
+                const element = document.createElement('div');
+                const view = await renderer.createView({scalingMode: 'Fit'});
+                element.appendChild(view.target);
+                videoContainer.appendChild(element);
+                const disposeViewIfUnavailable = async () => {
+                    if (!remoteVideoStream.isAvailable) {
+                        if (view.target.parentElement) {videoContainer.removeChild(view.target.parentElement);}
+                        view.dispose();
+                        remoteVideoStream.off("isAvailableChanged", disposeViewIfUnavailable);
+                    }
+                };
+                remoteVideoStream.on('isAvailableChanged', disposeViewIfUnavailable);
+            }
+        };
+
+        remoteVideoStream.on('isReceivingChanged', () => setIsVideoReceiving(remoteVideoStream.isReceiving));
+        remoteVideoStream.on('isAvailableChanged', () => setIsVideoAvailable(remoteVideoStream.isAvailable));
+
+        remoteVideoStream.on('isAvailableChanged', createViewIfAvailable);
+        await createViewIfAvailable();
+    };
+
+    const endCall = () => {
+        call?.hangUp({forEveryone: true});
+    };
+
+    const onCallStart = (call: Call) => {
+        setIsCallConnected(true);
+        createDataChannel(call);
+    };
+
+    const createDataChannel = (call: Call) => {
+        const dataChannel = call.feature(Features.DataChannel);
+
+        const messageSender = dataChannel.createDataChannelSender({
+            bitrateInKbps: 32,
+            channelId: 1000,
+            priority: "High",
+            reliability: "Durable"
+        });
+        messageSender.setParticipants(call.remoteParticipants.map(participant => participant.identifier));
+        setMessageSender(messageSender);
+
+        dataChannel.on("dataChannelReceiverCreated", receiver => {
+            receiver.on("close", () => {
+                console.log(`data channel id = ${receiver.channelId} is closed`);
+            });
+            receiver.on("messageReady", () => {
+                const message: Message
+                    = JSON.parse((new TextDecoder()).decode(receiver.readMessage()!.data), messageReviver);
+                if ("capturePhotoResponse" in message) { handleCapturePhotoResponse(message.capturePhotoResponse); }
+                if ("switchCameraResponse" in message) { handleSwitchCameraResponse(message.switchCameraResponse); }
+                if ("toggleTorchResponse" in message) { handleToggleTorchResponse(message.toggleTorchResponse); }
+                if ("locationResponse" in message) { handleLocationResponse(message.locationResponse); }
+                if ("photoDataEvent" in message) { handlePhotoDataEvent(message.photoDataEvent); }
+                if ("locationEvent" in message) { handleLocationEvent(message.locationEvent); }
+                if ("orientationEvent" in message) { handleOrientationEvent(message.orientationEvent); }
+                if ("errorEvent" in message) { handleErrorEvent(message.errorEvent); }
+            });
+        });
+    };
+
+    const sendMessage = (message: Message) => {
+        messageSender?.sendMessage((new TextEncoder()).encode(JSON.stringify(message)));
+    };
 
     /*
      * Reset everything when the call ends.
      */
-    const onCallEnd = () => {
+    const onCallEnd = async () => {
+        await callAgent?.dispose();
+
         setIsOnCall(false);
-        setIsAssistantReady(false);
-        setIsAudioInputMuted(true);
-        setIsAudioOutputMuted(true);
+        setIsCallConnected(false);
+        setIsVideoReceiving(false);
+        setIsVideoAvailable(false);
+        setCallClient(undefined);
+        setCallAgent(undefined);
+        setDeviceManager(undefined);
+        setCall(undefined);
+        setMessageSender(undefined);
+        setIsCallOnHold(false);
+        setIsAudioInputMuted(false);
+        setIsAudioOutputMuted(false);
         setIsCapturingPhoto(false);
         setIsSwitchingCamera(false);
         setIsUsingFrontCamera(false);
@@ -311,39 +468,19 @@ const CallScreen = () => {
         setLocation(undefined);
         setPhoto(undefined);
         setIsVideoMaximized(false);
-        setIsRestartingVideo(false);
-        setCallController(undefined);
-    }
+    };
 
     useEffect(
         () => {
             if (isOnCall) {
                 TowerApi
-                    .join()
-                    .then((joinResponse) => {
-                        let callController = new CallController(
-                            joinResponse,
-                            audioRef.current,
-                            videoRef.current,
-                            {audioVideoDidStop: onCallEnd},
-                            (msg: DataMessage) => {
-                                switch (msg.topic) {
-                                    case DataMessageTopic.LocationEvent:
-                                        onLocationEvent(JSON.parse(msg.text(), locationEventDataReviver));
-                                        break;
-                                    case DataMessageTopic.CallQualityEvent:
-                                        onCallQualityEvent(JSON.parse(msg.text()));
-                                        break;
-                                }
-                            }
-                        );
-                        setCallController(callController);
-                        callController
-                            .meetingSession
-                            .audioVideo
-                            .realtimeSubscribeToMuteAndUnmuteLocalAudio(setIsAudioInputMuted)
-                    })
-                    .catch(onCallEnd);
+                    .beginAssistance()
+                    .then(startCall)
+                    .then(subscribeToCall)
+                    .catch(error => {
+                        console.error(error);
+                        onCallEnd();
+                    });
             }
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -352,21 +489,19 @@ const CallScreen = () => {
 
     return (
         <>
-            {
-                !isAssistantReady
-                    && callController
-                    && <CallOptionsDialog
-                            callController={callController}
-                            callQualityLevel={callQualityLevel}
-                            onSubmit={handleAssistantReady}/>
-            }
+            {isCallOnHold && call && <CallOptionsDialog onSubmit={resumeCall}/>}
             <section id='call-screen' className={isOnCall ? 'active' : 'inactive'}>
-                <div id='video-background'><FontAwesomeIcon icon={faVideoSlash}/></div>
-                <video ref={videoRef} className={isVideoMaximized ? 'maximized' : ''}></video>
-                {!isAssistantReady && <div id='hold-indicator'><FontAwesomeIcon icon={faPause}/></div>}
-                <audio ref={audioRef}></audio>
+                <div ref={videoContainerRef} id='remote-video-container' className={isVideoMaximized ? 'maximized' : ''}>
+                    <div id='no-video-indicator'><FontAwesomeIcon icon={faVideoSlash}/></div>
+                    {isCallOnHold && <div id='hold-indicator'><FontAwesomeIcon icon={faPause}/></div>}
+                    {!isVideoReceiving && isVideoAvailable && (
+                        <div id='loading-indicator'>
+                            <div><div className='loading-spinner'/></div>
+                        </div>
+                    )}
+                </div>
                 <aside id='left-aside' className={isVideoMaximized ? 'closed' : 'open'}>
-                    {location && (<MapComponent coordinate={location}/>)}
+                {location && (<MapComponent coordinate={location}/>)}
                 </aside>
                 <aside id='right-aside' className={isVideoMaximized ? 'closed' : 'open'}>
                     {photo && (<img src={photo.imageURL.href} alt='Vom Gerät der Benutzer:in aufgenommenes Foto'/>)}
@@ -376,49 +511,43 @@ const CallScreen = () => {
                             id='maximize-video-button'
                             onClick={() => setIsVideoMaximized(!isVideoMaximized)}
                             className={isVideoMaximized ? 'active' : 'inactive'}
-                            disabled={!isAssistantReady}>
+                            disabled={isCallOnHold}>
                         <FontAwesomeIcon icon={faMaximize}/>
                     </button>
                     <button
                             id='capture-photo-button'
-                            onClick={handlePhotoCapture}
-                            disabled={isCapturingPhoto || !callController || !isAssistantReady}>
+                            onClick={capturePhoto}
+                            disabled={isCapturingPhoto || !isCallConnected || isCallOnHold}>
                         <FontAwesomeIcon icon={faImage}/>
                     </button>
                     <button
                             id='camera-switch-button'
-                            onClick={handleCameraSwitch}
-                            disabled={isSwitchingCamera || !callController || !isAssistantReady}>
+                            onClick={switchCamera}
+                            disabled={isSwitchingCamera || !isCallConnected || isCallOnHold}>
                         <FontAwesomeIcon icon={faCameraRotate}/>
-                    </button>
-                    <button
-                            id='restart-video-button'
-                            onClick={handleVideoRestart}
-                            disabled={isRestartingVideo || !callController || !isAssistantReady}>
-                        <FontAwesomeIcon icon={faHeartPulse}/>
                     </button>
                     <button
                             id='torch-toggle-button'
                             className={isUsingTorch ? 'active' : 'inactive'}
-                            onClick={handleTorchToggle}
+                            onClick={toggleTorch}
                             disabled={
                                 isTogglingTorch
                                     || isSwitchingCamera
                                     || isUsingFrontCamera
-                                    || !callController
-                                    || !isAssistantReady
+                                    || !isCallConnected
+                                    || isCallOnHold
                             }>
                         <FontAwesomeIcon icon={faLightbulb}/>
                     </button>
                     <button
                             id='request-location-button'
-                            onClick={handleLocationRequest}
+                            onClick={requestLocation}
                             disabled={
                                 isRequestingLocation
                                     || !!location
                                     || !isLocationAvailable
-                                    || !callController
-                                    || !isAssistantReady
+                                    || !isCallConnected
+                                    || isCallOnHold
                             }>
                         <FontAwesomeIcon icon={faLocationDot}/>
                     </button>
@@ -426,12 +555,12 @@ const CallScreen = () => {
                         <button
                                 id='unmute-input-button'
                                 className='inactive'
-                                onClick={handleInputUnmute}
-                                disabled={!isAssistantReady}>
+                                onClick={unmuteInput}
+                                disabled={isCallOnHold}>
                             <FontAwesomeIcon icon={faMicrophoneSlash}/>
                         </button>
                     ) : (
-                        <button id='mute-input-button' className='active' onClick={handleInputMute}>
+                        <button id='mute-input-button' className='active' onClick={muteInput}>
                             <FontAwesomeIcon icon={faMicrophone}/>
                         </button>
                     )}
@@ -439,21 +568,21 @@ const CallScreen = () => {
                         <button
                                 id='unmute-output-button'
                                 className='inactive'
-                                onClick={handleOutputUnmute}
-                                disabled={!isAssistantReady}>
+                                onClick={unmuteOutput}
+                                disabled={isCallOnHold}>
                             <FontAwesomeIcon icon={faVolumeXmark}/>
                         </button>
                     ) : (
-                        <button id='mute-output-button' className='active' onClick={handleOutputMute}>
+                        <button id='mute-output-button' className='active' onClick={muteOutput}>
                             <FontAwesomeIcon icon={faVolumeHigh}/>
                         </button>
                     )}
-                    {isAssistantReady ? (
-                        <button id="hold-button" className='inactive' onClick={handleAssistantBusy}>
+                    {isCallOnHold ? (
+                        <button id='resume-button' className='active' onClick={resumeCall}>
                             <FontAwesomeIcon icon={faPause}/>
                         </button>
                     ) : (
-                        <button id="ready-button" className='active' onClick={handleAssistantReady}>
+                        <button id='hold-button' className='inactive' onClick={holdCall}>
                             <FontAwesomeIcon icon={faPause}/>
                         </button>
                     )}
@@ -466,6 +595,6 @@ const CallScreen = () => {
             </section>
         </>
     );
-}
+};
 
 export default CallScreen;

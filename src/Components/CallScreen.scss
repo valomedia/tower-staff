@@ -6,42 +6,45 @@
 //
 //
 
+@use "../Styles/_colors.scss";
+
 #call-screen {
 
-  #video-background,
-  #hold-indicator {
+  #remote-video-container > * {
     background-color: black;
     color: lightgrey;
     position: absolute;
-    width: 100vw;
+    width: 40vw;
     height: 100vh;
-    left: 0;
+    left: 30vw;
     top: 0;
   }
 
-  #video-background > svg,
-  #hold-indicator > svg {
-    height: 64px;
+  #remote-video-container.maximized > * {
+    width: 100vw;
+    left: 0;
+  }
+
+  #no-video-indicator > svg,
+  #hold-indicator > svg,
+  #loading-indicator > div {
     position: absolute;
-    left: 50vw;
+    left: 50%;
     transform: translate(-50%, -50%);
   }
 
-  #video-background > svg {
+  #no-video-indicator > svg,
+  #hold-indicator > svg {
+    height: 100px;
+  }
+
+  #no-video-indicator > svg,
+  #loading-indicator > div {
     top: 50vh;
   }
 
   #hold-indicator > svg {
     top: 12.5vh;
-  }
-
-  video {
-    position: absolute;
-    left: 30vw;
-    top: 0;
-    width: 40vw;
-    height: 100vh;
-    object-fit: contain;
   }
 
   video.inactive {
@@ -52,10 +55,8 @@
     background: black;
   }
 
-  video.maximized {
-    width: 100vw;
-    left: 0;
-    object-fit: cover;
+  #remote-video-container.maximized video {
+    object-fit: cover!important;
   }
 
   footer button {
