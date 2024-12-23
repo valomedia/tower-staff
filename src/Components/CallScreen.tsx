@@ -45,7 +45,7 @@ import { AzureCommunicationTokenCredential } from '@azure/communication-common';
 import { DataMessage, Message, messageReviver } from '../Models/Message';
 import { ErrorMessage } from '../Models/Message';
 import ErrorInfo, { isErrorInfo } from '../Models/ErrorInfo';
-import PhotoDataEvent from '../Models/PhotoDataEvent';
+import PhotoDataChunk from '../Models/PhotoDataChunk';
 import Orientation from '../Models/Orientation';
 
 /*
@@ -244,7 +244,7 @@ const CallScreen = () => {
         if (isErrorInfo(locationResponse)) {setIsLocationAvailable(false);}
     };
 
-    const handlePhotoDataEvent = (photoDataEvent: PhotoDataEvent) => {
+    const handlePhotoDataEvent = (photoDataEvent: PhotoDataChunk) => {
         console.log(photoDataEvent);
     };
 

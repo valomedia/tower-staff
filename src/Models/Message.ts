@@ -6,7 +6,7 @@
 //  Copyright © 2024 valo.media GmbH. All rights reserved.
 //
 
-import PhotoDataEvent from './PhotoDataEvent';
+import PhotoDataChunk from './PhotoDataChunk';
 import Location from './Location';
 import Orientation from './Orientation';
 import ErrorInfo, { isErrorInfo } from './ErrorInfo';
