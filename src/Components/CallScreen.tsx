@@ -306,7 +306,7 @@ const CallScreen = () => {
         const callAgent = await callClient.createCallAgent(tokenCredential);
         const deviceManager = await callClient.getDeviceManager();
 
-        await deviceManager.askDevicePermission({audio: true, video: true});
+        await deviceManager.askDevicePermission({audio: true, video: false});
         const call = callAgent.join({groupId: crypto.randomUUID()});
 
         setCallClient(callClient);
