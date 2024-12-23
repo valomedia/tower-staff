@@ -387,6 +387,12 @@ const CallScreen = () => {
         const renderer = new VideoStreamRenderer(remoteVideoStream);
         const videoContainer = videoContainerRef.current;
 
+        // If the incoming stream is RawMedia, we have to guess the initial orientation while we wait for the first
+        // orientationEvent Message. We will assume the video is in portrait mode.
+        if (remoteVideoStream.mediaStreamType === "RawMedia") {
+            videoContainer.className = "portrait";
+        }
+
         const createViewIfAvailable = async () => {
             if (remoteVideoStream.isAvailable) {
                 const view = await renderer.createView({scalingMode: 'Fit'});
