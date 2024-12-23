@@ -49,6 +49,10 @@ import PhotoDataChunk from '../Models/PhotoDataChunk';
 import Orientation from '../Models/Orientation';
 import usePhoto from '../Hooks/usePhoto';
 
+const DATA_CHANNEL_ID = 1000;
+
+const DATA_CHANNEL_BANDWIDTH_KBPS = 32;
+
 /*
  * The in-call ui.
  */
@@ -433,8 +437,8 @@ const CallScreen = () => {
         const dataChannel = call.feature(Features.DataChannel);
 
         const messageSender = dataChannel.createDataChannelSender({
-            bitrateInKbps: 32,
-            channelId: 1000,
+            bitrateInKbps: DATA_CHANNEL_BANDWIDTH_KBPS,
+            channelId: DATA_CHANNEL_ID,
             priority: "High",
             reliability: "Durable"
         });
@@ -465,6 +469,7 @@ const CallScreen = () => {
 
     const sendMessage = (message: Message) => {
         messageSender?.sendMessage((new TextEncoder()).encode(JSON.stringify(message)));
+
     };
 
     /*
