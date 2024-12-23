@@ -29,6 +29,31 @@
     left: 0;
   }
 
+  main > #video-container {
+    transform-origin: center;
+  }
+
+  main > #video-container.portrait {
+    width: 100vh;
+    height: 40vw;
+    top: calc(50vh - 20vw);
+    left: calc(50vw - 50vh);
+    transform: rotate(90deg);
+  }
+
+  main.maximized > #video-container.portrait {
+    height: 100vw;
+    top: calc(50vh - 50vw);
+  }
+
+  main > #video-container.upside-down {
+    transform: rotate(180deg);
+  }
+
+  main > #video-container.portrait.upside-down {
+    transform: rotate(270deg);
+  }
+
   #no-video-indicator > svg,
   #hold-indicator > svg,
   #loading-indicator > div {

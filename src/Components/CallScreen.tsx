@@ -262,7 +262,21 @@ const CallScreen = () => {
     };
 
     const handleOrientationEvent = (orientationEvent: Orientation) => {
-        console.log(orientationEvent);
+        const videoContainer = videoContainerRef.current;
+        switch (orientationEvent.rotationAngle) {
+            case 0:
+                videoContainer.className = "landscape";
+                break;
+            case 90:
+                videoContainer.className = "portrait";
+                break;
+            case 180:
+                videoContainer.className = "landscape upside-down";
+                break;
+            case 270:
+                videoContainer.className = "portrait upside-down";
+                break;
+        }
     };
 
     const handleErrorEvent = (errorEvent: ErrorInfo) => {
