@@ -108,6 +108,14 @@
     width: initial;
   }
 
+  #hangup-button .spinner-container {
+    display: inline-block;
+    width: 13.3px;
+    height: 13.3px;
+    transform: scale(13.3%);
+    transform-origin: top left;
+  }
+
   #left-aside img {
     width: 100%;
     height: 100%;

@@ -77,6 +77,8 @@ const CallScreen = () => {
 
     const [isCallOnHold, setIsCallOnHold] = useState(false);
 
+    const [isHangingUp, setIsHangingUp] = useState(false);
+
     /*
      * Whether audio input is currently muted.
      */
@@ -287,6 +289,7 @@ const CallScreen = () => {
      * End the call.
      */
     const hangUp = () => {
+        setIsHangingUp(true);
         call?.hangUp({forEveryone: true});
         onCallEnd();
     };
@@ -467,6 +470,7 @@ const CallScreen = () => {
 
         setIsOnCall(false);
         setIsCallConnected(false);
+        setIsHangingUp(false);
         setIsVideoReceiving(false);
         setIsVideoAvailable(false);
         setCallClient(undefined);
@@ -610,8 +614,12 @@ const CallScreen = () => {
                             <FontAwesomeIcon icon={faPause}/>
                         </button>
                     )}
-                    <button id='hangup-button' onClick={hangUp}>
-                        <FontAwesomeIcon icon={faPhone}/>
+                    <button id='hangup-button' disabled={isHangingUp} onClick={hangUp}>
+                        {isHangingUp ? (
+                            <div className='spinner-container'><div className='loading-spinner'/></div>
+                        ) : (
+                            <FontAwesomeIcon icon={faPhone}/>
+                        )}
                         &nbsp;
                         Auflegen
                     </button>
