@@ -27,7 +27,7 @@ import {
 import CallOptionsDialog from './CallOptionsDialog';
 import Coordinate from '../Models/Coordinate';
 import MapComponent from './MapComponent';
-import LocationEvent from '../Models/LocationEvent';
+import Location from '../Models/Location';
 import PhotoResource from '../Models/PhotoResource';
 import { AppContext } from '../Routes/App';
 import {
@@ -251,7 +251,7 @@ const CallScreen = () => {
     /*
      * Respond to a location event
      */
-    const handleLocationEvent = (locationEvent: LocationEvent|ErrorInfo) => {
+    const handleLocationEvent = (locationEvent: Location|ErrorInfo) => {
         setIsRequestingLocation(false);
         if (!isErrorInfo(locationEvent)) {
             setLocation(locationEvent.coordinate);

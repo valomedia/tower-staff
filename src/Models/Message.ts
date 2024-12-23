@@ -7,8 +7,8 @@
 //
 
 import PhotoDataEvent from './PhotoDataEvent';
-import LocationEvent from './LocationEvent';
 import OrientationEvent from './OrientationEvent';
+import Location from './Location';
 import ErrorInfo, { isErrorInfo } from './ErrorInfo';
 import { EmptyObject } from '../../types/util';
 
@@ -26,8 +26,8 @@ export type DataMessage
     | {holdEvent: EmptyObject}
     | {resumeEvent: EmptyObject}
     | {photoDataEvent: PhotoDataEvent}
-    | {locationEvent: LocationEvent}
     | {orientationEvent: OrientationEvent}
+    | {locationEvent: Location}
     | {errorEvent: ErrorInfo}
 
 export type ErrorMessage
@@ -41,7 +41,7 @@ export type ErrorMessage
 export function messageReviver(key: string, value: any) {
     switch (key) {
         case "photoDataEvent": return !isErrorInfo(value) ? new PhotoDataEvent(value) : value;
-        case "locationEvent": return !isErrorInfo(value) ? new LocationEvent(value) : value;
+        case "locationEvent": return !isErrorInfo(value) ? new Location(value) : value;
         default: return value;
     }
 }
