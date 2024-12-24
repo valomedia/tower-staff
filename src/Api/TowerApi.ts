@@ -12,16 +12,19 @@ import BeginAssistanceResponse, { beginAssistanceResponseReviver } from '../Mode
 /*
  * Make a request to the index endpoint.
  */
-export const index = async () =>
-    JSON.parse(await request('GET', '/'));
+export async function index() {
+    return JSON.parse(await request('GET', '/'));
+}
 
-export const offerAssistance = async (): Promise<OfferAssistanceResponse> =>
-    JSON.parse(await request('GET', '/offerAssistance'), offerAssistanceResponseReviver);
+export async function offerAssistance(): Promise<OfferAssistanceResponse> {
+    return JSON.parse(await request('GET', '/offerAssistance'), offerAssistanceResponseReviver);
+}
 
-export const beginAssistance = async (): Promise<BeginAssistanceResponse> =>
-    JSON.parse(await request('POST', '/beginAssistance'), beginAssistanceResponseReviver);
+export async function beginAssistance(): Promise<BeginAssistanceResponse> {
+    return JSON.parse(await request('POST', '/beginAssistance'), beginAssistanceResponseReviver);
+}
 
-const request = async (method = 'GET', path: String, params?: URLSearchParams) => {
+async function request(method = 'GET', path: String, params?: URLSearchParams) {
     const response = await fetch(
         // @ts-ignore
         process.env.REACT_APP_TOWER_API_ENDPOINT + path + (params ? '?' + params: ''),
@@ -34,4 +37,4 @@ const request = async (method = 'GET', path: String, params?: URLSearchParams) =
         throw new Error(response.statusText);
     }
     return response.text();
-};
+}
