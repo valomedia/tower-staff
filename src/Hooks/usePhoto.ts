@@ -25,7 +25,7 @@ export default function usePhoto(): {
         if (!dataChunks[uuid]) {dataChunks[uuid] = [];}
         dataChunks[uuid][index] = photoDataChunk.imageData;
         if (dataChunks[uuid].flat().length === count) {
-            setPhoto(new PhotoResource(new URL("data:image/jpeg;base64," + dataChunks[uuid].join("")), imageSize));
+            setPhoto({imageURL: new URL("data:image/jpeg;base64," + dataChunks[uuid].join("")), imageSize});
             dataChunks = {};
         }
     }

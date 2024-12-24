@@ -13,12 +13,7 @@ import ImageSize from './ImageSize';
  *
  * This contains the URL for an image, along with its dimensions.
  */
-export default class PhotoResource {
-
-    constructor(imageURL: URL, imageSize: ImageSize) {
-        this.imageURL = imageURL;
-        this.imageSize = imageSize;
-    }
+export default interface PhotoResource {
 
     /**
      * The URL for the image.
