@@ -15,6 +15,8 @@ import { faBell, faPhone } from '@fortawesome/free-solid-svg-icons';
 import * as TowerApi from '../Api/TowerApi';
 import { AppContext } from '../Routes/App';
 
+const ASSISTANCE_SESSION_MAXIMUM_DURATION_MS = 7_200_000;
+
 /*
  * The screen presented to the user upon opening the app.
  */
@@ -23,7 +25,12 @@ const LaunchScreen = () => {
     /*
      * Whether a call is ongoing.
      */
-    const {isOnCall, setIsOnCall} = useContext(AppContext);
+    const {
+        isOnCall,
+        setIsOnCall,
+        userToken,
+        setUserToken
+    } = useContext(AppContext);
 
     /*
      * Whether the application is still trying to reach the backend.
@@ -82,9 +89,11 @@ const LaunchScreen = () => {
             () => {
                 if (!isOnCall) {
                     if (isConnecting) {
-                        TowerApi
-                            .index()
-                            .then(() => setHasBackend(true))
+                        TowerApi.assistanceToken()
+                            .then(response => {
+                                setUserToken(response.userToken);
+                                setHasBackend(true);
+                            })
                             .finally(() => setIsConnecting(false))
                     }
                     if (hasBackend) {
@@ -122,6 +131,17 @@ const LaunchScreen = () => {
             }
         },
         [isRinging, isOnCall, isRingtoneEnabled]);
+
+    // Refresh if a call comes in and the token is about to expire.
+    useEffect(
+        () => {
+            // Refresh if our session is about to expire.
+            if (isRinging
+                && (userToken?.expiresOn.getTime() || 0) < Date.now() + ASSISTANCE_SESSION_MAXIMUM_DURATION_MS
+            ) {window.location.reload();}
+        },
+        [isRinging, userToken?.expiresOn]
+    );
 
     return (
         <div id='launch-screen' className='screen' hidden={isOnCall}>

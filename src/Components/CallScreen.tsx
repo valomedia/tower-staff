@@ -48,6 +48,8 @@ import ErrorInfo, { isErrorInfo } from '../Models/ErrorInfo';
 import PhotoDataChunk from '../Models/PhotoDataChunk';
 import Orientation from '../Models/Orientation';
 import usePhoto from '../Hooks/usePhoto';
+import { CallProvider, useCallAgent, useCallClient } from '@azure/communication-react';
+import BeginAssistanceResponse from '../Models/BeginAssistanceResponse';
 
 const DATA_CHANNEL_ID = 1000;
 
@@ -73,11 +75,9 @@ const CallScreen = () => {
 
     const [isVideoAvailable, setIsVideoAvailable] = useState(false);
 
-    const [callClient, setCallClient] = useState<CallClient|undefined>();
+    const callClient = useCallClient();
 
-    const [callAgent, setCallAgent] = useState<CallAgent|undefined>();
-
-    const [deviceManager, setDeviceManager] = useState<DeviceManager|undefined>();
+    const callAgent = useCallAgent();
 
     const [call, setCall] = useState<Call|undefined>();
 
@@ -323,21 +323,11 @@ const CallScreen = () => {
     };
 
     const startCall = async (
-        {userToken, assistanceRequest}: {userToken: UserToken, assistanceRequest: AssistanceRequest}
+        {assistanceRequest}: BeginAssistanceResponse
     ): Promise<{call: Call, assistanceRequest: AssistanceRequest}> => {
-        const token = userToken.token;
-        const tokenCredential = new AzureCommunicationTokenCredential(token);
+        await (await callClient.getDeviceManager()).askDevicePermission({audio: true, video: false});
+        const call = callAgent!.join({groupId: crypto.randomUUID()});
 
-        const callClient = new CallClient();
-        const callAgent = await callClient.createCallAgent(tokenCredential);
-        const deviceManager = await callClient.getDeviceManager();
-
-        await deviceManager.askDevicePermission({audio: true, video: false});
-        const call = callAgent.join({groupId: crypto.randomUUID()});
-
-        setCallClient(callClient);
-        setCallAgent(callAgent);
-        setDeviceManager(deviceManager);
         setCall(call);
         setIsVideoReceiving(true);
 
@@ -371,10 +361,7 @@ const CallScreen = () => {
         call.remoteParticipants.forEach(subscribeToRemoteParticipant);
         call.on('remoteParticipantsUpdated', ({added, removed}) => {
             added.forEach(subscribeToRemoteParticipant);
-            if (removed.length) {
-                console.warn('Remote participant unexpectedly removed from call.');
-                endCall();
-            }
+            if (removed.length) {endCall();}
         });
 
     };
@@ -484,17 +471,12 @@ const CallScreen = () => {
      * Reset everything when the call ends.
      */
     const onCallEnd = async () => {
-        await callAgent?.dispose();
-
         setIsOnCall(false);
         setIsCallConnected(false);
         setIsDataChannelAvailable(false);
         setIsHangingUp(false);
         setIsVideoReceiving(false);
         setIsVideoAvailable(false);
-        setCallClient(undefined);
-        setCallAgent(undefined);
-        setDeviceManager(undefined);
         setCall(undefined);
         setMessageSender(undefined);
         setIsCallOnHold(false);
@@ -531,137 +513,139 @@ const CallScreen = () => {
 
     return (
         <>
-            {isCallOnHold && call && <CallOptionsDialog onSubmit={resumeCall}/>}
-            <div id='call-screen' className='screen' hidden={!isOnCall}>
-                <main className={isVideoMaximized ? 'maximized' : ''}>
-                    <div id='no-video-indicator'><FontAwesomeIcon icon={faVideoSlash}/></div>
-                    <div id='hold-indicator' hidden={!isCallOnHold}><FontAwesomeIcon icon={faPause}/></div>
-                    <div id='loading-indicator' hidden={isVideoReceiving || !isVideoAvailable}>
-                        <div>
-                            <div className='loading-spinner'/>
+            <CallProvider call={call}>
+                {isCallOnHold && call && <CallOptionsDialog onSubmit={resumeCall}/>}
+                <div id='call-screen' className='screen' hidden={!isOnCall}>
+                    <main className={isVideoMaximized ? 'maximized' : ''}>
+                        <div id='no-video-indicator'><FontAwesomeIcon icon={faVideoSlash}/></div>
+                        <div id='hold-indicator' hidden={!isCallOnHold}><FontAwesomeIcon icon={faPause}/></div>
+                        <div id='loading-indicator' hidden={isVideoReceiving || !isVideoAvailable}>
+                            <div>
+                                <div className='loading-spinner'/>
+                            </div>
                         </div>
-                    </div>
-                    <div
-                            ref={videoContainerRef}
-                            id='video-container'
-                            hidden={!isVideoReceiving || !isVideoAvailable || isCallOnHold}>
-                    </div>
-                </main>
-                <aside id='left-aside' className={isVideoMaximized ? 'closed' : 'open'}>
-                {location && (<MapComponent coordinate={location}/>)}
-                </aside>
-                <aside id='right-aside' className={isVideoMaximized ? 'closed' : 'open'}>
-                    {photo && (<img src={photo.imageURL.href} alt='Vom Gerät der Benutzer:in aufgenommenes Foto'/>)}
-                </aside>
-                <footer>
-                    <button
-                            id='maximize-video-button'
-                            onClick={() => setIsVideoMaximized(!isVideoMaximized)}
-                            className={isVideoMaximized ? 'active' : 'inactive'}
-                            disabled={isHangingUp}>
-                        <FontAwesomeIcon icon={faMaximize}/>
-                    </button>
-                    <button
-                            id='capture-photo-button'
-                            onClick={capturePhoto}
-                            disabled={isCapturingPhoto || !isDataChannelAvailable || isCallOnHold || isHangingUp}>
-                        <FontAwesomeIcon icon={faImage}/>
-                    </button>
-                    <button
-                            id='camera-switch-button'
-                            onClick={switchCamera}
-                            disabled={isSwitchingCamera || !isDataChannelAvailable || isCallOnHold || isHangingUp}>
-                        <FontAwesomeIcon icon={faCameraRotate}/>
-                    </button>
-                    <button
-                            id='torch-toggle-button'
-                            className={isUsingTorch ? 'active' : 'inactive'}
-                            onClick={toggleTorch}
-                            disabled={
-                                isTogglingTorch
-                                    || isSwitchingCamera
-                                    || isUsingFrontCamera
-                                    || !isDataChannelAvailable
-                                    || isCallOnHold
-                                    || isHangingUp
-                            }>
-                        <FontAwesomeIcon icon={faLightbulb}/>
-                    </button>
-                    <button
-                            id='request-location-button'
-                            onClick={requestLocation}
-                            disabled={
-                                isRequestingLocation
-                                    || !!location
-                                    || !isLocationAvailable
-                                    || !isDataChannelAvailable
-                                    || isCallOnHold
-                                    || isHangingUp
-                            }>
-                        <FontAwesomeIcon icon={faLocationDot}/>
-                    </button>
-                    {isAudioInputMuted ? (
+                        <div
+                                ref={videoContainerRef}
+                                id='video-container'
+                                hidden={!isVideoReceiving || !isVideoAvailable || isCallOnHold}>
+                        </div>
+                    </main>
+                    <aside id='left-aside' className={isVideoMaximized ? 'closed' : 'open'}>
+                    {location && (<MapComponent coordinate={location}/>)}
+                    </aside>
+                    <aside id='right-aside' className={isVideoMaximized ? 'closed' : 'open'}>
+                        {photo && (<img src={photo.imageURL.href} alt='Vom Gerät der Benutzer:in aufgenommenes Foto'/>)}
+                    </aside>
+                    <footer>
                         <button
-                                id='unmute-input-button'
-                                className='inactive'
-                                onClick={unmuteInput}
-                                disabled={isCallOnHold || !isCallConnected || isHangingUp}>
-                            <FontAwesomeIcon icon={faMicrophoneSlash}/>
+                                id='maximize-video-button'
+                                onClick={() => setIsVideoMaximized(!isVideoMaximized)}
+                                className={isVideoMaximized ? 'active' : 'inactive'}
+                                disabled={isHangingUp}>
+                            <FontAwesomeIcon icon={faMaximize}/>
                         </button>
-                    ) : (
                         <button
-                                id='mute-input-button'
-                                className='active'
-                                onClick={muteInput}
-                                disabled={!isCallConnected || isHangingUp}>
-                            <FontAwesomeIcon icon={faMicrophone}/>
+                                id='capture-photo-button'
+                                onClick={capturePhoto}
+                                disabled={isCapturingPhoto || !isDataChannelAvailable || isCallOnHold || isHangingUp}>
+                            <FontAwesomeIcon icon={faImage}/>
                         </button>
-                    )}
-                    {isAudioOutputMuted ? (
                         <button
-                                id='unmute-output-button'
-                                className='inactive'
-                                onClick={unmuteOutput}
-                                disabled={isCallOnHold || !isCallConnected || isHangingUp}>
-                            <FontAwesomeIcon icon={faVolumeXmark}/>
+                                id='camera-switch-button'
+                                onClick={switchCamera}
+                                disabled={isSwitchingCamera || !isDataChannelAvailable || isCallOnHold || isHangingUp}>
+                            <FontAwesomeIcon icon={faCameraRotate}/>
                         </button>
-                    ) : (
                         <button
-                                id='mute-output-button'
-                                className='active'
-                                onClick={muteOutput}
-                                disabled={!isCallConnected || isHangingUp}>
-                            <FontAwesomeIcon icon={faVolumeHigh}/>
+                                id='torch-toggle-button'
+                                className={isUsingTorch ? 'active' : 'inactive'}
+                                onClick={toggleTorch}
+                                disabled={
+                                    isTogglingTorch
+                                        || isSwitchingCamera
+                                        || isUsingFrontCamera
+                                        || !isDataChannelAvailable
+                                        || isCallOnHold
+                                        || isHangingUp
+                                }>
+                            <FontAwesomeIcon icon={faLightbulb}/>
                         </button>
-                    )}
-                    {isCallOnHold ? (
                         <button
-                                id='resume-button'
-                                className='active'
-                                onClick={resumeCall}
-                                disabled={!isDataChannelAvailable || isHangingUp}>
-                            <FontAwesomeIcon icon={faPause}/>
+                                id='request-location-button'
+                                onClick={requestLocation}
+                                disabled={
+                                    isRequestingLocation
+                                        || !!location
+                                        || !isLocationAvailable
+                                        || !isDataChannelAvailable
+                                        || isCallOnHold
+                                        || isHangingUp
+                                }>
+                            <FontAwesomeIcon icon={faLocationDot}/>
                         </button>
-                    ) : (
-                        <button
-                                id='hold-button'
-                                className='inactive'
-                                onClick={holdCall}
-                                disabled={!isDataChannelAvailable || isHangingUp}>
-                            <FontAwesomeIcon icon={faPause}/>
-                        </button>
-                    )}
-                    <button id='hangup-button' disabled={isHangingUp} onClick={hangUp}>
-                        {isHangingUp ? (
-                            <div className='spinner-container'><div className='loading-spinner'/></div>
+                        {isAudioInputMuted ? (
+                            <button
+                                    id='unmute-input-button'
+                                    className='inactive'
+                                    onClick={unmuteInput}
+                                    disabled={isCallOnHold || !isCallConnected || isHangingUp}>
+                                <FontAwesomeIcon icon={faMicrophoneSlash}/>
+                            </button>
                         ) : (
-                            <FontAwesomeIcon icon={faPhone}/>
+                            <button
+                                    id='mute-input-button'
+                                    className='active'
+                                    onClick={muteInput}
+                                    disabled={!isCallConnected || isHangingUp}>
+                                <FontAwesomeIcon icon={faMicrophone}/>
+                            </button>
                         )}
-                        &nbsp;
-                        Auflegen
-                    </button>
-                </footer>
-            </div>
+                        {isAudioOutputMuted ? (
+                            <button
+                                    id='unmute-output-button'
+                                    className='inactive'
+                                    onClick={unmuteOutput}
+                                    disabled={isCallOnHold || !isCallConnected || isHangingUp}>
+                                <FontAwesomeIcon icon={faVolumeXmark}/>
+                            </button>
+                        ) : (
+                            <button
+                                    id='mute-output-button'
+                                    className='active'
+                                    onClick={muteOutput}
+                                    disabled={!isCallConnected || isHangingUp}>
+                                <FontAwesomeIcon icon={faVolumeHigh}/>
+                            </button>
+                        )}
+                        {isCallOnHold ? (
+                            <button
+                                    id='resume-button'
+                                    className='active'
+                                    onClick={resumeCall}
+                                    disabled={!isDataChannelAvailable || isHangingUp}>
+                                <FontAwesomeIcon icon={faPause}/>
+                            </button>
+                        ) : (
+                            <button
+                                    id='hold-button'
+                                    className='inactive'
+                                    onClick={holdCall}
+                                    disabled={!isDataChannelAvailable || isHangingUp}>
+                                <FontAwesomeIcon icon={faPause}/>
+                            </button>
+                        )}
+                        <button id='hangup-button' disabled={isHangingUp} onClick={hangUp}>
+                            {isHangingUp ? (
+                                <div className='spinner-container'><div className='loading-spinner'/></div>
+                            ) : (
+                                <FontAwesomeIcon icon={faPhone}/>
+                            )}
+                            &nbsp;
+                            Auflegen
+                        </button>
+                    </footer>
+                </div>
+            </CallProvider>
         </>
     );
 };
