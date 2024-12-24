@@ -28,6 +28,7 @@ export type DataMessage
     | {photoDataEvent: PhotoDataChunk}
     | {orientationEvent: Orientation}
     | {locationEvent: Location}
+    | {flushEvent: EmptyObject}
 
 export type ErrorMessage
     = {capturePhotoResponse: ErrorInfo}

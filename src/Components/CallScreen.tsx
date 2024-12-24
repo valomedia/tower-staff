@@ -53,6 +53,8 @@ const DATA_CHANNEL_ID = 1000;
 
 const DATA_CHANNEL_BANDWIDTH_KBPS = 32;
 
+const DATA_CHANNEL_FLUSH_DELAY_MS = 2000;
+
 /*
  * The in-call ui.
  */
@@ -470,6 +472,12 @@ const CallScreen = () => {
     const sendMessage = (message: Message) => {
         messageSender?.sendMessage((new TextEncoder()).encode(JSON.stringify(message)));
 
+        // ACS seems to have a bug where data messages can get stuck until another data message is sent. As
+        // a workaround, we send a dummy message after each real message to flush it through.
+        setTimeout(
+            () => {messageSender?.sendMessage((new TextEncoder().encode(JSON.stringify({flushEvent: {}}))))},
+            DATA_CHANNEL_FLUSH_DELAY_MS
+        );
     };
 
     /*
