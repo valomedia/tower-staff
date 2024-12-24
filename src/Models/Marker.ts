@@ -8,6 +8,7 @@
 
 import Coordinate from './Coordinate';
 import MarkerStyle from './MarkerStyle';
+import { Dead } from '../../types/util';
 
 
 /*
@@ -15,28 +16,19 @@ import MarkerStyle from './MarkerStyle';
  */
 class Marker {
 
-    constructor(
-        {
-            style,
-            place
-        }: {
-            style?: MarkerStyle | undefined,
-            place: Coordinate | string
-        }
-    ) {
-        this.style = style
-        this.place = place
+    constructor(props: Dead<Marker>) {
+        Object.assign(this, props);
     }
 
     /*
      * The latitude in degrees.
      */
-    readonly style?: MarkerStyle
+    readonly style?: MarkerStyle;
 
     /*
      * The longitude in degrees.
      */
-    readonly place: Coordinate | string
+    readonly place!: Coordinate | string;
 
     toString() {
         return (this.style ? `color:${this.style.color}|` : "") + this.place.toString();
