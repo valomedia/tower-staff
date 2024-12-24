@@ -6,8 +6,9 @@
 //
 //
 
-import OfferAssistanceResponse, { offerAssistanceResponseReviver } from '../Models/OfferAssistanceResponse';
-import BeginAssistanceResponse, { beginAssistanceResponseReviver } from '../Models/BeginAssistanceResponse';
+import OfferAssistanceResponse from '../Models/OfferAssistanceResponse';
+import BeginAssistanceResponse from '../Models/BeginAssistanceResponse';
+import dateFieldReviver from '../Lib/dateFieldReviver';
 
 /*
  * Make a request to the index endpoint.
@@ -17,11 +18,11 @@ export async function index() {
 }
 
 export async function offerAssistance(): Promise<OfferAssistanceResponse> {
-    return JSON.parse(await request('GET', '/offerAssistance'), offerAssistanceResponseReviver);
+    return JSON.parse(await request('GET', '/offerAssistance'), dateFieldReviver);
 }
 
 export async function beginAssistance(): Promise<BeginAssistanceResponse> {
-    return JSON.parse(await request('POST', '/beginAssistance'), beginAssistanceResponseReviver);
+    return JSON.parse(await request('POST', '/beginAssistance'), dateFieldReviver);
 }
 
 async function request(method = 'GET', path: String, params?: URLSearchParams) {

@@ -6,8 +6,8 @@
 //  Copyright © 2024 valo.media GmbH. All rights reserved.
 //
 
-import UserToken, { userTokenReviver } from './UserToken';
-import AssistanceRequest, { assistanceRequestReviver } from './AssistanceRequest';
+import UserToken from './UserToken';
+import AssistanceRequest from './AssistanceRequest';
 
 export default interface BeginAssistanceResponse {
 
@@ -15,10 +15,4 @@ export default interface BeginAssistanceResponse {
 
     assistanceRequest: AssistanceRequest;
 
-}
-
-export function beginAssistanceResponseReviver(key: string, value: any): any {
-    if (key === 'userToken') {return JSON.parse(JSON.stringify(value), userTokenReviver);}
-    if (key === 'assistanceRequest') {return JSON.parse(JSON.stringify(value), assistanceRequestReviver);}
-    return value;
 }

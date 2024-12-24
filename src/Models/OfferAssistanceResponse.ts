@@ -6,7 +6,7 @@
 //  Copyright © 2024 valo.media GmbH. All rights reserved.
 //
 
-import AssistanceRequest, { assistanceRequestReviver } from './AssistanceRequest';
+import AssistanceRequest from './AssistanceRequest';
 
 export default interface OfferAssistanceResponse {
 
@@ -15,5 +15,3 @@ export default interface OfferAssistanceResponse {
     message?: string
 
 }
-
-export const offerAssistanceResponseReviver = assistanceRequestReviver;

@@ -17,10 +17,3 @@ export default interface UserToken {
     expiresOn: Date;
 
 }
-
-/*
- * Reviver for UserToken to be used when parsing UserToken from JSON.
- */
-export function userTokenReviver(key: String, value: any): any {
-    return key === "expiresOn" ? new Date(value) : value
-}

@@ -24,10 +24,3 @@ export default interface AssistanceRequest {
     startDateTime: Date;
 
 }
-
-/*
- * Reviver for AssistanceRequest to be used when parsing AssistanceRequest from JSON.
- */
-export function assistanceRequestReviver(key: String, value: any): any {
-    return key === "expiresOn" ? new Date(value) : value
-}
