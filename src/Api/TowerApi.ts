@@ -9,12 +9,17 @@
 import OfferAssistanceResponse from '../Models/OfferAssistanceResponse';
 import BeginAssistanceResponse from '../Models/BeginAssistanceResponse';
 import dateFieldReviver from '../Lib/dateFieldReviver';
+import AssistanceTokenResponse from '../Models/AssistanceTokenResponse';
 
 /*
  * Make a request to the index endpoint.
  */
 export async function index() {
     return JSON.parse(await request('GET', '/'));
+}
+
+export async function assistanceToken(): Promise<AssistanceTokenResponse> {
+    return JSON.parse(await request('GET', '/assistanceToken'), dateFieldReviver);
 }
 
 export async function offerAssistance(): Promise<OfferAssistanceResponse> {
