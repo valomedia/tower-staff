@@ -159,7 +159,7 @@ const LaunchScreen = () => {
                                         : 'Verbindung fehlgeschlagen!'
                     }
                 </p>
-                <button className='accept-button' disabled={!isRinging} onClick={handleAccept}>
+                <button id='accept-button' disabled={!isRinging} onClick={handleAccept}>
                     <FontAwesomeIcon icon={faPhone}/>
                     &nbsp;
                     Anfrage annehmen
