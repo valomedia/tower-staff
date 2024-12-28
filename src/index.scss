@@ -5,8 +5,8 @@
  *  created by jean-pierre höhmann on 2023-03-06.
  */
 
-@use "Styles/_fonts.scss";
-@use "Styles/_colors.scss";
+@use "Styles/fonts.module";
+@use "Styles/colors.module";
 
 //noinspection ALL
 @import-normalize;
