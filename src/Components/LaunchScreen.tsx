@@ -11,7 +11,7 @@ import logoAnimated from '../Assets/logo-animated.svg';
 import videoChatCalling from '../Assets/video-chat-calling.m4a';
 import './LaunchScreen.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faPhone } from '@fortawesome/free-solid-svg-icons';
+import { faBell, faGear, faPhone } from '@fortawesome/free-solid-svg-icons';
 import * as TowerApi from '../Api/TowerApi';
 import { AppContext } from '../Routes/App';
 
@@ -28,6 +28,8 @@ const LaunchScreen = () => {
     const {
         isOnCall,
         setIsOnCall,
+        isPresentingCallOptionsDialog,
+        setIsPresentingCallOptionsDialog,
         userToken,
         setUserToken
     } = useContext(AppContext);
@@ -165,14 +167,23 @@ const LaunchScreen = () => {
                 <audio src={videoChatCalling} ref={audioRef} loop></audio>
             </main>
             <footer>
-                    <button
-                            id='ringtone-toggle-button'
-                            className={isRingtoneEnabled ? 'active' : 'inactive'}
-                            onClick={handleRingtoneToggle}>
-                        <FontAwesomeIcon icon={faBell}/>
-                        &nbsp;
-                        Klingelton ist <strong>{isRingtoneEnabled ? 'an' : 'aus'}</strong>
-                    </button>
+                <button
+                    id='call-options-button'
+                    disabled={!hasBackend}
+                    className={isPresentingCallOptionsDialog ? 'active' : 'inactive'}
+                    onClick={() => setIsPresentingCallOptionsDialog(!isPresentingCallOptionsDialog)}
+                >
+                    <FontAwesomeIcon icon={faGear} />
+                </button>
+                <button
+                    id='ringtone-toggle-button'
+                    className={isRingtoneEnabled ? 'active' : 'inactive'}
+                    onClick={handleRingtoneToggle}
+                >
+                    <FontAwesomeIcon icon={faBell}/>
+                    &nbsp;
+                    Klingelton ist <strong>{isRingtoneEnabled ? 'an' : 'aus'}</strong>
+                </button>
             </footer>
         </div>
     );

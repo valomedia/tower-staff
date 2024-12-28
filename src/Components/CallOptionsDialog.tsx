@@ -15,12 +15,12 @@ import SpeakerSelectionDropdown from './SpeakerSelectionDropdown';
 /**
  * The dialog box allowing the assistant to set various options for the call.
  */
-const CallOptionsDialog = (props: {onSubmit: () => void}) => {
+const CallOptionsDialog = (props: {onClose: () => void}) => {
     return (
         <div id="call-options-dialog" className='dialog'>
             <h1>
                 Anrufoptionen
-                <button className='close-button' onClick={props.onSubmit}>
+                <button className='close-button' onClick={props.onClose}>
                     <FontAwesomeIcon icon={faXmark}></FontAwesomeIcon>
                 </button>
             </h1>

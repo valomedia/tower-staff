@@ -19,6 +19,7 @@ import {
 import UserToken from '../Models/UserToken';
 import { CallAgent } from '@azure/communication-calling';
 import { AzureCommunicationTokenCredential } from '@azure/communication-common';
+import CallOptionsDialog from '../Components/CallOptionsDialog';
 
 const App = () => {
 
@@ -26,6 +27,8 @@ const App = () => {
      * Whether a call is ongoing.
      */
     const [isOnCall, setIsOnCall] = useState(false);
+
+    const [isPresentingCallOptionsDialog, setIsPresentingCallOptionsDialog] = useState(false);
 
     /**
      * The stateful call client for the app.
@@ -55,6 +58,8 @@ const App = () => {
             <AppContext.Provider value={{
                 isOnCall,
                 setIsOnCall,
+                isPresentingCallOptionsDialog,
+                setIsPresentingCallOptionsDialog,
                 userToken,
                 setUserToken
             }}>
@@ -63,13 +68,16 @@ const App = () => {
                 </header>
                 <div>
                     <LaunchScreen></LaunchScreen>
-                    {callClient && callAgent && (
+                    {callClient && callAgent &&
                         <CallClientProvider callClient={callClient}>
                             <CallAgentProvider callAgent={callAgent}>
+                                {isPresentingCallOptionsDialog &&
+                                    <CallOptionsDialog onClose={() => setIsPresentingCallOptionsDialog(false)}/>
+                                }
                                 <CallScreen/>
                             </CallAgentProvider>
                         </CallClientProvider>
-                    )}
+                    }
                 </div>
             </AppContext.Provider>
         </div>
@@ -82,11 +90,15 @@ const App = () => {
 export const AppContext: Context<{
     isOnCall: boolean,
     setIsOnCall: Dispatch<SetStateAction<boolean>>,
+    isPresentingCallOptionsDialog: boolean,
+    setIsPresentingCallOptionsDialog: Dispatch<SetStateAction<boolean>>,
     userToken?: UserToken,
     setUserToken: Dispatch<SetStateAction<UserToken|undefined>>
 }> = createContext({
     isOnCall: false as boolean,
     setIsOnCall: _ => {},
+    isPresentingCallOptionsDialog: false as boolean,
+    setIsPresentingCallOptionsDialog: _ => {},
     setUserToken: _ => {}
 });
 
