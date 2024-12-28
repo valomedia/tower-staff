@@ -6,7 +6,6 @@
 //  Copyright © 2024 valo.media GmbH. All rights reserved.
 //
 
-import './DeviceSelectionDropdown.scss';
 import { Dropdown } from '@fluentui/react';
 
 export default function DeviceSelectionDropdown(props: {

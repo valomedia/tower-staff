@@ -6,7 +6,6 @@
 //  Copyright © 2024 valo.media GmbH. All rights reserved.
 //
 
-import './SpeakerSelectionDropdown.scss';
 import useSpeakers from '../Hooks/useSpeakers';
 import DeviceSelectionDropdown from './DeviceSelectionDropdown';
 

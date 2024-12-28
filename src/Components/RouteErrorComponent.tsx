@@ -6,7 +6,6 @@
 //  Copyright © 2024 valo.media GmbH. All rights reserved.
 //
 
-import './RouteErrorComponent.scss';
 import { ErrorResponse, isRouteErrorResponse } from "react-router-dom";
 
 /**
