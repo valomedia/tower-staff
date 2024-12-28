@@ -41,7 +41,7 @@ code {
 }
 
 header, footer, header:after, footer:before {
-  background-color: colors.$primary;
+  background-color: colors.$themePrimary;
 }
 
 header, footer {
@@ -126,8 +126,8 @@ button.inactive {
   color: white;
 }
 
-.accept-button {
-  background-color: colors.$primary;
+#accept-button {
+  background-color: colors.$themePrimary;
   color: white;
 }
 
@@ -147,7 +147,7 @@ aside {
   position: fixed;
   width: 30vw;
   height: calc(100vh - 53.33px);
-  border-color: colors.$primary;
+  border-color: colors.$themePrimary;
   border-style: solid;
   background: white;
 }
@@ -195,7 +195,7 @@ aside#right-aside.closed {
   height: 100px;
   border: 12px solid #f3f3f3;
   border-radius: 50%;
-  border-top: 12px solid colors.$primary;
+  border-top: 12px solid colors.$themePrimary;
   animation: spin 2s linear infinite;
 }
 
