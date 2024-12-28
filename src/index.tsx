@@ -12,6 +12,11 @@ import App from './Routes/App';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ErrorPage from './error-page';
+import { initializeIcons, registerIcons } from '@fluentui/react';
+import { DEFAULT_COMPONENT_ICONS } from '@azure/communication-react';
+
+initializeIcons();
+registerIcons({icons: DEFAULT_COMPONENT_ICONS});
 
 const router = createBrowserRouter([
     {
