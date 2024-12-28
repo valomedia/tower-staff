@@ -92,6 +92,21 @@ footer:before {
   transform: translate(-28.87%) skew(-30deg);
 }
 
+footer > button {
+  margin: 0 6.666px;
+  width: 40px;
+  height: 40px;
+}
+
+footer > button:first-child {
+  margin-left: 0;
+}
+
+footer > button:last-child {
+  margin-right: 0;
+}
+
+
 button {
   background-color: white;
   border: 0;
