@@ -66,12 +66,9 @@
   }
 
   #no-video-indicator > svg,
+  #hold-indicator > svg,
   #loading-indicator > div {
     top: 50vh;
-  }
-
-  #hold-indicator > svg {
-    top: 12.5vh;
   }
 
   video.inactive {
