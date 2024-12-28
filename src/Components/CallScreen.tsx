@@ -325,7 +325,6 @@ const CallScreen = () => {
     const startCall = async (
         {assistanceRequest}: BeginAssistanceResponse
     ): Promise<{call: Call, assistanceRequest: AssistanceRequest}> => {
-        await (await callClient.getDeviceManager()).askDevicePermission({audio: true, video: false});
         const call = callAgent!.join({groupId: crypto.randomUUID()});
 
         setCall(call);

@@ -40,6 +40,9 @@ const App = () => {
         () => {
             if (userToken && !callClient) {
                 const callClient = createStatefulCallClient({userId: userToken.user});
+                callClient.getDeviceManager().then(deviceManager => {
+                    deviceManager.askDevicePermission({audio: true, video: false})
+                });
                 setCallClient(callClient);
                 callClient.createCallAgent(new AzureCommunicationTokenCredential(userToken.token)).then(setCallAgent);
             }
