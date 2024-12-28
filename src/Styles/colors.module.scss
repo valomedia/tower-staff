@@ -7,3 +7,23 @@
 //
 
 $themePrimary: #4eaca7;
+$themeLighterAlt: #f6fcfb;
+$themeLighter: #dcf2f0;
+$themeLight: #c0e6e4;
+$themeTertiary: #89cdc9;
+$themeSecondary: #5db5b1;
+$themeDarkAlt: #459a96;
+$themeDark: #3a827e;
+$themeDarker: #2b605d;
+
+:export {
+  themePrimary: $themePrimary;
+  themeLighterAlt: $themeLighterAlt;
+  themeLighter: $themeLighter;
+  themeLight: $themeLight;
+  themeTertiary: $themeTertiary;
+  themeSecondary: $themeSecondary;
+  themeDarkAlt: $themeDarkAlt;
+  themeDark: $themeDark;
+  themeDarker: $themeDarker;
+}
