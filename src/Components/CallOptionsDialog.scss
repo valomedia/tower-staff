@@ -8,20 +8,23 @@
 
 #call-options-dialog {
 
-  .preference {
-    margin-bottom: 16px;
+  h1 {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
   }
 
-  form > * {
-    display: flex;
+  button {
+    padding-top: 0;
+    padding-right: 0;
+    margin-top: -1rem;
   }
 
-  label {
-    flex-grow: 1;
-    margin-right: 16px;
+  .ms-Dropdown-container {
+    margin-bottom: 1rem;
   }
 
   button {
     float: right;
   }
+
 }
