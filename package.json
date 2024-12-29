@@ -8,7 +8,6 @@
     "@azure/communication-react": "^1.21.0",
     "@babel/core": "^7.16.0",
     "@fluentui/react": "^8.122.2",
-    "@fluentui/react-icons": "^2.0.270",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-regular-svg-icons": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
