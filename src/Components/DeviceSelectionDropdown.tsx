@@ -6,7 +6,7 @@
 //  Copyright © 2024 valo.media GmbH. All rights reserved.
 //
 
-import { Dropdown } from '@fluentui/react';
+import './DeviceSelectionDropdown.scss';
 
 export default function DeviceSelectionDropdown(props: {
     placeholder: string,
@@ -16,12 +16,17 @@ export default function DeviceSelectionDropdown(props: {
     onSelectionChange: (deviceId?: string) => void
 }) {
     return (
-        <Dropdown
-            placeholder={props.placeholder}
-            label={props.label}
-            options={props.devices.map(device => ({key: device.id, text: device.name}))}
-            selectedKey={props.selectedDevice?.id}
-            onChange={(_, option) => props.onSelectionChange?.(option?.key as string|undefined)}
-        />
+        <div className='device-selection-dropdown'>
+            <label>
+                {props.label}
+                <select onChange={event => props.onSelectionChange?.(event.target.value)}>
+                    {props.devices.map(device =>
+                        <option value={device.id} key={device.id} selected={props.selectedDevice?.id === device.id}>
+                            {device.name}
+                        </option>
+                    )}
+                </select>
+            </label>
+        </div>
     )
 }
