@@ -19,12 +19,11 @@ export default function DeviceSelectionDropdown(props: {
         <div className='device-selection-dropdown'>
             <label>
                 {props.label}
-                <select onChange={event => props.onSelectionChange?.(event.target.value)}>
-                    {props.devices.map(device =>
-                        <option value={device.id} key={device.id} selected={props.selectedDevice?.id === device.id}>
-                            {device.name}
-                        </option>
-                    )}
+                <select
+                    value={props.selectedDevice?.id}
+                    onChange={event => props.onSelectionChange?.(event.target.value)}
+                >
+                    {props.devices.map(device => <option value={device.id} key={device.id}>{device.name}</option>)}
                 </select>
             </label>
         </div>
