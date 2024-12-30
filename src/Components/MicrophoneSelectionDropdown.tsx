@@ -7,7 +7,7 @@
 //
 
 import useMicrophones from '../Hooks/useMicrophones';
-import DeviceSelectionDropdown from './DeviceSelectionDropdown';
+import Dropdown from './Dropdown';
 
 export default function MicrophoneSelectionDropdown() {
     const {
@@ -17,11 +17,10 @@ export default function MicrophoneSelectionDropdown() {
     } = useMicrophones();
 
     return (
-        <DeviceSelectionDropdown
-            placeholder={microphones.length === 0 ? 'Keine Mikrofone gefunden' : 'Mikrofon auswählen'}
+        <Dropdown
             label={'Mikrofon'}
-            devices={microphones}
-            selectedDevice={selectedMicrophone}
+            options={microphones}
+            selectedOption={selectedMicrophone}
             onSelectionChange={(selectedDeviceId) => {
                 const newlySelectedMicrophone = microphones.find(microphone => microphone.id === selectedDeviceId);
                 if (newlySelectedMicrophone) {

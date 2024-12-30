@@ -7,7 +7,7 @@
 //
 
 import useSpeakers from '../Hooks/useSpeakers';
-import DeviceSelectionDropdown from './DeviceSelectionDropdown';
+import Dropdown from './Dropdown';
 
 export default function SpeakerSelectionDropdown() {
     const {
@@ -17,11 +17,10 @@ export default function SpeakerSelectionDropdown() {
     } = useSpeakers();
 
     return (
-        <DeviceSelectionDropdown
-            placeholder={speakers.length === 0 ? 'Keine Lautsprecher gefunden': 'Lautsprecher auswählen'}
+        <Dropdown
             label={'Lautsprecher'}
-            devices={speakers}
-            selectedDevice={selectedSpeaker}
+            options={speakers}
+            selectedOption={selectedSpeaker}
             onSelectionChange={selectedDeviceId => {
                 const newlySelectedSpeaker = speakers.find(speaker => speaker.id === selectedDeviceId);
                 if (newlySelectedSpeaker) {
