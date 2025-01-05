@@ -523,7 +523,7 @@ const CallScreen = () => {
                 <main className={isVideoMaximized ? 'maximized' : ''}>
                     <div id='no-video-indicator'><FontAwesomeIcon icon={faVideoSlash}/></div>
                     <div id='hold-indicator' hidden={!isCallOnHold}><FontAwesomeIcon icon={faPause}/></div>
-                    <div id='loading-indicator' hidden={isVideoReceiving || !isVideoAvailable}>
+                    <div id='loading-indicator' hidden={isVideoReceiving || !isVideoAvailable || isCallOnHold}>
                         <div>
                             <div className='loading-spinner'/>
                         </div>
