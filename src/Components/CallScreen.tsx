@@ -405,7 +405,7 @@ const CallScreen = () => {
         call.remoteParticipants.forEach(subscribeToRemoteParticipant);
         call.on('remoteParticipantsUpdated', ({added, removed}) => {
             added.forEach(subscribeToRemoteParticipant);
-            if (removed.length) {endCall();}
+            if (removed.length) {hangUp();}
         });
     };
 
@@ -455,9 +455,6 @@ const CallScreen = () => {
         remoteVideoStream.on('isAvailableChanged', createViewIfAvailable);
         await createViewIfAvailable();
         setIsVideoAvailable(remoteVideoStream.isAvailable);
-    };
-
-    const endCall = () => {
     };
 
     const onCallStart = (call: Call) => {
