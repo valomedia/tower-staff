@@ -60,6 +60,8 @@ const DATA_CHANNEL_BANDWIDTH_KBPS = 32;
 
 const DATA_CHANNEL_FLUSH_DELAY_MS = 2000;
 
+const RESUME_CALL_DELAY_MS = 3000;
+
 /*
  * The in-call ui.
  */
@@ -92,6 +94,8 @@ const CallScreen = () => {
     const [messageSender, setMessageSender] = useState<DataChannelSender|undefined>();
 
     const [isCallOnHold, setIsCallOnHold] = useState(false);
+
+    const [isResumingCall, setIsResumingCall] = useState(false);
 
     const [isHangingUp, setIsHangingUp] = useState(false);
 
@@ -325,11 +329,19 @@ const CallScreen = () => {
      * Put the caller on the line.
      */
     const resumeCall = () => {
-        if (!call) { return; }
-        if (!isAudioInputMuted) { call.unmute(); }
-        if (!isAudioOutputMuted) { call.unmuteIncomingAudio(); }
-        setIsCallOnHold(false);
-        sendMessage({resumeEvent: {}})
+        sendMessage({resumeEvent: {}});
+        setIsResumingCall(true);
+
+        setTimeout(
+            () => {
+                if (!call) { return; }
+                if (!isAudioInputMuted) { call.unmute(); }
+                if (!isAudioOutputMuted) { call.unmuteIncomingAudio(); }
+                setIsCallOnHold(false);
+                setIsResumingCall(false);
+            },
+            RESUME_CALL_DELAY_MS
+        );
     };
 
     const startCall = async (
@@ -488,6 +500,7 @@ const CallScreen = () => {
         setCall(undefined);
         setMessageSender(undefined);
         setIsCallOnHold(false);
+        setIsResumingCall(false);
         setIsAudioInputMuted(false);
         setIsAudioOutputMuted(false);
         setIsCapturingPhoto(false);
@@ -524,8 +537,13 @@ const CallScreen = () => {
             <div id='call-screen' className='screen' hidden={!isOnCall}>
                 <main className={isVideoMaximized ? 'maximized' : ''}>
                     <div id='no-video-indicator'><FontAwesomeIcon icon={faVideoSlash}/></div>
-                    <div id='hold-indicator' hidden={!isCallOnHold}><FontAwesomeIcon icon={faPause}/></div>
-                    <div id='loading-indicator' hidden={isVideoReceiving || !isVideoAvailable || isCallOnHold}>
+                    <div id='hold-indicator' hidden={!isCallOnHold || isResumingCall}>
+                        <FontAwesomeIcon icon={faPause}/>
+                    </div>
+                    <div
+                        id='loading-indicator'
+                        hidden={(isVideoReceiving || !isVideoAvailable || isCallOnHold) && !isResumingCall}
+                    >
                         <div>
                             <div className='loading-spinner'/>
                         </div>
@@ -628,7 +646,7 @@ const CallScreen = () => {
                             id='resume-button'
                             className='active'
                             onClick={resumeCall}
-                            disabled={!isDataChannelAvailable || isHangingUp}>
+                            disabled={!isDataChannelAvailable || isHangingUp || isResumingCall}>
                             <FontAwesomeIcon icon={faPause}/>
                         </button>
                     ) : (
