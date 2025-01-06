@@ -10,7 +10,7 @@
 import Coordinate from '../Models/Coordinate';
 import * as MapsApi from '../Api/MapsApi';
 import Marker from '../Models/Marker';
-import Size from '../Models/Size';
+import ImageSize from '../Models/ImageSize';
 
 /*
  * The map showing the user's location.
@@ -25,7 +25,7 @@ const MapComponent = ({ coordinate }: { coordinate: Coordinate }) => {
                         src={
                             MapsApi
                                 .staticMap({
-                                    size: new Size({width: 400, height: 600}),
+                                    size: new ImageSize({width: 400, height: 600}),
                                     markers: [new Marker({place: coordinate})]
                                 })
                                 .toString()

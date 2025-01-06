@@ -7,7 +7,7 @@
 //
 
 import Coordinate from '../Models/Coordinate';
-import Size from '../Models/Size';
+import ImageSize from '../Models/ImageSize';
 import Marker from '../Models/Marker';
 
 /*
@@ -28,7 +28,7 @@ export function staticMap(
     }: {
         center?: Coordinate | string,
         zoom?: number,
-        size: Size,
+        size: ImageSize,
         scale?: 1 | 2,
         format?: "png8" | "png32" | "gif" | "jpg" | "jpg-baseline",
         maptype?: "roadmap" | "satellite" | "hybrid" | "terrain",
