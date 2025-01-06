@@ -1,5 +1,5 @@
 //
-//  CaputrePhotoResponse.ts
+//  CapturePhotoResponse.ts
 //  tower-staff
 //
 //  Created by Jean-Pierre Höhmann on 2024-12-21.
