@@ -6,7 +6,7 @@
 //  Copyright © 2024 valo.media GmbH. All rights reserved.
 //
 
-export default function dateFieldReviver(key: string, value: any) {
+export default function dateFieldReviver(_: string, value: any) {
     return (typeof value === "string" && value.match(/\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d\d\dZ/))
         ? new Date(value) : value;
 }

@@ -25,6 +25,8 @@ export default function SpeakerSelectionDropdown() {
                 const newlySelectedSpeaker = speakers.find(speaker => speaker.id === selectedDeviceId);
                 if (newlySelectedSpeaker) {
                     console.log(`Switching output to: ${newlySelectedSpeaker.name}`);
+
+                    // noinspection JSIgnoredPromiseFromCall
                     setSelectedSpeaker(newlySelectedSpeaker);
                 }
             }}

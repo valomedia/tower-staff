@@ -175,7 +175,10 @@ const CallScreen = () => {
      */
     const muteInput = () => {
         if (!call || isAudioInputMuted) { return; }
+
+        // noinspection JSIgnoredPromiseFromCall
         call.mute();
+
         setIsAudioInputMuted(true);
     };
 
@@ -184,7 +187,10 @@ const CallScreen = () => {
      */
     const unmuteInput = () => {
         if (!call || !isAudioInputMuted) { return; }
+
+        // noinspection JSIgnoredPromiseFromCall
         call.unmute();
+
         setIsAudioInputMuted(false);
     };
 
@@ -193,7 +199,10 @@ const CallScreen = () => {
      */
     const muteOutput = () => {
         if (!call || isAudioOutputMuted) { return; }
+
+        // noinspection JSIgnoredPromiseFromCall
         call.muteIncomingAudio();
+
         setIsAudioOutputMuted(true);
     };
 
@@ -202,7 +211,10 @@ const CallScreen = () => {
      */
     const unmuteOutput = () => {
         if (!call || !isAudioOutputMuted) { return; }
+
+        // noinspection JSIgnoredPromiseFromCall
         call.unmuteIncomingAudio();
+
         setIsAudioOutputMuted(false);
     };
 
@@ -302,6 +314,8 @@ const CallScreen = () => {
     const hangUp = () => {
         setIsHangingUp(true);
         call?.hangUp({forEveryone: true});
+
+        // noinspection JSIgnoredPromiseFromCall
         onCallEnd();
     };
 
@@ -310,8 +324,17 @@ const CallScreen = () => {
      */
     const holdCall = () => {
         if (!call) { return; }
-        if (!isAudioInputMuted) { call.mute(); }
-        if (!isAudioOutputMuted) { call.muteIncomingAudio(); }
+
+        if (!isAudioInputMuted) {
+            // noinspection JSIgnoredPromiseFromCall
+            call.mute();
+        }
+
+        if (!isAudioOutputMuted) {
+            // noinspection JSIgnoredPromiseFromCall
+            call.muteIncomingAudio();
+        }
+
         setIsCallOnHold(true);
         sendMessage({holdEvent: {}})
     };
@@ -326,8 +349,17 @@ const CallScreen = () => {
         setTimeout(
             () => {
                 if (!call) { return; }
-                if (!isAudioInputMuted) { call.unmute(); }
-                if (!isAudioOutputMuted) { call.unmuteIncomingAudio(); }
+
+                if (!isAudioInputMuted) {
+                    // noinspection JSIgnoredPromiseFromCall
+                    call.unmute();
+                }
+
+                if (!isAudioOutputMuted) {
+                    // noinspection JSIgnoredPromiseFromCall
+                    call.unmuteIncomingAudio();
+                }
+
                 setIsCallOnHold(false);
                 setIsResumingCall(false);
             },
@@ -515,6 +547,8 @@ const CallScreen = () => {
                     .then(subscribeToCall)
                     .catch(error => {
                         console.error(error);
+
+                        // noinspection JSIgnoredPromiseFromCall
                         onCallEnd();
                     });
             }

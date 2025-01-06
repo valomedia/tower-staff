@@ -25,6 +25,8 @@ export default function MicrophoneSelectionDropdown() {
                 const newlySelectedMicrophone = microphones.find(microphone => microphone.id === selectedDeviceId);
                 if (newlySelectedMicrophone) {
                     console.log(`Switching input to: ${newlySelectedMicrophone.name}`);
+
+                    // noinspection JSIgnoredPromiseFromCall
                     setSelectedMicrophone(newlySelectedMicrophone);
                 }
             }}
