@@ -41,7 +41,6 @@ import AssistanceRequest from '../Models/AssistanceRequest';
 import { Message, messageReviver } from '../Models/Message';
 import ErrorInfo, { isErrorInfo } from '../Models/ErrorInfo';
 import PhotoDataChunk from '../Models/PhotoDataChunk';
-import Orientation from '../Models/Orientation';
 import usePhoto from '../Hooks/usePhoto';
 import { CallProvider, useCallAgent } from '@azure/communication-react';
 
@@ -284,7 +283,7 @@ const CallScreen = () => {
         }
     };
 
-    const handleOrientationEvent = (orientationEvent: Orientation) => {
+    const handleOrientationEvent = (orientationEvent: {rotationAngle: 0|90|180|270}) => {
         const videoContainer = videoContainerRef.current;
         switch (orientationEvent.rotationAngle) {
             case 0:

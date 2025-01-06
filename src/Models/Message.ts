@@ -8,7 +8,6 @@
 
 import PhotoDataChunk from './PhotoDataChunk';
 import Location from './Location';
-import Orientation from './Orientation';
 import ErrorInfo, { isErrorInfo } from './ErrorInfo';
 import { EmptyObject } from '../../types/util';
 
@@ -26,7 +25,7 @@ export type DataMessage
     | {holdEvent: EmptyObject}
     | {resumeEvent: EmptyObject}
     | {photoDataEvent: PhotoDataChunk}
-    | {orientationEvent: Orientation}
+    | {orientationEvent: {rotationAngle: 0|90|180|270}}
     | {locationEvent: Location}
     | {flushEvent: EmptyObject}
 
