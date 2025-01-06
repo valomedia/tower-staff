@@ -6,12 +6,9 @@
 //  Copyright © 2024 valo.media GmbH. All rights reserved.
 //
 
-import UserToken from './UserToken';
 import AssistanceRequest from './AssistanceRequest';
 
 export default interface BeginAssistanceResponse {
-
-    userToken: UserToken;
 
     assistanceRequest: AssistanceRequest;
 
