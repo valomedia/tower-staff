@@ -25,33 +25,25 @@ import {
     faVolumeHigh,
     faVolumeXmark
 } from '@fortawesome/free-solid-svg-icons';
-import CallOptionsDialog from './CallOptionsDialog';
 import Coordinate from '../Models/Coordinate';
 import MapComponent from './MapComponent';
 import Location from '../Models/Location';
-import PhotoResource from '../Models/PhotoResource';
 import { AppContext } from '../Routes/App';
 import {
     Call,
-    CallAgent,
-    CallClient,
     DataChannelSender,
-    DeviceManager,
     Features,
     RemoteParticipant,
     RemoteVideoStream,
     VideoStreamRenderer
 } from '@azure/communication-calling';
-import UserToken from '../Models/UserToken';
 import AssistanceRequest from '../Models/AssistanceRequest';
-import { AzureCommunicationTokenCredential } from '@azure/communication-common';
-import { DataMessage, Message, messageReviver } from '../Models/Message';
-import { ErrorMessage } from '../Models/Message';
+import { Message, messageReviver } from '../Models/Message';
 import ErrorInfo, { isErrorInfo } from '../Models/ErrorInfo';
 import PhotoDataChunk from '../Models/PhotoDataChunk';
 import Orientation from '../Models/Orientation';
 import usePhoto from '../Hooks/usePhoto';
-import { CallProvider, useCallAgent, useCallClient } from '@azure/communication-react';
+import { CallProvider, useCallAgent } from '@azure/communication-react';
 import BeginAssistanceResponse from '../Models/BeginAssistanceResponse';
 import CapturePhotoResponse from '../Models/CapturePhotoResponse';
 
