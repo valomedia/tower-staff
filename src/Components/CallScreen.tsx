@@ -44,8 +44,6 @@ import PhotoDataChunk from '../Models/PhotoDataChunk';
 import Orientation from '../Models/Orientation';
 import usePhoto from '../Hooks/usePhoto';
 import { CallProvider, useCallAgent } from '@azure/communication-react';
-import BeginAssistanceResponse from '../Models/BeginAssistanceResponse';
-import CapturePhotoResponse from '../Models/CapturePhotoResponse';
 
 const DATA_CHANNEL_ID = 1000;
 
@@ -251,7 +249,7 @@ const CallScreen = () => {
         sendMessage({locationRequest: {}});
     };
 
-    const handleCapturePhotoResponse = (_: CapturePhotoResponse|ErrorInfo) => {
+    const handleCapturePhotoResponse = (_: {uuid: string}|ErrorInfo) => {
         setIsCapturingPhoto(false);
     };
 
@@ -366,7 +364,7 @@ const CallScreen = () => {
     };
 
     const startCall = async (
-        {assistanceRequest}: BeginAssistanceResponse
+        {assistanceRequest}: {assistanceRequest: AssistanceRequest}
     ): Promise<{call: Call, assistanceRequest: AssistanceRequest}> => {
         const call = callAgent!.join({groupId: crypto.randomUUID()});
 

@@ -6,10 +6,9 @@
 //
 //
 
-import OfferAssistanceResponse from '../Models/OfferAssistanceResponse';
-import BeginAssistanceResponse from '../Models/BeginAssistanceResponse';
 import dateFieldReviver from '../Lib/dateFieldReviver';
-import AssistanceTokenResponse from '../Models/AssistanceTokenResponse';
+import UserToken from '../Models/UserToken';
+import AssistanceRequest from '../Models/AssistanceRequest';
 
 /*
  * Make a request to the index endpoint.
@@ -18,15 +17,15 @@ export async function index() {
     return JSON.parse(await request('GET', '/'));
 }
 
-export async function assistanceToken(): Promise<AssistanceTokenResponse> {
+export async function assistanceToken(): Promise<{userToken: UserToken}> {
     return JSON.parse(await request('GET', '/assistanceToken'), dateFieldReviver);
 }
 
-export async function offerAssistance(): Promise<OfferAssistanceResponse> {
+export async function offerAssistance(): Promise<{assistanceRequest?: AssistanceRequest}> {
     return JSON.parse(await request('GET', '/offerAssistance'), dateFieldReviver);
 }
 
-export async function beginAssistance(): Promise<BeginAssistanceResponse> {
+export async function beginAssistance(): Promise<{assistanceRequest: AssistanceRequest}> {
     return JSON.parse(await request('POST', '/beginAssistance'), dateFieldReviver);
 }
 

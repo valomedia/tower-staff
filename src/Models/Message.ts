@@ -11,13 +11,12 @@ import Location from './Location';
 import Orientation from './Orientation';
 import ErrorInfo, { isErrorInfo } from './ErrorInfo';
 import { EmptyObject } from '../../types/util';
-import CapturePhotoResponse from './CapturePhotoResponse';
 
 export type Message = DataMessage|ErrorMessage
 
 export type DataMessage
     = {capturePhotoRequest: EmptyObject}
-    | {capturePhotoResponse: CapturePhotoResponse}
+    | {capturePhotoResponse: {uuid: string}}
     | {switchCameraRequest: EmptyObject}
     | {switchCameraResponse: EmptyObject}
     | {toggleTorchRequest: EmptyObject}
