@@ -311,11 +311,9 @@ const CallScreen = () => {
     /*
      * End the call.
      */
-    const hangUp = () => {
+    const endCall = () => {
         setIsHangingUp(true);
         call?.hangUp({forEveryone: true});
-
-        // noinspection JSIgnoredPromiseFromCall
         onCallEnd();
     };
 
@@ -396,7 +394,7 @@ const CallScreen = () => {
                     console.log('Call started');
                     break;
                 case 'Disconnected':
-                    hangUp();
+                    onCallEnd();
                     console.log(`Call ended, call end reason=${JSON.stringify(call.callEndReason)}`);
                     break;
             }
@@ -405,7 +403,9 @@ const CallScreen = () => {
         call.remoteParticipants.forEach(subscribeToRemoteParticipant);
         call.on('remoteParticipantsUpdated', ({added, removed}) => {
             added.forEach(subscribeToRemoteParticipant);
-            if (removed.length) {hangUp();}
+
+            // End the call, if the user unexpectedly drops.
+            if (removed.length) {endCall();}
         });
     };
 
@@ -510,7 +510,7 @@ const CallScreen = () => {
     /*
      * Reset everything when the call ends.
      */
-    const onCallEnd = async () => {
+    const onCallEnd = () => {
         setIsOnCall(false);
         setIsCallConnected(false);
         setIsDataChannelAvailable(false);
@@ -544,9 +544,7 @@ const CallScreen = () => {
                     .then(subscribeToCall)
                     .catch(error => {
                         console.error(error);
-
-                        // noinspection JSIgnoredPromiseFromCall
-                        onCallEnd();
+                        endCall();
                     });
             }
         },
@@ -687,7 +685,7 @@ const CallScreen = () => {
                     >
                         <FontAwesomeIcon icon={faGear}/>
                     </button>
-                    <button id='hangup-button' disabled={isHangingUp} onClick={hangUp}>
+                    <button id='hangup-button' disabled={isHangingUp} onClick={endCall}>
                         {isHangingUp ? (
                             <div className='spinner-container'>
                                 <div className='loading-spinner'/>
