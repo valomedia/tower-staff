@@ -12,6 +12,4 @@ export default interface OfferAssistanceResponse {
 
     assistanceRequest?: AssistanceRequest
 
-    message?: string
-
 }
