@@ -314,8 +314,9 @@ const CallScreen = () => {
      * Put the caller on hold.
      */
     const holdCall = () => {
-        muteInput();
-        muteOutput();
+        if (!call) { return; }
+        if (!isAudioInputMuted) { call.mute(); }
+        if (!isAudioOutputMuted) { call.muteIncomingAudio(); }
         setIsCallOnHold(true);
         sendMessage({holdEvent: {}})
     };
@@ -324,8 +325,9 @@ const CallScreen = () => {
      * Put the caller on the line.
      */
     const resumeCall = () => {
-        unmuteInput();
-        unmuteOutput();
+        if (!call) { return; }
+        if (!isAudioInputMuted) { call.unmute(); }
+        if (!isAudioOutputMuted) { call.unmuteIncomingAudio(); }
         setIsCallOnHold(false);
         sendMessage({resumeEvent: {}})
     };
@@ -592,7 +594,7 @@ const CallScreen = () => {
                             id='unmute-input-button'
                             className='inactive'
                             onClick={unmuteInput}
-                            disabled={isCallOnHold || !isCallConnected || isHangingUp}>
+                            disabled={!isCallConnected || isCallOnHold || isHangingUp}>
                             <FontAwesomeIcon icon={faMicrophoneSlash}/>
                         </button>
                     ) : (
@@ -600,7 +602,7 @@ const CallScreen = () => {
                             id='mute-input-button'
                             className='active'
                             onClick={muteInput}
-                            disabled={!isCallConnected || isHangingUp}>
+                            disabled={!isCallConnected || isCallOnHold || isHangingUp}>
                             <FontAwesomeIcon icon={faMicrophone}/>
                         </button>
                     )}
@@ -609,7 +611,7 @@ const CallScreen = () => {
                             id='unmute-output-button'
                             className='inactive'
                             onClick={unmuteOutput}
-                            disabled={isCallOnHold || !isCallConnected || isHangingUp}>
+                            disabled={!isCallConnected || isCallOnHold || isHangingUp}>
                             <FontAwesomeIcon icon={faVolumeXmark}/>
                         </button>
                     ) : (
@@ -617,7 +619,7 @@ const CallScreen = () => {
                             id='mute-output-button'
                             className='active'
                             onClick={muteOutput}
-                            disabled={!isCallConnected || isHangingUp}>
+                            disabled={!isCallConnected || isCallOnHold || isHangingUp}>
                             <FontAwesomeIcon icon={faVolumeHigh}/>
                         </button>
                     )}
