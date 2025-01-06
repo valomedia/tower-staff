@@ -30,6 +30,4 @@ export default class Location {
 
     readonly courseAccuracy?: number;
 
-    readonly timestamp?: number
-
 }
