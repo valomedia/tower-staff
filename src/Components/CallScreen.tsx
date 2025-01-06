@@ -53,6 +53,7 @@ import Orientation from '../Models/Orientation';
 import usePhoto from '../Hooks/usePhoto';
 import { CallProvider, useCallAgent, useCallClient } from '@azure/communication-react';
 import BeginAssistanceResponse from '../Models/BeginAssistanceResponse';
+import CapturePhotoResponse from '../Models/CapturePhotoResponse';
 
 const DATA_CHANNEL_ID = 1000;
 
@@ -248,7 +249,7 @@ const CallScreen = () => {
         sendMessage({locationRequest: {}});
     };
 
-    const handleCapturePhotoResponse = (capturePhotoResponse: {}|ErrorInfo) => {
+    const handleCapturePhotoResponse = (_: CapturePhotoResponse|ErrorInfo) => {
         setIsCapturingPhoto(false);
     };
 
