@@ -179,7 +179,7 @@ const CallScreen = () => {
      * Mute the microphone.
      */
     const muteInput = () => {
-        if (!call) { return; }
+        if (!call || isAudioInputMuted) { return; }
         call.mute();
         setIsAudioInputMuted(true);
     };
@@ -188,7 +188,7 @@ const CallScreen = () => {
      * Unmute the microphone.
      */
     const unmuteInput = () => {
-        if (!call) { return; }
+        if (!call || !isAudioInputMuted) { return; }
         call.unmute();
         setIsAudioInputMuted(false);
     };
@@ -197,7 +197,7 @@ const CallScreen = () => {
      * Mute the output.
      */
     const muteOutput = () => {
-        if (!call) { return; }
+        if (!call || isAudioOutputMuted) { return; }
         call.muteIncomingAudio();
         setIsAudioOutputMuted(true);
     };
@@ -206,7 +206,7 @@ const CallScreen = () => {
      * Unmute the output.
      */
     const unmuteOutput = () => {
-        if (!call) { return; }
+        if (!call || !isAudioOutputMuted) { return; }
         call.unmuteIncomingAudio();
         setIsAudioOutputMuted(false);
     };
