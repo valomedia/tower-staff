@@ -86,8 +86,6 @@ const CallScreen = () => {
 
     const [isVideoAvailable, setIsVideoAvailable] = useState(false);
 
-    const callClient = useCallClient();
-
     const callAgent = useCallAgent();
 
     const [call, setCall] = useState<Call|undefined>();
