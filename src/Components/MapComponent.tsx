@@ -8,15 +8,16 @@
 
 
 import Coordinate from '../Models/Coordinate';
-import MapsApi from '../Api/MapsApi';
-import './MapComponent.scss';
+import * as MapsApi from '../Api/MapsApi';
 import Marker from '../Models/Marker';
-import Size from '../Models/Size';
+import ImageSize from '../Models/ImageSize';
 
-/*
+/**
  * The map showing the user's location.
+ *
+ * @param coordinate The coordinate to show on the map.
  */
-const MapComponent = ({ coordinate }: { coordinate: Coordinate }) => {
+export default function MapComponent({ coordinate }: { coordinate: Coordinate }) {
 
     return (
         <>
@@ -26,7 +27,7 @@ const MapComponent = ({ coordinate }: { coordinate: Coordinate }) => {
                         src={
                             MapsApi
                                 .staticMap({
-                                    size: new Size({width: 400, height: 600}),
+                                    size: new ImageSize({width: 400, height: 600}),
                                     markers: [new Marker({place: coordinate})]
                                 })
                                 .toString()
@@ -37,5 +38,3 @@ const MapComponent = ({ coordinate }: { coordinate: Coordinate }) => {
     );
 
 }
-
-export default MapComponent;

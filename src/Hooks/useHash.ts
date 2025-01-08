@@ -11,7 +11,7 @@ import { useState, useCallback, useEffect } from 'react';
 /*
  * A hook for the url fragment.
  */
-const useHash = (): [string, (newValue: string) => void] => {
+export default function useHash (): [string, (newValue: string) => void] {
     const [hash, setHash] = useState(() => window.location.hash);
     const onHashChange = useCallback(() => { setHash(window.location.hash) }, []);
 
@@ -30,5 +30,3 @@ const useHash = (): [string, (newValue: string) => void] => {
         )
     ];
 }
-
-export default useHash;

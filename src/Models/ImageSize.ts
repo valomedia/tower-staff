@@ -6,33 +6,26 @@
 //  Copyright © 2024 valo.media GmbH. All rights reserved.
 //
 
+import { Dead } from './UtilityTypes';
+
 /**
  * A width and height.
  */
 export default class ImageSize {
 
-    constructor(
-        {
-            width,
-            height
-        }: {
-            width: number,
-            height: number
-        }
-    ) {
-        this.width = width
-        this.height = height
+    constructor(props: Dead<ImageSize>) {
+        Object.assign(this, props);
     }
 
     /**
      * The width in pixels.
      */
-    readonly width: number
+    readonly width!: number;
 
     /**
      * The height in pixels.
      */
-    readonly height: number
+    readonly height!: number;
 
     toString() {
         return `${this.width}x${this.height}`;

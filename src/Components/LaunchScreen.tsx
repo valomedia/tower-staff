@@ -11,19 +11,28 @@ import logoAnimated from '../Assets/logo-animated.svg';
 import videoChatCalling from '../Assets/video-chat-calling.m4a';
 import './LaunchScreen.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faPhone } from '@fortawesome/free-solid-svg-icons';
-import TowerApi from '../Api/TowerApi';
+import { faBell, faGear, faPhone } from '@fortawesome/free-solid-svg-icons';
+import * as TowerApi from '../Api/TowerApi';
 import { AppContext } from '../Routes/App';
+
+const ASSISTANCE_SESSION_MAXIMUM_DURATION_MS = 7_200_000;
 
 /*
  * The screen presented to the user upon opening the app.
  */
-const LaunchScreen = () => {
+export default function LaunchScreen() {
 
-    /*
-     * Whether a call is ongoing.
+    /**
+     * State shared throughout the app.
      */
-    const {isOnCall, setIsOnCall} = useContext(AppContext);
+    const {
+        isOnCall,
+        setIsOnCall,
+        isPresentingCallOptionsDialog,
+        setIsPresentingCallOptionsDialog,
+        userToken,
+        setUserToken
+    } = useContext(AppContext);
 
     /*
      * Whether the application is still trying to reach the backend.
@@ -82,21 +91,25 @@ const LaunchScreen = () => {
             () => {
                 if (!isOnCall) {
                     if (isConnecting) {
-                        TowerApi
-                            .index()
-                            .then(() => setHasBackend(true))
+                        TowerApi.assistanceToken()
+                            .then(response => {
+                                setUserToken(response.userToken);
+                                setHasBackend(true);
+                            })
                             .finally(() => setIsConnecting(false))
                     }
                     if (hasBackend) {
                         TowerApi
-                            .poll()
-                            .then(meetingResponse => {
-                                setCustomerName(meetingResponse.Meeting.ExternalMeetingId || undefined);
-                                setIsRinging(true);
+                            .offerAssistance()
+                            .then(offerAssistanceResponse => {
+                                if (offerAssistanceResponse.assistanceRequest) {
+                                    setCustomerName(offerAssistanceResponse.assistanceRequest.user.username);
+                                    setIsRinging(true);
+                                } else {
+                                    setIsRinging(false);
+                                }
                             })
-                            .catch(() => {
-                                setIsRinging(false);
-                            })
+                            .catch(() => setIsRinging(false));
                     }
                 }
             },
@@ -121,38 +134,58 @@ const LaunchScreen = () => {
         },
         [isRinging, isOnCall, isRingtoneEnabled]);
 
+    // Refresh if a call comes in and the token is about to expire.
+    useEffect(
+        () => {
+            // Refresh if our session is about to expire.
+            if (isRinging
+                && (userToken?.expiresOn.getTime() || 0) < Date.now() + ASSISTANCE_SESSION_MAXIMUM_DURATION_MS
+            ) {window.location.reload();}
+        },
+        [isRinging, userToken?.expiresOn]
+    );
+
     return (
-        <section id='launch-screen' className={isOnCall ? 'inactive' : 'active'}>
-            <img src={logoAnimated} className='launch-screen-logo' alt='logo'/>
-            <h1>Tower</h1>
-            <p>
-                {
-                    isOnCall ? 'Verbindung hergestellt'
-                        : isRinging ? `Neue Anfrage von ${customerName || "Unbekannter Anrufer"}`
-                            : hasBackend ? 'Warten auf Anfragen…'
-                                : isConnecting ? 'Verbindung wird hergestellt…'
-                                    : 'Verbindung fehlgeschlagen!'
-                }
-            </p>
-            <button className='accept-button' disabled={!isRinging} onClick={handleAccept}>
-                <FontAwesomeIcon icon={faPhone}/>
-                &nbsp;
-                Anfrage annehmen
-            </button>
-            <audio src={videoChatCalling} ref={audioRef} loop></audio>
+        <div id='launch-screen' className='screen' hidden={isOnCall}>
+            <main>
+                <img src={logoAnimated} className='launch-screen-logo' alt='logo'/>
+                <h1>Tower</h1>
+                <p>
+                    {
+                        isOnCall ? 'Verbindung hergestellt'
+                            : isRinging ? `Neue Anfrage von ${customerName || "Unbekannter Anrufer"}`
+                                : hasBackend ? 'Warten auf Anfragen…'
+                                    : isConnecting ? 'Verbindung wird hergestellt…'
+                                        : 'Verbindung fehlgeschlagen!'
+                    }
+                </p>
+                <button id='accept-button' disabled={!isRinging} onClick={handleAccept}>
+                    <FontAwesomeIcon icon={faPhone}/>
+                    &nbsp;
+                    Anfrage annehmen
+                </button>
+                <audio src={videoChatCalling} ref={audioRef} loop></audio>
+            </main>
             <footer>
-                    <button
-                            id='ringtone-toggle-button'
-                            className={isRingtoneEnabled ? 'active' : 'inactive'}
-                            onClick={handleRingtoneToggle}>
-                        <FontAwesomeIcon icon={faBell}/>
-                        &nbsp;
-                        Klingelton ist <strong>{isRingtoneEnabled ? 'an' : 'aus'}</strong>
-                    </button>
+                <button
+                    id='call-options-button'
+                    disabled={!hasBackend}
+                    className={isPresentingCallOptionsDialog ? 'active' : 'inactive'}
+                    onClick={() => setIsPresentingCallOptionsDialog(!isPresentingCallOptionsDialog)}
+                >
+                    <FontAwesomeIcon icon={faGear} />
+                </button>
+                <button
+                    id='ringtone-toggle-button'
+                    className={isRingtoneEnabled ? 'active' : 'inactive'}
+                    onClick={handleRingtoneToggle}
+                >
+                    <FontAwesomeIcon icon={faBell}/>
+                    &nbsp;
+                    Klingelton ist <strong>{isRingtoneEnabled ? 'an' : 'aus'}</strong>
+                </button>
             </footer>
-        </section>
+        </div>
     );
 
 }
-
-export default LaunchScreen;

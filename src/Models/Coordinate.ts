@@ -9,35 +9,29 @@
 /*
  * A latitude and longitude
  */
-class Coordinate {
+import { Dead } from './UtilityTypes';
 
-    constructor(
-        {
-            latitude,
-            longitude
-        }: {
-            latitude: number,
-            longitude: number
-        }
-    ) {
-        this.latitude = latitude
-        this.longitude = longitude
+/**
+ * A latitude and longitude.
+ */
+export default class Coordinate {
+
+    constructor(props: Dead<Coordinate>) {
+        Object.assign(this, props);
     }
 
     /*
      * The latitude in degrees.
      */
-    readonly latitude: number
+    readonly latitude!: number;
 
     /*
      * The longitude in degrees.
      */
-    readonly longitude: number
+    readonly longitude!: number;
 
     toString() {
         return `${this.latitude},${this.longitude}`;
     }
 
 }
-
-export default Coordinate

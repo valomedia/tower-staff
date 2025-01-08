@@ -5,20 +5,139 @@
  *  Created by Jean-Pierre Höhmann on 2023-03-06.
  */
 
-header > img {
-  height: 100%;
-}
+@use "../Styles/colors.module";
 
-section {
-  width: 100vw;
-  height: 100vh;
-  position: fixed;
-}
+#app {
 
-section:nth-child(1) {
-  z-index: -1;
-}
+  header > img {
+    height: 100%;
+  }
 
-section:nth-child(2) {
-  z-index: -2;
+  .screen {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+  }
+
+  #launch-screen {
+    z-index: -1;
+  }
+
+  #call-screen {
+    z-index: -2;
+  }
+
+  header, footer, header:after, footer:before {
+    background-color: colors.$themePrimary;
+  }
+
+  header, footer {
+    position: fixed;
+    background-size: cover;
+    height: 40px;
+    padding: 6.667px;
+    min-width: 30vw;
+  }
+
+  header *, footer * {
+    position: relative;
+  }
+
+  /* Thanks to https://mat.dev */
+  header:after, footer:before {
+    display: block;
+    content: '';
+    height: 100%;
+    aspect-ratio: 1;
+    position: absolute;
+  }
+
+  header {
+    z-index: 40;
+  }
+
+  header:after {
+    top: 0;
+    right: 0;
+
+    /* tan(1/6*pi)/2 */
+    transform: translate(28.87%) skew(-30deg);
+  }
+
+  footer {
+    bottom: 0;
+    right: 0;
+    z-index: 20;
+    text-align: right;
+    position: absolute;
+  }
+
+  footer:before {
+    top: 0;
+    left: 0;
+
+    transform: translate(-28.87%) skew(-30deg);
+  }
+
+  footer > button {
+    margin: 0 6.666px;
+    width: 40px;
+    height: 40px;
+  }
+
+  footer > button:first-child {
+    margin-left: 0;
+  }
+
+  footer > button:last-child {
+    margin-right: 0;
+  }
+
+  aside {
+    position: fixed;
+    width: 30vw;
+    height: calc(100vh - 53.33px);
+    border-color: colors.$themePrimary;
+    border-style: solid;
+    background: white;
+  }
+
+  aside#left-aside {
+    padding-top: 53.33px;
+    left: 0;
+    top: 0;
+    border-top-width: 0;
+    border-bottom-width: 2px;
+    border-left-width: 0;
+    border-right-width: 2px;
+  }
+
+  aside#left-aside.closed {
+    left: -30vw;
+  }
+
+  aside#right-aside {
+    padding-bottom: 53.33px;
+    right: 0;
+    bottom: 0;
+    border-top-width: 2px;
+    border-bottom-width: 0;
+    border-left-width: 2px;
+    border-right-width: 0;
+  }
+
+  aside#right-aside.closed {
+    right: -30vw;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+
+    aside {
+      transition-property: left, right;
+      transition-duration: 400ms;
+      transition-timing-function: ease-out;
+    }
+
+  }
+
 }

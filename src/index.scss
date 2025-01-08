@@ -5,12 +5,11 @@
  *  created by jean-pierre höhmann on 2023-03-06.
  */
 
-@use "Styles/_fonts.scss";
-@use "Styles/_colors.scss";
+@use "Styles/fonts.module";
+@use "Styles/colors.module";
 
 //noinspection ALL
 @import-normalize;
-
 
 body {
     margin: 0;
@@ -39,59 +38,6 @@ code {
             'Courier New',
             monospace;
 }
-
-header, footer, header:after, footer:before {
-  background-color: colors.$primary;
-}
-
-header, footer {
-  position: fixed;
-  background-size: cover;
-  height: 40px;
-  padding: 6.667px;
-  min-width: 30vw;
-}
-
-header *, footer * {
-  position: relative;
-}
-
-/* Thanks to https://mat.dev */
-header:after, footer:before {
-  display: block;
-  content: '';
-  height: 100%;
-  aspect-ratio: 1;
-  position: absolute;
-}
-
-header {
-  z-index: 40;
-}
-
-header:after {
-  top: 0;
-  right: 0;
-
-  /* tan(1/6*pi)/2 */
-  transform: translate(28.87%) skew(-30deg);
-}
-
-footer {
-  bottom: 0;
-  right: 0;
-  z-index: 20;
-  text-align: right;
-  position: absolute;
-}
-
-footer:before {
-  top: 0;
-  left: 0;
-
-  transform: translate(-28.87%) skew(-30deg);
-}
-
 button {
   background-color: white;
   border: 0;
@@ -111,11 +57,6 @@ button.inactive {
   color: white;
 }
 
-.accept-button {
-  background-color: colors.$primary;
-  color: white;
-}
-
 .dialog {
   position: fixed;
   top: 50vh;
@@ -128,49 +69,23 @@ button.inactive {
   max-width: 30vw;
 }
 
-aside {
-  position: fixed;
-  width: 30vw;
-  height: calc(100vh - 53.33px);
-  border-color: colors.$primary;
-  border-style: solid;
-  background: white;
+.loading-spinner {
+  width: 100px;
+  height: 100px;
+  border: 12px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 12px solid colors.$themePrimary;
+  animation: spin 2s linear infinite;
 }
 
-aside#left-aside {
-  padding-top: 53.33px;
-  left: 0;
-  top: 0;
-  border-top-width: 0;
-  border-bottom-width: 2px;
-  border-left-width: 0;
-  border-right-width: 2px;
-}
+@keyframes spin {
 
-aside#left-aside.closed {
-  left: -30vw;
-}
+  0% {
+    transform: rotate(0deg);
+  }
 
-aside#right-aside {
-  padding-bottom: 53.33px;
-  right: 0;
-  bottom: 0;
-  border-top-width: 2px;
-  border-bottom-width: 0;
-  border-left-width: 2px;
-  border-right-width: 0;
-}
-
-aside#right-aside.closed {
-  right: -30vw;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-
-  aside {
-    transition-property: left, right;
-    transition-duration: 400ms;
-    transition-timing-function: ease-out;
+  100% {
+    transform: rotate(360deg);
   }
 
 }

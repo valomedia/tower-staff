@@ -6,42 +6,53 @@
 //
 //
 
-import JoinResponse from '../Models/JoinResponse';
-import MeetingResponse from '../Models/MeetingResponse';
+import dateFieldReviver from '../Lib/dateFieldReviver';
+import UserToken from '../Models/UserToken';
+import AssistanceRequest from '../Models/AssistanceRequest';
 
-const TowerApi = {
-
-    /*
-     * Make a request to the index endpoint.
-     */
-    index: async () => {
-        return await request('GET', '/');
-    },
-
-    /*
-     * Make a request to the join endpoint.
-     */
-    join: async (): Promise<JoinResponse> => {
-        return await request('POST', '/join');
-    },
-
-    /*
-     * Make a request to the end endpoint.
-     */
-    end: async (meetingId: string) => {
-        return await request('POST', '/end', new URLSearchParams({meetingId}));
-    },
-
-    /*
-     * Make a request to the poll endpoint.
-     */
-    poll: async (): Promise<MeetingResponse> => {
-        return await request('GET', '/poll');
-    }
-
+/**
+ * Make a request to the index endpoint.
+ *
+ * This is used to ensure that the backend is operational and the credentials are correct.
+ */
+export async function index() {
+    return JSON.parse(await request('GET', '/'));
 }
 
-const request = async (method = 'GET', path: String, params?: URLSearchParams) => {
+/**
+ * Make a request to the assistanceToken endpoint.
+ *
+ * This fetches the token used to connect to Azure Communication Services.
+ *
+ * @return The token needed to connect to ACS.
+ */
+export async function assistanceToken(): Promise<{userToken: UserToken}> {
+    return JSON.parse(await request('GET', '/assistanceToken'), dateFieldReviver);
+}
+
+/**
+ * Make a request to the offerAssistance endpoint.
+ *
+ * This checks whether there are currently any users waiting for assistance.
+ *
+ * @return The oldest unanswered AssistanceRequest, if any.
+ */
+export async function offerAssistance(): Promise<{assistanceRequest?: AssistanceRequest}> {
+    return JSON.parse(await request('GET', '/offerAssistance'), dateFieldReviver);
+}
+
+/**
+ * Make a request to the beginAssistance endpoint.
+ *
+ * This will remove the oldest unanswered AssistanceRequest from the queue on the backend and return it.
+ *
+ * @return The assistance request that the assistant is supposed to answer.
+ */
+export async function beginAssistance(): Promise<{assistanceRequest: AssistanceRequest}> {
+    return JSON.parse(await request('POST', '/beginAssistance'), dateFieldReviver);
+}
+
+async function request(method = 'GET', path: String, params?: URLSearchParams) {
     const response = await fetch(
         // @ts-ignore
         process.env.REACT_APP_TOWER_API_ENDPOINT + path + (params ? '?' + params: ''),
@@ -49,11 +60,9 @@ const request = async (method = 'GET', path: String, params?: URLSearchParams) =
             method,
             credentials: 'include',
         }
-    )
+    );
     if (!response.ok) {
         throw new Error(response.statusText);
     }
-    return response.json();
+    return response.text();
 }
-
-export default TowerApi;

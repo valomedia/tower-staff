@@ -8,40 +8,67 @@
 
 #call-screen {
 
-  #video-background,
-  #hold-indicator {
+  &[hidden] {
+    display: block;
+  }
+
+  main > * {
     background-color: black;
     color: lightgrey;
     position: absolute;
-    width: 100vw;
+    width: 40vw;
     height: 100vh;
-    left: 0;
+    left: 30vw;
     top: 0;
   }
 
-  #video-background > svg,
-  #hold-indicator > svg {
-    height: 64px;
+  main.maximized > * {
+    width: 100vw;
+    left: 0;
+  }
+
+  main > #video-container {
+    transform-origin: center;
+  }
+
+  main > #video-container.portrait {
+    width: 100vh;
+    height: 40vw;
+    top: calc(50vh - 20vw);
+    left: calc(50vw - 50vh);
+    transform: rotate(90deg);
+  }
+
+  main.maximized > #video-container.portrait {
+    height: 100vw;
+    top: calc(50vh - 50vw);
+  }
+
+  main > #video-container.upside-down {
+    transform: rotate(180deg);
+  }
+
+  main > #video-container.portrait.upside-down {
+    transform: rotate(270deg);
+  }
+
+  #no-video-indicator > svg,
+  #hold-indicator > svg,
+  #loading-indicator > div {
     position: absolute;
-    left: 50vw;
+    left: 50%;
     transform: translate(-50%, -50%);
   }
 
-  #video-background > svg {
-    top: 50vh;
-  }
-
+  #no-video-indicator > svg,
   #hold-indicator > svg {
-    top: 12.5vh;
+    height: 100px;
   }
 
-  video {
-    position: absolute;
-    left: 30vw;
-    top: 0;
-    width: 40vw;
-    height: 100vh;
-    object-fit: contain;
+  #no-video-indicator > svg,
+  #hold-indicator > svg,
+  #loading-indicator > div {
+    top: 50vh;
   }
 
   video.inactive {
@@ -52,30 +79,22 @@
     background: black;
   }
 
-  video.maximized {
-    width: 100vw;
-    left: 0;
-    object-fit: cover;
-  }
-
-  footer button {
-    margin: 0 6.666px;
-    width: 40px;
-    height: 40px;
-  }
-
-  button:first-child {
-    margin-left: 0;
-  }
-
-  button:last-child {
-    margin-right: 0;
+  main.maximized video {
+    object-fit: cover!important;
   }
 
   #hangup-button {
     background-color: red;
     color: white;
     width: initial;
+  }
+
+  #hangup-button .spinner-container {
+    display: inline-block;
+    width: 13.3px;
+    height: 13.3px;
+    transform: scale(13.3%);
+    transform-origin: top left;
   }
 
   #left-aside img {
@@ -92,4 +111,11 @@
     object-fit: cover;
   }
 
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  #video-container {
+    transition-property: top, left, width, height, transform;
+    transition-duration: 400ms;
+  }
 }

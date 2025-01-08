@@ -6,7 +6,6 @@
 //  Copyright © 2024 valo.media GmbH. All rights reserved.
 //
 
-import './RouteErrorComponent.scss';
 import { ErrorResponse, isRouteErrorResponse } from "react-router-dom";
 
 /**
@@ -16,8 +15,6 @@ import { ErrorResponse, isRouteErrorResponse } from "react-router-dom";
  * response, or a generic Error.
  *
  * @param error The error to display.
- *
- * @constructor
  */
 export default function RouteErrorComponent({error}: {error: ErrorResponse|Error}) {
 

@@ -6,7 +6,7 @@
 //
 //
 
-@use '../Styles/colors';
+@use "../Styles/colors.module";
 
 #launch-screen {
   text-align: center;
@@ -18,10 +18,11 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-  top: -100vh;
+  top: 0;
 
-  &.active {
-    top: 0;
+  &[hidden] {
+    display: flex;
+    top: -100vh;
   }
 
   .launch-screen-logo {
@@ -37,6 +38,15 @@
 
   p {
     margin: 16px 0;
+  }
+
+  #accept-button {
+    background-color: colors.$themePrimary;
+    color: white;
+  }
+
+  #ringtone-toggle-button {
+    width: initial;
   }
 
 }
