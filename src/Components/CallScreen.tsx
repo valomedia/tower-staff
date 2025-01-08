@@ -703,7 +703,14 @@ export default function CallScreen() {
                     <button
                         id='capture-photo-button'
                         onClick={capturePhoto}
-                        disabled={isCapturingPhoto || !isDataChannelAvailable || isCallOnHold || isHangingUp}>
+                        disabled={
+                            isCapturingPhoto
+                                || !isDataChannelAvailable
+                                || isCallOnHold
+                                || isHangingUp
+                                || !isVideoEnabled
+                        }
+                    >
                         <FontAwesomeIcon icon={faImage}/>
                     </button>
                     <button
@@ -715,6 +722,7 @@ export default function CallScreen() {
                                 || !isDataChannelAvailable
                                 || isCallOnHold
                                 || isHangingUp
+                                || !isVideoEnabled
                         }
                     >
                         <FontAwesomeIcon icon={faCameraRotate}/>
@@ -731,6 +739,7 @@ export default function CallScreen() {
                                 || !isDataChannelAvailable
                                 || isCallOnHold
                                 || isHangingUp
+                                || !isVideoEnabled
                         }
                     >
                         <FontAwesomeIcon icon={faLightbulb}/>
