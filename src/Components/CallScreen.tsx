@@ -605,6 +605,9 @@ export default function CallScreen() {
         });
     };
 
+    /**
+     * Send a message through the data channel.
+     */
     const sendMessage = (message: Message) => {
         messageSender?.sendMessage((new TextEncoder()).encode(JSON.stringify(message)));
 
