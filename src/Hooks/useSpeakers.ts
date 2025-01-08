@@ -8,7 +8,7 @@
 
 import { AudioDeviceInfo } from '@azure/communication-calling';
 import { useCallClient } from '@azure/communication-react';
-import useCallClientStateChange from './useCallClientStateChange';
+import useCallClientState from './useCallClientState';
 import { useEffect } from 'react';
 
 export default function useSpeakers(): {
@@ -18,7 +18,7 @@ export default function useSpeakers(): {
 } {
     const callClient = useCallClient();
 
-    const state = useCallClientStateChange();
+    const state = useCallClientState();
 
     async function setSelectedSpeaker(speaker: AudioDeviceInfo) {
         await (await callClient.getDeviceManager()).selectSpeaker(speaker);
