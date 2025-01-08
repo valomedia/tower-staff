@@ -155,6 +155,13 @@ export default function CallScreen() {
      */
     const [isSwitchingCamera, setIsSwitchingCamera] = useState(false);
 
+    /**
+     * Whether we can switch between cameras.
+     *
+     * This is usually true, but is set to false for the duration of the Call if switching cameras fails.
+     */
+    const [isCameraSwitchAvailable, setIsCameraSwitchAvailable] = useState(true);
+
     /*
      * Whether the camera in use is the front camera.
      */
@@ -271,6 +278,7 @@ export default function CallScreen() {
     const switchCamera = () => {
         setIsSwitchingCamera(true);
         setIsUsingTorch(false);
+        setIsUsingFrontCamera(!isUsingFrontCamera);
         sendMessage({switchCameraRequest: {}});
     };
 
@@ -305,7 +313,10 @@ export default function CallScreen() {
      */
     const handleSwitchCameraResponse = (switchCameraResponse: {}|ErrorInfo) => {
         setIsSwitchingCamera(false);
-        if (!isErrorInfo(switchCameraResponse)) { setIsUsingFrontCamera(!isUsingFrontCamera); }
+        if (isErrorInfo(switchCameraResponse)) {
+            setIsUsingFrontCamera(false);
+            setIsCameraSwitchAvailable(false);
+        }
     };
 
     /**
@@ -392,6 +403,7 @@ export default function CallScreen() {
         setIsAudioOutputMuted(false);
         setIsCapturingPhoto(false);
         setIsSwitchingCamera(false);
+        setIsCameraSwitchAvailable(true);
         setIsUsingFrontCamera(false);
         setIsTogglingTorch(false);
         setIsUsingTorch(false);
@@ -652,7 +664,14 @@ export default function CallScreen() {
                     <button
                         id='camera-switch-button'
                         onClick={switchCamera}
-                        disabled={isSwitchingCamera || !isDataChannelAvailable || isCallOnHold || isHangingUp}>
+                        disabled={
+                            isSwitchingCamera
+                                || !isCameraSwitchAvailable
+                                || !isDataChannelAvailable
+                                || isCallOnHold
+                                || isHangingUp
+                        }
+                    >
                         <FontAwesomeIcon icon={faCameraRotate}/>
                     </button>
                     <button
