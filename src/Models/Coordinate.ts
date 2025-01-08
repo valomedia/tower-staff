@@ -11,6 +11,9 @@
  */
 import { Dead } from './UtilityTypes';
 
+/**
+ * A latitude and longitude.
+ */
 export default class Coordinate {
 
     constructor(props: Dead<Coordinate>) {

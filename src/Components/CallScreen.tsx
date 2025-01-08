@@ -52,13 +52,13 @@ const DATA_CHANNEL_FLUSH_DELAY_MS = 2000;
 
 const RESUME_CALL_DELAY_MS = 3000;
 
-/*
+/**
  * The in-call ui.
  */
 export default function CallScreen() {
 
     /*
-     * Whether a call is ongoing.
+     * Whether the assistant is on a call and whether the call options dialog is showing.
      */
     const {
         isOnCall,
@@ -67,24 +67,66 @@ export default function CallScreen() {
         setIsPresentingCallOptionsDialog
     } = useContext(AppContext);
 
+    /**
+     * Whether the assistant is connected to the user.
+     */
     const [isCallConnected, setIsCallConnected] = useState(false);
 
+    /**
+     * Whether the data channel can be used.
+     */
     const [isDataChannelAvailable, setIsDataChannelAvailable] = useState(false);
 
+    /**
+     * Whether video is being received.
+     *
+     * This indicates whether the app is actually receiving video frames at the moment.
+     */
     const [isVideoReceiving, setIsVideoReceiving] = useState(false);
 
+    /**
+     * Whether the video stream is available.
+     *
+     * This indicates if there is a video stream that the app is trying to receive.
+     */
     const [isVideoAvailable, setIsVideoAvailable] = useState(false);
 
+    /**
+     * The CallAgent used to make the Call.
+     */
     const callAgent = useCallAgent();
 
+    /**
+     * The ongoing Call, if any.
+     */
     const [call, setCall] = useState<Call|undefined>();
 
+    /**
+     * The DataChannelSender used to send control messages.
+     */
     const [messageSender, setMessageSender] = useState<DataChannelSender|undefined>();
 
+    /**
+     * Whether the assistant has put the call on hold.
+     *
+     * This will stay true until the call is fully resumed.
+     */
     const [isCallOnHold, setIsCallOnHold] = useState(false);
 
+    /**
+     * Whether the call is being resumed.
+     *
+     * This is used to show the loading spinner for a few seconds after the assistant has chosen to resume the call,
+     * while the user is being informed the call is about to resume.
+     */
     const [isResumingCall, setIsResumingCall] = useState(false);
 
+    /**
+     * Whether tower-staff is in the process of ending the call.
+     *
+     * This becomes true if the assistant presses the hang-up button, or if the app terminates the call, because the
+     * user has unexpectedly dropped. It will not become true when the call ends because the user has ended the call.
+     */
     const [isHangingUp, setIsHangingUp] = useState(false);
 
     /*
@@ -248,25 +290,43 @@ export default function CallScreen() {
         sendMessage({locationRequest: {}});
     };
 
+    /**
+     * Respond to a capturePhotoResponse.
+     *
+     * When this arrives, the photo has already been fully transmitted and is hopefully being shown to the user, so
+     * this just re-enables the button.
+     */
     const handleCapturePhotoResponse = (_: {uuid: string}|ErrorInfo) => {
         setIsCapturingPhoto(false);
     };
 
+    /**
+     * Respond to a switchCameraResponse.
+     */
     const handleSwitchCameraResponse = (switchCameraResponse: {}|ErrorInfo) => {
         setIsSwitchingCamera(false);
         if (!isErrorInfo(switchCameraResponse)) { setIsUsingFrontCamera(!isUsingFrontCamera); }
     };
 
+    /**
+     * Respond to a toggleTorchResponse.
+     */
     const handleToggleTorchResponse = (toggleTorchResponse: {}|ErrorInfo) => {
         setIsTogglingTorch(false);
         if (!isErrorInfo(toggleTorchResponse)) { setIsUsingTorch(!isUsingTorch); }
     };
 
+    /**
+     * Respond to a locationResponse.
+     */
     const handleLocationResponse = (locationResponse: {}|ErrorInfo) => {
         setIsRequestingLocation(false);
         if (isErrorInfo(locationResponse)) {setIsLocationAvailable(false);}
     };
 
+    /**
+     * Respond to a photoDataEvent.
+     */
     const handlePhotoDataEvent = (photoDataEvent: PhotoDataChunk) => {
         storePhotoDataChunk(photoDataEvent);
     };
@@ -283,6 +343,9 @@ export default function CallScreen() {
         }
     };
 
+    /**
+     * Respond to an orientationEvent.
+     */
     const handleOrientationEvent = (orientationEvent: {rotationAngle: 0|90|180|270}) => {
         const videoContainer = videoContainerRef.current;
         switch (orientationEvent.rotationAngle) {
@@ -301,6 +364,9 @@ export default function CallScreen() {
         }
     };
 
+    /**
+     * Respond to an errorEvent.
+     */
     const handleErrorEvent = (errorEvent: ErrorInfo) => {
         console.warn(errorEvent.error);
     };
@@ -362,6 +428,12 @@ export default function CallScreen() {
         );
     };
 
+    /**
+     * Start the call.
+     *
+     * This will take the AssistanceRequest from the backend and use it to start a call and subscribe to all the
+     * necessary events.
+     */
     const startCall = async (
         {assistanceRequest}: {assistanceRequest: AssistanceRequest}
     ): Promise<{call: Call, assistanceRequest: AssistanceRequest}> => {
@@ -427,8 +499,8 @@ export default function CallScreen() {
 
         const createViewIfAvailable = async () => {
             if (remoteVideoStream.isAvailable) {
-                // If the incoming stream is RawMedia, we have to guess the initial orientation while we wait for the first
-                // orientationEvent Message. We will assume the video is in portrait mode.
+                // If the incoming stream is RawMedia, we have to guess the initial orientation while we wait for the
+                // first orientationEvent Message. We will assume the video is in portrait mode.
                 if (!videoContainer.className && remoteVideoStream.mediaStreamType === "RawMedia") {
                     videoContainer.className = "portrait";
                 }
@@ -459,6 +531,9 @@ export default function CallScreen() {
         createDataChannel(call);
     };
 
+    /**
+     * Establish an outgoing data channel and begin listening for incoming messages.
+     */
     const createDataChannel = (call: Call) => {
         const dataChannel = call.feature(Features.DataChannel);
 

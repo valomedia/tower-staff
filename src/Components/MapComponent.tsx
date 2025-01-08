@@ -12,8 +12,10 @@ import * as MapsApi from '../Api/MapsApi';
 import Marker from '../Models/Marker';
 import ImageSize from '../Models/ImageSize';
 
-/*
+/**
  * The map showing the user's location.
+ *
+ * @param coordinate The coordinate to show on the map.
  */
 export default function MapComponent({ coordinate }: { coordinate: Coordinate }) {
 

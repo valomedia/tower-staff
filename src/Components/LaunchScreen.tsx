@@ -22,8 +22,8 @@ const ASSISTANCE_SESSION_MAXIMUM_DURATION_MS = 7_200_000;
  */
 export default function LaunchScreen() {
 
-    /*
-     * Whether a call is ongoing.
+    /**
+     * State shared throughout the app.
      */
     const {
         isOnCall,

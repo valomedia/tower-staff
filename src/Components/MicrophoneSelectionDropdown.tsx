@@ -9,6 +9,9 @@
 import useMicrophones from '../Hooks/useMicrophones';
 import Dropdown from './Dropdown';
 
+/**
+ * A dropdown for choosing the input device.
+ */
 export default function MicrophoneSelectionDropdown() {
     const {
         microphones,

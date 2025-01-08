@@ -11,8 +11,14 @@ import Location from './Location';
 import ErrorInfo, { isErrorInfo } from './ErrorInfo';
 import { EmptyObject } from './UtilityTypes';
 
+/**
+ * A data channel message.
+ */
 export type Message = DataMessage|ErrorMessage
 
+/**
+ * A data channel message that is sent during normal operation.
+ */
 export type DataMessage
     = {capturePhotoRequest: EmptyObject}
     | {capturePhotoResponse: {uuid: string}}
@@ -29,6 +35,9 @@ export type DataMessage
     | {locationEvent: Location}
     | {flushEvent: EmptyObject}
 
+/**
+ * A data channel message sent when something goes wrong.
+ */
 export type ErrorMessage
     = {capturePhotoResponse: ErrorInfo}
     | {switchCameraResponse: ErrorInfo}
@@ -37,7 +46,15 @@ export type ErrorMessage
     | {locationEvent: ErrorInfo}
     | {errorEvent: ErrorInfo}
 
-export function messageReviver(key: string, value: any) {
+/**
+ * JSON reviver for Messages.
+ *
+ * @param key The key associated with the value.
+ * @param value The value produced by parsing.
+ *
+ * @return The revived version of value.
+ */
+export function messageReviver(key: string, value: any): any {
     switch (key) {
         case "locationEvent": return !isErrorInfo(value) ? new Location(value) : value;
         default: return value;

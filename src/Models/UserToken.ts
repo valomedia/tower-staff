@@ -8,12 +8,24 @@
 
 import User from './User';
 
+/**
+ * A User associated with an access token.
+ */
 export default interface UserToken {
 
+    /**
+     * The User the token is for.
+     */
     user: User;
 
+    /**
+     * The token for the User.
+     */
     token: string;
 
+    /**
+     * The expiry Date of the token.
+     */
     expiresOn: Date;
 
 }

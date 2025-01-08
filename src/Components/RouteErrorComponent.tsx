@@ -15,8 +15,6 @@ import { ErrorResponse, isRouteErrorResponse } from "react-router-dom";
  * response, or a generic Error.
  *
  * @param error The error to display.
- *
- * @constructor
  */
 export default function RouteErrorComponent({error}: {error: ErrorResponse|Error}) {
 

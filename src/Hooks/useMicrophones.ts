@@ -11,6 +11,9 @@ import { useCallClient } from '@azure/communication-react';
 import useCallClientState from './useCallClientState';
 import { useEffect } from 'react';
 
+/**
+ * Hook for dealing with input devices.
+ */
 export default function useMicrophones(): {
     microphones: AudioDeviceInfo[],
     selectedMicrophone?: AudioDeviceInfo,
@@ -20,6 +23,21 @@ export default function useMicrophones(): {
 
     const state = useCallClientState();
 
+    /**
+     * The list of available input devices.
+     */
+    const microphones = state.deviceManager.microphones;
+
+    /**
+     * The currently selected input device.
+     */
+    const selectedMicrophone = state.deviceManager.selectedMicrophone;
+
+    /**
+     * Change the selected input device.
+     *
+     * @param microphone The input device to switch to.
+     */
     async function setSelectedMicrophone(microphone: AudioDeviceInfo) {
         await (await callClient.getDeviceManager()).selectMicrophone(microphone);
     }
@@ -31,9 +49,5 @@ export default function useMicrophones(): {
         [callClient]
     );
 
-    return {
-        microphones: state.deviceManager.microphones,
-        selectedMicrophone: state.deviceManager.selectedMicrophone,
-        setSelectedMicrophone
-    };
+    return {microphones, selectedMicrophone, setSelectedMicrophone};
 }

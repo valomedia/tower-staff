@@ -9,15 +9,31 @@
 import PhotoDataChunk from '../Models/PhotoDataChunk';
 import { useState } from 'react';
 
+/**
+ * Hook for reassembling a photo from PhotoDataChunk's
+ */
 export default function usePhoto(): {
     photo?: URL,
     storePhotoDataChunk: (photoDataChunk: PhotoDataChunk) => void,
     clearPhoto: () => void
 } {
+    /**
+     * The last complete photo that was stored, if any.
+     */
     const [photo, setPhoto] = useState<URL|undefined>();
 
+    /**
+     * The chunks for the photo currently being assembled.
+     */
     let dataChunks: Record<string, string[]> = {};
 
+    /**
+     * Add a chunk for the photo.
+     *
+     * This will store the given chunk, updating the photo if it was the last missing chunk.
+     *
+     * @param photoDataChunk The PhotoDataChunk to add.
+     */
     function storePhotoDataChunk(photoDataChunk: PhotoDataChunk) {
         const {uuid, index, count} = photoDataChunk.chunkingInfo;
         if (!dataChunks[uuid]) {dataChunks[uuid] = [];}
@@ -28,6 +44,11 @@ export default function usePhoto(): {
         }
     }
 
+    /**
+     * Clear the state of the hook.
+     *
+     * This will remove the photo, as well as any store chunks that have not been assembled into a photo yet.
+     */
     function clearPhoto() {
         dataChunks = {};
         setPhoto(undefined);

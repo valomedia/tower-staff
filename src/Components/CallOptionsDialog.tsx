@@ -14,6 +14,8 @@ import SpeakerSelectionDropdown from './SpeakerSelectionDropdown';
 
 /**
  * The dialog box allowing the assistant to set various options for the call.
+ *
+ * @param props.onClose Callback to invoke when the close button on the dialog is pressed.
  */
 export default function CallOptionsDialog(props: {onClose: () => void}) {
     return (

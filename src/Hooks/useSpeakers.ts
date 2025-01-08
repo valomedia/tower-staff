@@ -11,6 +11,9 @@ import { useCallClient } from '@azure/communication-react';
 import useCallClientState from './useCallClientState';
 import { useEffect } from 'react';
 
+/**
+ * Hook for dealing with output devices.
+ */
 export default function useSpeakers(): {
     speakers: AudioDeviceInfo[],
     selectedSpeaker?: AudioDeviceInfo,
@@ -20,6 +23,21 @@ export default function useSpeakers(): {
 
     const state = useCallClientState();
 
+    /**
+     * The list of available output devices.
+     */
+    const speakers = state.deviceManager.speakers;
+
+    /**
+     * The currently selected output device.
+     */
+    const selectedSpeaker = state.deviceManager.selectedSpeaker;
+
+    /**
+     * Change the selected output device.
+     *
+     * @param speaker The output device to switch to.
+     */
     async function setSelectedSpeaker(speaker: AudioDeviceInfo) {
         await (await callClient.getDeviceManager()).selectSpeaker(speaker);
     }
@@ -31,9 +49,5 @@ export default function useSpeakers(): {
         [callClient]
     );
 
-    return {
-        speakers: state.deviceManager.speakers,
-        selectedSpeaker: state.deviceManager.selectedSpeaker,
-        setSelectedSpeaker
-    };
+    return {speakers, selectedSpeaker, setSelectedSpeaker};
 }

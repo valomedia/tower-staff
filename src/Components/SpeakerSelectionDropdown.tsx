@@ -9,6 +9,9 @@
 import useSpeakers from '../Hooks/useSpeakers';
 import Dropdown from './Dropdown';
 
+/**
+ * A dropdown for choosing the output device.
+ */
 export default function SpeakerSelectionDropdown() {
     const {
         speakers,
