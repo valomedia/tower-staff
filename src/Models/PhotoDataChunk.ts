@@ -6,25 +6,17 @@
 //  Copyright © 2024 valo.media GmbH. All rights reserved.
 //
 
-import ImageSize from './ImageSize';
-import { Dead } from '../../types/util';
-
 /**
  * The data sent in a capture-photo-response realtime data message.
  */
-export default class PhotoDataChunk {
+export default interface PhotoDataChunk {
 
-    constructor(props: Dead<PhotoDataChunk>) {
-        Object.assign(this, {...props, imageSize: new ImageSize(props.imageSize)});
-    }
+    imageData: string;
 
-    readonly imageData!: string;
-
-    readonly imageSize!: ImageSize;
-
-    readonly chunkingInfo!: {
+    chunkingInfo: {
         index: number,
         count: number,
         uuid: string
     };
+
 }

@@ -7,25 +7,23 @@
 //
 
 import PhotoDataChunk from '../Models/PhotoDataChunk';
-import PhotoResource from '../Models/PhotoResource';
 import { useState } from 'react';
 
 export default function usePhoto(): {
-    photo?: PhotoResource,
+    photo?: URL,
     storePhotoDataChunk: (photoDataChunk: PhotoDataChunk) => void,
     clearPhoto: () => void
 } {
-    const [photo, setPhoto] = useState<PhotoResource|undefined>();
+    const [photo, setPhoto] = useState<URL|undefined>();
 
     let dataChunks: Record<string, string[]> = {};
 
     function storePhotoDataChunk(photoDataChunk: PhotoDataChunk) {
         const {uuid, index, count} = photoDataChunk.chunkingInfo;
-        const imageSize = photoDataChunk.imageSize;
         if (!dataChunks[uuid]) {dataChunks[uuid] = [];}
         dataChunks[uuid][index] = photoDataChunk.imageData;
         if (dataChunks[uuid].flat().length === count) {
-            setPhoto({imageURL: new URL("data:image/jpeg;base64," + dataChunks[uuid].join("")), imageSize});
+            setPhoto(new URL("data:image/jpeg;base64," + dataChunks[uuid].join("")));
             dataChunks = {};
         }
     }

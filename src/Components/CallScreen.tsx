@@ -575,7 +575,7 @@ const CallScreen = () => {
                 {location && (<MapComponent coordinate={location}/>)}
                 </aside>
                 <aside id='right-aside' className={isVideoMaximized ? 'closed' : 'open'}>
-                    {photo && (<img src={photo.imageURL.href} alt='Vom Gerät der Benutzer:in aufgenommenes Foto'/>)}
+                    {photo && (<img src={photo.href} alt='Vom Gerät der Benutzer:in aufgenommenes Foto'/>)}
                 </aside>
                 <footer>
                     <button

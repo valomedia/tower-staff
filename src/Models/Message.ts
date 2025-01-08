@@ -39,7 +39,6 @@ export type ErrorMessage
 
 export function messageReviver(key: string, value: any) {
     switch (key) {
-        case "photoDataEvent": return !isErrorInfo(value) ? new PhotoDataChunk(value) : value;
         case "locationEvent": return !isErrorInfo(value) ? new Location(value) : value;
         default: return value;
     }
