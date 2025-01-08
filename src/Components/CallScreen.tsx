@@ -176,6 +176,14 @@ export default function CallScreen() {
      */
     const [isTogglingTorch, setIsTogglingTorch] = useState(false);
 
+    /**
+     * Whether the torch can be enabled.
+     *
+     * This is usually true, but is set to false for the duration of the call if trying to toggle the torch results
+     * in an error.
+     */
+    const [isTorchAvailable, setIsTorchAvailable] = useState(true);
+
     /*
      * Whether the torch is currently on.
      */
@@ -287,6 +295,7 @@ export default function CallScreen() {
      */
     const toggleTorch = () => {
         setIsTogglingTorch(true);
+        setIsUsingTorch(!isUsingTorch);
         sendMessage({toggleTorchRequest: {}});
     };
 
@@ -324,7 +333,10 @@ export default function CallScreen() {
      */
     const handleToggleTorchResponse = (toggleTorchResponse: {}|ErrorInfo) => {
         setIsTogglingTorch(false);
-        if (!isErrorInfo(toggleTorchResponse)) { setIsUsingTorch(!isUsingTorch); }
+        if (isErrorInfo(toggleTorchResponse)) {
+            setIsUsingTorch(false);
+            setIsTorchAvailable(false);
+        }
     };
 
     /**
@@ -406,6 +418,7 @@ export default function CallScreen() {
         setIsCameraSwitchAvailable(true);
         setIsUsingFrontCamera(false);
         setIsTogglingTorch(false);
+        setIsTorchAvailable(true);
         setIsUsingTorch(false);
         setIsRequestingLocation(false);
         setIsLocationAvailable(true);
@@ -680,12 +693,14 @@ export default function CallScreen() {
                         onClick={toggleTorch}
                         disabled={
                             isTogglingTorch
-                            || isSwitchingCamera
-                            || isUsingFrontCamera
-                            || !isDataChannelAvailable
-                            || isCallOnHold
-                            || isHangingUp
-                        }>
+                                || isSwitchingCamera
+                                || isUsingFrontCamera
+                                || !isTorchAvailable
+                                || !isDataChannelAvailable
+                                || isCallOnHold
+                                || isHangingUp
+                        }
+                    >
                         <FontAwesomeIcon icon={faLightbulb}/>
                     </button>
                     <button
