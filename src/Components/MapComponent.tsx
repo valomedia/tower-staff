@@ -15,7 +15,7 @@ import ImageSize from '../Models/ImageSize';
 /*
  * The map showing the user's location.
  */
-const MapComponent = ({ coordinate }: { coordinate: Coordinate }) => {
+export default function MapComponent({ coordinate }: { coordinate: Coordinate }) {
 
     return (
         <>
@@ -36,5 +36,3 @@ const MapComponent = ({ coordinate }: { coordinate: Coordinate }) => {
     );
 
 }
-
-export default MapComponent;

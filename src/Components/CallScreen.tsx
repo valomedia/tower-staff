@@ -55,7 +55,7 @@ const RESUME_CALL_DELAY_MS = 3000;
 /*
  * The in-call ui.
  */
-const CallScreen = () => {
+export default function CallScreen() {
 
     /*
      * Whether a call is ongoing.
@@ -698,5 +698,3 @@ const CallScreen = () => {
         </CallProvider>
     );
 };
-
-export default CallScreen;

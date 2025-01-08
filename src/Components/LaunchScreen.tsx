@@ -20,7 +20,7 @@ const ASSISTANCE_SESSION_MAXIMUM_DURATION_MS = 7_200_000;
 /*
  * The screen presented to the user upon opening the app.
  */
-const LaunchScreen = () => {
+export default function LaunchScreen() {
 
     /*
      * Whether a call is ongoing.
@@ -189,5 +189,3 @@ const LaunchScreen = () => {
     );
 
 }
-
-export default LaunchScreen;
