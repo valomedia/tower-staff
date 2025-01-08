@@ -369,3 +369,20 @@ Example message:
     }
 }}
 ```
+
+### `videoToggleEvent`
+
+This message is sent by `tower-staff` to inform the app of the user about the assistant toggling the video on or off.
+The app can use this information to save bandwidth by not sending the video when the assistant is not looking at it.
+
+Message format:
+
+```
+{videoToggleEvent: {isVideoEnabled: boolean}}
+```
+
+Example message:
+
+```json
+{"videoToggleEvent": {"isVideoEnabled":  false}}
+```
