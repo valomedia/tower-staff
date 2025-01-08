@@ -377,7 +377,29 @@ export default function CallScreen() {
     const endCall = () => {
         setIsHangingUp(true);
         call?.hangUp({forEveryone: true});
-        onCallEnd();
+
+        setIsOnCall(false);
+        setIsCallConnected(false);
+        setIsDataChannelAvailable(false);
+        setIsHangingUp(false);
+        setIsVideoReceiving(false);
+        setIsVideoAvailable(false);
+        setCall(undefined);
+        setMessageSender(undefined);
+        setIsCallOnHold(false);
+        setIsResumingCall(false);
+        setIsAudioInputMuted(false);
+        setIsAudioOutputMuted(false);
+        setIsCapturingPhoto(false);
+        setIsSwitchingCamera(false);
+        setIsUsingFrontCamera(false);
+        setIsTogglingTorch(false);
+        setIsUsingTorch(false);
+        setIsRequestingLocation(false);
+        setIsLocationAvailable(true);
+        setLocation(undefined);
+        clearPhoto();
+        setIsVideoMaximized(false);
     };
 
     /**
@@ -463,7 +485,7 @@ export default function CallScreen() {
                     console.log('Call started');
                     break;
                 case 'Disconnected':
-                    onCallEnd();
+                    endCall();
                     console.log(`Call ended, call end reason=${JSON.stringify(call.callEndReason)}`);
                     break;
             }
@@ -577,34 +599,6 @@ export default function CallScreen() {
             () => {messageSender?.sendMessage((new TextEncoder().encode(JSON.stringify({flushEvent: {}}))))},
             DATA_CHANNEL_FLUSH_DELAY_MS
         );
-    };
-
-    /*
-     * Reset everything when the call ends.
-     */
-    const onCallEnd = () => {
-        setIsOnCall(false);
-        setIsCallConnected(false);
-        setIsDataChannelAvailable(false);
-        setIsHangingUp(false);
-        setIsVideoReceiving(false);
-        setIsVideoAvailable(false);
-        setCall(undefined);
-        setMessageSender(undefined);
-        setIsCallOnHold(false);
-        setIsResumingCall(false);
-        setIsAudioInputMuted(false);
-        setIsAudioOutputMuted(false);
-        setIsCapturingPhoto(false);
-        setIsSwitchingCamera(false);
-        setIsUsingFrontCamera(false);
-        setIsTogglingTorch(false);
-        setIsUsingTorch(false);
-        setIsRequestingLocation(false);
-        setIsLocationAvailable(true);
-        setLocation(undefined);
-        clearPhoto();
-        setIsVideoMaximized(false);
     };
 
     useEffect(
