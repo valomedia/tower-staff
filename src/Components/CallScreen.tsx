@@ -456,18 +456,11 @@ export default function CallScreen() {
      * This will take the AssistanceRequest from the backend and use it to start a call and subscribe to all the
      * necessary events.
      */
-    const startCall = async (
-        {assistanceRequest}: {assistanceRequest: AssistanceRequest}
-    ): Promise<{call: Call, assistanceRequest: AssistanceRequest}> => {
+    const startCall = async ({assistanceRequest}: {assistanceRequest: AssistanceRequest}) => {
         const call = callAgent!.join({groupId: crypto.randomUUID()});
 
         setCall(call);
-        setIsVideoReceiving(true);
 
-        return {call, assistanceRequest};
-    };
-
-    const subscribeToCall = ({call, assistanceRequest}: {call: Call, assistanceRequest: AssistanceRequest}): void => {
         console.log(`Call Id: ${call.id}`);
         console.log(`Call state: ${call.state}`);
 
@@ -481,7 +474,8 @@ export default function CallScreen() {
                 case 'Connected':
                     console.log("Adding user:", assistanceRequest.user);
                     call?.addParticipant(assistanceRequest.user);
-                    onCallStart(call);
+                    setIsCallConnected(true);
+                    createDataChannel(call);
                     console.log('Call started');
                     break;
                 case 'Disconnected':
@@ -548,10 +542,6 @@ export default function CallScreen() {
         setIsVideoAvailable(remoteVideoStream.isAvailable);
     };
 
-    const onCallStart = (call: Call) => {
-        setIsCallConnected(true);
-        createDataChannel(call);
-    };
 
     /**
      * Establish an outgoing data channel and begin listening for incoming messages.
@@ -607,7 +597,6 @@ export default function CallScreen() {
                 TowerApi
                     .beginAssistance()
                     .then(startCall)
-                    .then(subscribeToCall)
                     .catch(error => {
                         console.error(error);
                         endCall();
