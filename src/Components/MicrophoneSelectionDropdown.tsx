@@ -23,8 +23,8 @@ export default function MicrophoneSelectionDropdown() {
         <Dropdown
             label={'Mikrofon'}
             options={microphones}
-            selectedOption={selectedMicrophone}
-            onSelectionChange={(selectedDeviceId) => {
+            selectedOption={selectedMicrophone?.id}
+            onChange={(selectedDeviceId) => {
                 const newlySelectedMicrophone = microphones.find(microphone => microphone.id === selectedDeviceId);
                 if (newlySelectedMicrophone) {
                     console.log(`Switching input to: ${newlySelectedMicrophone.name}`);

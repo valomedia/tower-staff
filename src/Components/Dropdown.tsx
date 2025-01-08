@@ -19,14 +19,14 @@ import './Dropdown.scss';
 export default function Dropdown(props: {
     label: string,
     options: {id: string, name: string}[],
-    selectedOption?: {id: string, name: string},
-    onSelectionChange: (deviceId?: string) => void
+    selectedOption?: string,
+    onChange: (id?: string) => void
 }) {return (
     <div className='dropdown'>
         <label>
             {props.label}
-            <select value={props.selectedOption?.id} onChange={event => props.onSelectionChange?.(event.target.value)}>
-                {props.options.map(device => <option value={device.id} key={device.id}>{device.name}</option>)}
+            <select value={props.selectedOption} onChange={event => props.onChange?.(event.target.value)}>
+                {props.options.map(option => <option value={option.id} key={option.id}>{option.name}</option>)}
             </select>
         </label>
     </div>
