@@ -9,7 +9,7 @@
 import PhotoDataChunk from './PhotoDataChunk';
 import Location from './Location';
 import ErrorInfo, { isErrorInfo } from './ErrorInfo';
-import { EmptyObject } from '../../types/util';
+import { EmptyObject } from './UtilityTypes';
 
 export type Message = DataMessage|ErrorMessage
 

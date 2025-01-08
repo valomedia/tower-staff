@@ -8,7 +8,7 @@
 
 import Coordinate from './Coordinate';
 import MarkerStyle from './MarkerStyle';
-import { Dead } from '../../types/util';
+import { Dead } from './UtilityTypes';
 
 
 /*

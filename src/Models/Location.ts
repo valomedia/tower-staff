@@ -7,7 +7,7 @@
 //
 
 import Coordinate from './Coordinate';
-import { Dead } from '../../types/util';
+import { Dead } from './UtilityTypes';
 
 /*
  * The data sent in a location-response realtime data message.

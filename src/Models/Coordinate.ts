@@ -9,7 +9,7 @@
 /*
  * A latitude and longitude
  */
-import { Dead } from '../../types/util';
+import { Dead } from './UtilityTypes';
 
 export default class Coordinate {
 

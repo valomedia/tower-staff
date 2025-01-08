@@ -6,7 +6,7 @@
 //  Copyright © 2024 valo.media GmbH. All rights reserved.
 //
 
-import { Dead } from '../../types/util';
+import { Dead } from './UtilityTypes';
 
 /**
  * A width and height.
