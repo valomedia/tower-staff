@@ -34,6 +34,7 @@ export type DataMessage
     | {orientationEvent: {rotationAngle: 0|90|180|270}}
     | {locationEvent: Location}
     | {flushEvent: EmptyObject}
+    | {videoToggleEvent: {isVideoEnabled: boolean}}
 
 /**
  * A data channel message sent when something goes wrong.

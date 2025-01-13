@@ -21,6 +21,7 @@ import {
     faMicrophoneSlash,
     faPause,
     faPhone,
+    faVideo,
     faVideoSlash,
     faVolumeHigh,
     faVolumeXmark
@@ -90,6 +91,14 @@ export default function CallScreen() {
      * This indicates if there is a video stream that the app is trying to receive.
      */
     const [isVideoAvailable, setIsVideoAvailable] = useState(false);
+
+    /**
+     * Whether a video stream should be shown.
+     *
+     * This indicates whether the video is supposed to be displayed to the assistant, if available. It gets set to
+     * false if the assistant switches the video feed off.
+     */
+    const [isVideoEnabled, setIsVideoEnabled] = useState(true);
 
     /**
      * The CallAgent used to make the Call.
@@ -223,6 +232,22 @@ export default function CallScreen() {
      * The remote video container.
      */
     const videoContainerRef = useRef() as MutableRefObject<HTMLDivElement>;
+
+    /*
+     * Turn off the video feed.
+     */
+    function disableVideo() {
+        setIsVideoEnabled(false);
+        sendMessage({videoToggleEvent: {isVideoEnabled: false}});
+    }
+
+    /*
+     * Turn on the video feed.
+     */
+    function enableVideo() {
+        setIsVideoEnabled(true);
+        sendMessage({videoToggleEvent: {isVideoEnabled: true}});
+    }
 
     /*
      * Mute the microphone.
@@ -407,6 +432,7 @@ export default function CallScreen() {
         setIsHangingUp(false);
         setIsVideoReceiving(false);
         setIsVideoAvailable(false);
+        setIsVideoEnabled(true);
         setCall(undefined);
         setMessageSender(undefined);
         setIsCallOnHold(false);
@@ -645,7 +671,10 @@ export default function CallScreen() {
                     </div>
                     <div
                         id='loading-indicator'
-                        hidden={(isVideoReceiving || !isVideoAvailable || isCallOnHold) && !isResumingCall}
+                        hidden={
+                            (isVideoReceiving || !isVideoAvailable || isCallOnHold || !isVideoEnabled)
+                                && !isResumingCall
+                        }
                     >
                         <div>
                             <div className='loading-spinner'/>
@@ -654,7 +683,7 @@ export default function CallScreen() {
                     <div
                             ref={videoContainerRef}
                             id='video-container'
-                            hidden={!isVideoReceiving || !isVideoAvailable || isCallOnHold}>
+                            hidden={!isVideoReceiving || !isVideoAvailable || isCallOnHold || !isVideoEnabled}>
                     </div>
                 </main>
                 <aside id='left-aside' className={isVideoMaximized ? 'closed' : 'open'}>
@@ -674,7 +703,14 @@ export default function CallScreen() {
                     <button
                         id='capture-photo-button'
                         onClick={capturePhoto}
-                        disabled={isCapturingPhoto || !isDataChannelAvailable || isCallOnHold || isHangingUp}>
+                        disabled={
+                            isCapturingPhoto
+                                || !isDataChannelAvailable
+                                || isCallOnHold
+                                || isHangingUp
+                                || !isVideoEnabled
+                        }
+                    >
                         <FontAwesomeIcon icon={faImage}/>
                     </button>
                     <button
@@ -686,6 +722,7 @@ export default function CallScreen() {
                                 || !isDataChannelAvailable
                                 || isCallOnHold
                                 || isHangingUp
+                                || !isVideoEnabled
                         }
                     >
                         <FontAwesomeIcon icon={faCameraRotate}/>
@@ -702,6 +739,7 @@ export default function CallScreen() {
                                 || !isDataChannelAvailable
                                 || isCallOnHold
                                 || isHangingUp
+                                || !isVideoEnabled
                         }
                     >
                         <FontAwesomeIcon icon={faLightbulb}/>
@@ -719,6 +757,21 @@ export default function CallScreen() {
                         }>
                         <FontAwesomeIcon icon={faLocationDot}/>
                     </button>
+                    {isVideoEnabled ? (
+                        <button
+                            id='disable-video-button'
+                            className='active'
+                            onClick={disableVideo}
+                            disabled={!isCallConnected || isCallOnHold || isHangingUp}
+                        ><FontAwesomeIcon icon={faVideo}/></button>
+                    ) : (
+                        <button
+                            id='enable-video-button'
+                            className='inactive'
+                            onClick={enableVideo}
+                            disabled={!isCallConnected || isCallOnHold || isHangingUp}
+                        ><FontAwesomeIcon icon={faVideoSlash}/></button>
+                    )}
                     {isAudioInputMuted ? (
                         <button
                             id='unmute-input-button'
