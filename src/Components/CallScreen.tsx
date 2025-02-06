@@ -426,6 +426,8 @@ export default function CallScreen() {
         setIsHangingUp(true);
         call?.hangUp({forEveryone: true});
 
+        videoContainerRef.current.className = "";
+
         setIsOnCall(false);
         setIsCallConnected(false);
         setIsDataChannelAvailable(false);
