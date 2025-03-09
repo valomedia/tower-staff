@@ -153,7 +153,7 @@ export default function LaunchScreen() {
                 <p>
                     {
                         isOnCall ? 'Verbindung hergestellt'
-                            : isRinging ? `Neue Anfrage von ${customerName || "Unbekannter Anrufer"}`
+                            : isRinging ? 'Eine Nutzer:in benötigt Unterstützung!'
                                 : hasBackend ? 'Warten auf Anfragen…'
                                     : isConnecting ? 'Verbindung wird hergestellt…'
                                         : 'Verbindung fehlgeschlagen!'
