@@ -6,7 +6,7 @@
 //
 //
 
-
+import './MapComponent.scss';
 import Coordinate from '../Models/Coordinate';
 import * as MapsApi from '../Api/MapsApi';
 import Marker from '../Models/Marker';
@@ -20,7 +20,7 @@ import ImageSize from '../Models/ImageSize';
 export default function MapComponent({ coordinate }: { coordinate: Coordinate }) {
 
     return (
-        <>
+        <div className='map'>
             <a href={MapsApi.searchUrl({query: coordinate}).toString()} target='_blank' rel="noopener noreferrer">
                 <img
                         id='map-component'
@@ -34,7 +34,7 @@ export default function MapComponent({ coordinate }: { coordinate: Coordinate })
                         }
                         alt='A map of the current location of the user.'/>
             </a>
-        </>
+        </div>
     );
 
 }
