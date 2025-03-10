@@ -10,6 +10,7 @@ import PhotoDataChunk from './PhotoDataChunk';
 import Location from './Location';
 import ErrorInfo, { isErrorInfo } from './ErrorInfo';
 import { EmptyObject } from './UtilityTypes';
+import { UserData } from './UserData';
 
 /**
  * A data channel message.
@@ -35,6 +36,7 @@ export type DataMessage
     | {locationEvent: Location}
     | {flushEvent: EmptyObject}
     | {videoToggleEvent: {isVideoEnabled: boolean}}
+    | {userHelloEvent: UserData}
 
 /**
  * A data channel message sent when something goes wrong.
