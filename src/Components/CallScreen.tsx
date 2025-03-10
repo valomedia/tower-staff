@@ -44,6 +44,8 @@ import ErrorInfo, { isErrorInfo } from '../Models/ErrorInfo';
 import PhotoDataChunk from '../Models/PhotoDataChunk';
 import usePhoto from '../Hooks/usePhoto';
 import { CallProvider, useCallAgent } from '@azure/communication-react';
+import { UserData } from '../Models/UserData';
+import ProfileComponent from './ProfileComponent';
 
 const DATA_CHANNEL_ID = 1000;
 
@@ -227,6 +229,11 @@ export default function CallScreen() {
      * Whether the assistant currently has the video maximized (and zoomed in).
      */
     const [isVideoMaximized, setIsVideoMaximized] = useState(false);
+
+    /**
+     * Information about the user who is making the call, if available.
+     */
+    const [userData, setUserData] = useState<UserData|undefined>();
 
     /**
      * The remote video container.
@@ -413,6 +420,13 @@ export default function CallScreen() {
     };
 
     /**
+     * Respond to a userHelloEvent.
+     */
+    const handleUserHelloEvent = (userHelloEvent: UserData) => {
+        setUserData(userHelloEvent);
+    };
+
+    /**
      * Respond to an errorEvent.
      */
     const handleErrorEvent = (errorEvent: ErrorInfo) => {
@@ -451,6 +465,7 @@ export default function CallScreen() {
         setIsRequestingLocation(false);
         setIsLocationAvailable(true);
         setLocation(undefined);
+        setUserData(undefined);
         clearPhoto();
         setIsVideoMaximized(false);
     };
@@ -628,6 +643,7 @@ export default function CallScreen() {
                 if ("photoDataEvent" in message) { handlePhotoDataEvent(message.photoDataEvent); }
                 if ("locationEvent" in message) { handleLocationEvent(message.locationEvent); }
                 if ("orientationEvent" in message) { handleOrientationEvent(message.orientationEvent); }
+                if ("userHelloEvent" in message) { handleUserHelloEvent(message.userHelloEvent); }
                 if ("errorEvent" in message) { handleErrorEvent(message.errorEvent); }
             });
         });
@@ -689,7 +705,8 @@ export default function CallScreen() {
                     </div>
                 </main>
                 <aside id='left-aside' className={isVideoMaximized ? 'closed' : 'open'}>
-                {location && (<MapComponent coordinate={location}/>)}
+                    {userData && (<ProfileComponent userData={userData}/>)}
+                    {location && (<MapComponent coordinate={location}/>)}
                 </aside>
                 <aside id='right-aside' className={isVideoMaximized ? 'closed' : 'open'}>
                     {photo && (<img src={photo.href} alt='Vom Gerät der Benutzer:in aufgenommenes Foto'/>)}
