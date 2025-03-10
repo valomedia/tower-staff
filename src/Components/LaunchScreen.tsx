@@ -53,14 +53,6 @@ export default function LaunchScreen() {
     const [isRinging,setIsRinging] = useState(false);
 
     /*
-     * The name of the user seeking assistance.
-     *
-     * Once implemented, this will provide the assistant with the name of the user seeking assistance, or receiving
-     * assistance.
-     */
-    const [customerName, setCustomerName] = useState<string|undefined>();
-
-    /*
      * Whether the ringtone is enabled.
      */
     const [isRingtoneEnabled, setIsRingtoneEnabled] = useState(false);
@@ -103,7 +95,6 @@ export default function LaunchScreen() {
                             .offerAssistance()
                             .then(offerAssistanceResponse => {
                                 if (offerAssistanceResponse.assistanceRequest) {
-                                    setCustomerName(offerAssistanceResponse.assistanceRequest.user.username);
                                     setIsRinging(true);
                                 } else {
                                     setIsRinging(false);
