@@ -1,0 +1,26 @@
+//
+//  ProfileComponent.scss
+//  tower-staff
+//
+//  Created by Jean-Pierre Höhmann on 2025-03-09.
+//  Copyright © 2025 valo.media GmbH. All rights reserved.
+//
+
+@use "../Styles/colors.module";
+
+.profile {
+  padding: 16px;
+  background-color: colors.$themePrimary;
+
+  .profile-name {
+    display: flex;
+    align-items: center;
+
+    svg {
+      font-size: 2em;
+      margin-right: 16px;
+    }
+
+  }
+
+}

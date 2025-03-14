@@ -110,10 +110,26 @@
     border-bottom-width: 2px;
     border-left-width: 0;
     border-right-width: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
 
   aside#left-aside.closed {
     left: -30vw;
+  }
+
+  aside#left-aside > * {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+
+  aside#left-aside > :first-child {
+    margin-top: 16px;
+  }
+
+  aside#left-aside > :last-child {
+    margin-bottom: 16px;
   }
 
   aside#right-aside {

@@ -342,12 +342,12 @@ Message format:
         version: string
     },
     userProfile?: {
-        firstName?: string,
+        firstName: string,
         lastName?: string,
         gender?: "M"|"F"|"X",
-        birthdate: string,
-        phone: string,
-        email: string
+        birthdate?: string,
+        phone?: string,
+        email?: string
     }
 }}
 ```

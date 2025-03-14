@@ -1,0 +1,19 @@
+//
+//  MapComponent.scss
+//  tower-staff
+//
+//  Created by Jean-Pierre Höhmann on 2025-03-09.
+//  Copyright © 2025 valo.media GmbH. All rights reserved.
+//
+
+.map {
+  overflow: hidden;
+
+  img {
+    object-position: center;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+
+}
