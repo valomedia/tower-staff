@@ -671,21 +671,7 @@ export default function CallScreen() {
 
     useEffect(
         () => {
-            const videoContainer = videoContainerRef.current;
-            switch (videoOrientation) {
-                case 0:
-                    videoContainer.className = "landscape";
-                    break;
-                case 90:
-                    videoContainer.className = "portrait";
-                    break;
-                case 180:
-                    videoContainer.className = "landscape upside-down";
-                    break;
-                case 270:
-                    videoContainer.className = "portrait upside-down";
-                    break;
-            }
+            videoContainerRef.current.className = "rotation-" + videoOrientation;
         },
         [videoOrientation, setVideoOrientation]
     );

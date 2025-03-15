@@ -31,7 +31,8 @@
     transform-origin: center;
   }
 
-  main > #video-container.portrait {
+  main > #video-container.rotation-90,
+  main > #video-container.rotation-270 {
     width: 100vh;
     height: 40vw;
     top: calc(50vh - 20vw);
@@ -39,16 +40,17 @@
     transform: rotate(90deg);
   }
 
-  main.maximized > #video-container.portrait {
+  main.maximized > #video-container.rotation-90,
+  main.maximized > #video-container.rotation-270 {
     height: 100vw;
     top: calc(50vh - 50vw);
   }
 
-  main > #video-container.upside-down {
+  main > #video-container.rotation-180 {
     transform: rotate(180deg);
   }
 
-  main > #video-container.portrait.upside-down {
+  main > #video-container.rotation-270 {
     transform: rotate(270deg);
   }
 
