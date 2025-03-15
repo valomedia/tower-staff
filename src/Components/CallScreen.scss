@@ -32,7 +32,8 @@
   }
 
   main > #video-container.rotation-90,
-  main > #video-container.rotation-270 {
+  main > #video-container.rotation-270,
+  main > #video-container.rotation-450 {
     width: 100vh;
     height: 40vw;
     top: calc(50vh - 20vw);
@@ -41,7 +42,8 @@
   }
 
   main.maximized > #video-container.rotation-90,
-  main.maximized > #video-container.rotation-270 {
+  main.maximized > #video-container.rotation-270,
+  main.maximized > #video-container.rotation-450 {
     height: 100vw;
     top: calc(50vh - 50vw);
   }
@@ -52,6 +54,18 @@
 
   main > #video-container.rotation-270 {
     transform: rotate(270deg);
+  }
+
+  main > #video-container.rotation-360 {
+    transform: rotate(360deg);
+  }
+
+  main > #video-container.rotation-450 {
+    transform: rotate(450deg);
+  }
+
+  main > #video-container.rotation-540 {
+    transform: rotate(540deg);
   }
 
   #no-video-indicator > svg,
