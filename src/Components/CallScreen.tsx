@@ -103,6 +103,11 @@ export default function CallScreen() {
     const [isVideoEnabled, setIsVideoEnabled] = useState(true);
 
     /**
+     * How much the video from the caller needs to be rotated clockwise to achieve its natural orientation.
+     */
+    const [videoOrientation, setVideoOrientation] = useState<0|90|180|270>(0);
+
+    /**
      * The CallAgent used to make the Call.
      */
     const callAgent = useCallAgent();
@@ -402,21 +407,7 @@ export default function CallScreen() {
      * Respond to an orientationEvent.
      */
     const handleOrientationEvent = (orientationEvent: {rotationAngle: 0|90|180|270}) => {
-        const videoContainer = videoContainerRef.current;
-        switch (orientationEvent.rotationAngle) {
-            case 0:
-                videoContainer.className = "landscape";
-                break;
-            case 90:
-                videoContainer.className = "portrait";
-                break;
-            case 180:
-                videoContainer.className = "landscape upside-down";
-                break;
-            case 270:
-                videoContainer.className = "portrait upside-down";
-                break;
-        }
+        setVideoOrientation(orientationEvent.rotationAngle);
     };
 
     /**
@@ -440,8 +431,6 @@ export default function CallScreen() {
         setIsHangingUp(true);
         call?.hangUp({forEveryone: true});
 
-        videoContainerRef.current.className = "";
-
         setIsOnCall(false);
         setIsCallConnected(false);
         setIsDataChannelAvailable(false);
@@ -449,6 +438,7 @@ export default function CallScreen() {
         setIsVideoReceiving(false);
         setIsVideoAvailable(false);
         setIsVideoEnabled(true);
+        setVideoOrientation(0);
         setCall(undefined);
         setMessageSender(undefined);
         setIsCallOnHold(false);
@@ -677,6 +667,27 @@ export default function CallScreen() {
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [isOnCall, setIsOnCall]
+    );
+
+    useEffect(
+        () => {
+            const videoContainer = videoContainerRef.current;
+            switch (videoOrientation) {
+                case 0:
+                    videoContainer.className = "landscape";
+                    break;
+                case 90:
+                    videoContainer.className = "portrait";
+                    break;
+                case 180:
+                    videoContainer.className = "landscape upside-down";
+                    break;
+                case 270:
+                    videoContainer.className = "portrait upside-down";
+                    break;
+            }
+        },
+        [videoOrientation, setVideoOrientation]
     );
 
     return (
