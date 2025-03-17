@@ -47,6 +47,7 @@ import usePhoto from '../Hooks/usePhoto';
 import { CallProvider, useCallAgent } from '@azure/communication-react';
 import { UserData } from '../Models/UserData';
 import ProfileComponent from './ProfileComponent';
+import { FULL_ROTATION, ROTATION_STEP, RotationAngle } from '../Models/RotationAngle';
 
 const DATA_CHANNEL_ID = 1000;
 
@@ -106,12 +107,12 @@ export default function CallScreen() {
     /**
      * How much the video from the caller needs to be rotated clockwise to achieve its natural orientation.
      */
-    const [videoOrientation, setVideoOrientation] = useState<0|90|180|270>(0);
+    const [videoOrientation, setVideoOrientation] = useState<RotationAngle>(0);
 
     /**
      * How much the assistant has manually rotated the video clockwise, relative to its natural orientation.
      */
-    const [videoRotationAngle, setVideoRotationAngle] = useState<0|90|180|270>(0);
+    const [videoRotationAngle, setVideoRotationAngle] = useState<RotationAngle>(0);
 
     /**
      * The CallAgent used to make the Call.
@@ -354,8 +355,7 @@ export default function CallScreen() {
      * Rotate the video manually.
      */
     const rotateVideo = () => {
-        // @ts-ignore
-        setVideoRotationAngle((videoRotationAngle + 90) % 360);
+        setVideoRotationAngle(((videoRotationAngle + ROTATION_STEP) % FULL_ROTATION) as RotationAngle);
     };
 
     /**
@@ -420,7 +420,7 @@ export default function CallScreen() {
     /**
      * Respond to an orientationEvent.
      */
-    const handleOrientationEvent = (orientationEvent: {rotationAngle: 0|90|180|270}) => {
+    const handleOrientationEvent = (orientationEvent: {rotationAngle: RotationAngle}) => {
         setVideoOrientation(orientationEvent.rotationAngle);
     };
 
