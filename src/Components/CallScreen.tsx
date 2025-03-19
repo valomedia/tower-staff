@@ -788,6 +788,12 @@ export default function CallScreen() {
                         }>
                         <FontAwesomeIcon icon={faLocationDot}/>
                     </button>
+                    <button
+                        id='rotate-video-button'
+                        className={videoRotationAngle ? 'active' : 'inactive'}
+                        onClick={rotateVideo}>
+                        <FontAwesomeIcon icon={faRotateRight}/>
+                    </button>
                     {isVideoEnabled ? (
                         <button
                             id='disable-video-button'
@@ -803,12 +809,6 @@ export default function CallScreen() {
                             disabled={!isCallConnected || isCallOnHold || isHangingUp}
                         ><FontAwesomeIcon icon={faVideoSlash}/></button>
                     )}
-                    <button
-                        id='rotate-video-button'
-                        className={videoRotationAngle ? 'active' : 'inactive'}
-                        onClick={rotateVideo}>
-                        <FontAwesomeIcon icon={faRotateRight}/>
-                    </button>
                     {isAudioInputMuted ? (
                         <button
                             id='unmute-input-button'
