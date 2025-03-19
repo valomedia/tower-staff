@@ -21,6 +21,7 @@ import {
     faMicrophoneSlash,
     faPause,
     faPhone,
+    faRotateRight,
     faVideo,
     faVideoSlash,
     faVolumeHigh,
@@ -46,6 +47,7 @@ import usePhoto from '../Hooks/usePhoto';
 import { CallProvider, useCallAgent } from '@azure/communication-react';
 import { UserData } from '../Models/UserData';
 import ProfileComponent from './ProfileComponent';
+import { FULL_ROTATION, ROTATION_STEP, RotationAngle } from '../Models/RotationAngle';
 
 const DATA_CHANNEL_ID = 1000;
 
@@ -101,6 +103,16 @@ export default function CallScreen() {
      * false if the assistant switches the video feed off.
      */
     const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+
+    /**
+     * How much the video from the caller needs to be rotated clockwise to achieve its natural orientation.
+     */
+    const [videoOrientation, setVideoOrientation] = useState<RotationAngle>(0);
+
+    /**
+     * How much the assistant has manually rotated the video clockwise, relative to its natural orientation.
+     */
+    const [videoRotationAngle, setVideoRotationAngle] = useState<RotationAngle>(0);
 
     /**
      * The CallAgent used to make the Call.
@@ -340,6 +352,13 @@ export default function CallScreen() {
     };
 
     /**
+     * Rotate the video manually.
+     */
+    const rotateVideo = () => {
+        setVideoRotationAngle(((videoRotationAngle + ROTATION_STEP) % FULL_ROTATION) as RotationAngle);
+    };
+
+    /**
      * Respond to a capturePhotoResponse.
      *
      * When this arrives, the photo has already been fully transmitted and is hopefully being shown to the user, so
@@ -401,22 +420,8 @@ export default function CallScreen() {
     /**
      * Respond to an orientationEvent.
      */
-    const handleOrientationEvent = (orientationEvent: {rotationAngle: 0|90|180|270}) => {
-        const videoContainer = videoContainerRef.current;
-        switch (orientationEvent.rotationAngle) {
-            case 0:
-                videoContainer.className = "landscape";
-                break;
-            case 90:
-                videoContainer.className = "portrait";
-                break;
-            case 180:
-                videoContainer.className = "landscape upside-down";
-                break;
-            case 270:
-                videoContainer.className = "portrait upside-down";
-                break;
-        }
+    const handleOrientationEvent = (orientationEvent: {rotationAngle: RotationAngle}) => {
+        setVideoOrientation(orientationEvent.rotationAngle);
     };
 
     /**
@@ -440,8 +445,6 @@ export default function CallScreen() {
         setIsHangingUp(true);
         call?.hangUp({forEveryone: true});
 
-        videoContainerRef.current.className = "";
-
         setIsOnCall(false);
         setIsCallConnected(false);
         setIsDataChannelAvailable(false);
@@ -449,6 +452,8 @@ export default function CallScreen() {
         setIsVideoReceiving(false);
         setIsVideoAvailable(false);
         setIsVideoEnabled(true);
+        setVideoRotationAngle(0);
+        setVideoOrientation(0);
         setCall(undefined);
         setMessageSender(undefined);
         setIsCallOnHold(false);
@@ -679,6 +684,13 @@ export default function CallScreen() {
         [isOnCall, setIsOnCall]
     );
 
+    useEffect(
+        () => {
+            videoContainerRef.current.className = `rotation-${videoOrientation + videoRotationAngle}`;
+        },
+        [videoOrientation, setVideoOrientation, videoRotationAngle, setVideoRotationAngle]
+    );
+
     return (
         <CallProvider call={call}>
             <div id='call-screen' className='screen' hidden={!isOnCall}>
@@ -775,6 +787,12 @@ export default function CallScreen() {
                             || isHangingUp
                         }>
                         <FontAwesomeIcon icon={faLocationDot}/>
+                    </button>
+                    <button
+                        id='rotate-video-button'
+                        className={videoRotationAngle ? 'active' : 'inactive'}
+                        onClick={rotateVideo}>
+                        <FontAwesomeIcon icon={faRotateRight}/>
                     </button>
                     {isVideoEnabled ? (
                         <button

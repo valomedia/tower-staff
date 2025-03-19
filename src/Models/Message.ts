@@ -11,6 +11,7 @@ import Location from './Location';
 import ErrorInfo, { isErrorInfo } from './ErrorInfo';
 import { EmptyObject } from './UtilityTypes';
 import { UserData } from './UserData';
+import { RotationAngle } from './RotationAngle';
 
 /**
  * A data channel message.
@@ -32,7 +33,7 @@ export type DataMessage
     | {holdEvent: EmptyObject}
     | {resumeEvent: EmptyObject}
     | {photoDataEvent: PhotoDataChunk}
-    | {orientationEvent: {rotationAngle: 0|90|180|270}}
+    | {orientationEvent: {rotationAngle: RotationAngle}}
     | {locationEvent: Location}
     | {flushEvent: EmptyObject}
     | {videoToggleEvent: {isVideoEnabled: boolean}}
