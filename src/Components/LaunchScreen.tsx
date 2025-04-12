@@ -67,8 +67,7 @@ export default function LaunchScreen() {
      */
     const handleAccept = () => {
         setIsOnCall(true);
-        setIsRinging(false);
-    }
+    };
 
     /*
      * Toggle ringtone.
@@ -81,27 +80,25 @@ export default function LaunchScreen() {
     useEffect(() => {
         const intervalId = window.setInterval(
             () => {
-                if (!isOnCall) {
-                    if (isConnecting) {
-                        TowerApi.assistanceToken()
-                            .then(response => {
-                                setUserToken(response.userToken);
-                                setHasBackend(true);
-                            })
-                            .finally(() => setIsConnecting(false))
-                    }
-                    if (hasBackend) {
-                        TowerApi
-                            .offerAssistance()
-                            .then(offerAssistanceResponse => {
-                                if (offerAssistanceResponse.assistanceRequest) {
-                                    setIsRinging(true);
-                                } else {
-                                    setIsRinging(false);
-                                }
-                            })
-                            .catch(() => setIsRinging(false));
-                    }
+                if (isConnecting) {
+                    TowerApi
+                        .assistanceToken()
+                        .then(response => {
+                            setUserToken(response.userToken);
+                            setHasBackend(true);
+                        })
+                        .finally(() => setIsConnecting(false))
+                }
+                if (!isOnCall && hasBackend) {
+                    TowerApi
+                        .offerAssistance()
+                        .then(offerAssistanceResponse => {
+                            setIsRinging(!!offerAssistanceResponse.assistanceRequest);
+                        })
+                        .catch(() => setIsRinging(false));
+                }
+                if (isOnCall) {
+                    setIsRinging(false);
                 }
             },
             2000
