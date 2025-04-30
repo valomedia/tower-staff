@@ -1,6 +1,6 @@
 {
   "name": "tower-staff",
-  "version": "1.0.0-rc.2",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@azure/communication-calling": "^1.30.4",
