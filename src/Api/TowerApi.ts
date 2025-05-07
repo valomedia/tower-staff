@@ -52,13 +52,18 @@ export async function beginAssistance(): Promise<{assistanceRequest: AssistanceR
     return JSON.parse(await request('POST', '/beginAssistance'), dateFieldReviver);
 }
 
-async function request(method = 'GET', path: String, params?: URLSearchParams) {
+async function request(method = 'GET', path: String, body?: {[key: string]: any}) {
     const response = await fetch(
         // @ts-ignore
-        process.env.REACT_APP_TOWER_API_ENDPOINT + path + (params ? '?' + params: ''),
+        process.env.REACT_APP_TOWER_API_ENDPOINT + path,
         {
             method,
             credentials: 'include',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
         }
     );
     if (!response.ok) {
