@@ -11,6 +11,8 @@ import UserToken from '../Models/UserToken';
 import AssistanceRequest from '../Models/AssistanceRequest';
 import UploadLink from '../Models/UploadLink';
 import DownloadLink from '../Models/DownloadLink';
+import compositeReviver from '../Lib/compositeReviver';
+import urlFieldReviver from '../Lib/urlFieldReviver';
 
 /**
  * Make a request to the index endpoint.
@@ -97,5 +99,5 @@ async function request(method = 'GET', path: String, body?: {[key: string]: any}
     if (!response.ok) {
         throw new Error(response.statusText);
     }
-    return JSON.parse(await response.text(), dateFieldReviver);
+    return JSON.parse(await response.text(), compositeReviver(dateFieldReviver, urlFieldReviver));
 }

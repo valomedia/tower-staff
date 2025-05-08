@@ -14,7 +14,7 @@ export default interface UploadLink {
     /**
      * The url the file can be uploaded to using a PUT request.
      */
-    uploadUrl: string;
+    uploadUrl: URL;
 
     /**
      * The key that can be used to retrieve the file later.

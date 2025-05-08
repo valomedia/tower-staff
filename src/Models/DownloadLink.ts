@@ -14,7 +14,7 @@ export default interface DownloadLink {
     /**
      * The url the file can be downloaded from using a GET request.
      */
-    downloadUrl: string;
+    downloadUrl: URL;
 
     /**
      * The Date until which the download url can be used.
