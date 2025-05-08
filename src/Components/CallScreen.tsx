@@ -319,9 +319,9 @@ export default function CallScreen() {
     /*
      * Capture a photo.
      */
-    const capturePhoto = () => {
+    const capturePhoto = async () => {
         setIsCapturingPhoto(true);
-        sendMessage({capturePhotoRequest: {}});
+        sendMessage({capturePhotoRequest: await TowerApi.createImageUploadUrl()});
     };
 
     /*
