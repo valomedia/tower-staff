@@ -641,6 +641,8 @@ export default function CallScreen() {
 
                 const message: Message
                     = JSON.parse((new TextDecoder()).decode(receiver.readMessage()!.data), messageReviver);
+                console.log("Got data message:", message);
+
                 if ("capturePhotoResponse" in message) { handleCapturePhotoResponse(message.capturePhotoResponse); }
                 if ("switchCameraResponse" in message) { handleSwitchCameraResponse(message.switchCameraResponse); }
                 if ("toggleTorchResponse" in message) { handleToggleTorchResponse(message.toggleTorchResponse); }
@@ -658,6 +660,7 @@ export default function CallScreen() {
      * Send a message through the data channel.
      */
     const sendMessage = (message: Message) => {
+        console.log("Sending data message:", message);
         messageSender?.sendMessage((new TextEncoder()).encode(JSON.stringify(message)));
 
         // ACS seems to have a bug where data messages can get stuck until another data message is sent. As
