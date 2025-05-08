@@ -9,6 +9,8 @@
 import dateFieldReviver from '../Lib/dateFieldReviver';
 import UserToken from '../Models/UserToken';
 import AssistanceRequest from '../Models/AssistanceRequest';
+import UploadLink from '../Models/UploadLink';
+import DownloadLink from '../Models/DownloadLink';
 
 /**
  * Make a request to the index endpoint.
@@ -50,6 +52,32 @@ export async function offerAssistance(): Promise<{assistanceRequest?: Assistance
  */
 export async function beginAssistance(): Promise<{assistanceRequest: AssistanceRequest}> {
     return JSON.parse(await request('POST', '/beginAssistance'), dateFieldReviver);
+}
+
+/**
+ * Make a request to the createImageUploadUrl endpoint.
+ *
+ * This endpoint will return a single-use URL the customer's app can use to upload an image in response to a
+ * capturePhotoRequest.
+ *
+ * @return The UploadLink sent to the users app, so it can upload the photo.
+ */
+export async function createImageUploadUrl(): Promise<UploadLink> {
+    return JSON.parse(await request('POST', '/createImageUploadUrl'), dateFieldReviver);
+}
+
+/**
+ * Make a request to the createImageDownloadUrl endpoint.
+ *
+ * This endpoint will return a URL tower-staff can use to download the image an end-user app uploaded under a
+ * particular key.
+ *
+ * @param key The key of the uploaded image.
+ *
+ * @return The DownloadLink that can be used to download the image.
+ */
+export async function createImageDownloadUrl(key: string): Promise<DownloadLink> {
+    return JSON.parse(await request('POST', '/createImageDownloadUrl', {key}), dateFieldReviver);
 }
 
 async function request(method = 'GET', path: String, body?: {[key: string]: any}) {
