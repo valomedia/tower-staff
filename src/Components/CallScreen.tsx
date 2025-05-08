@@ -235,7 +235,7 @@ export default function CallScreen() {
     /*
      * The most recently captured photo, if any.
      */
-    const {photo, storePhotoDataChunk, clearPhoto} = usePhoto();
+    const {photo, setPhoto, storePhotoDataChunk, clearPhoto} = usePhoto();
 
     /*
      * Whether the assistant currently has the video maximized (and zoomed in).
@@ -364,8 +364,14 @@ export default function CallScreen() {
      * When this arrives, the photo has already been fully transmitted and is hopefully being shown to the user, so
      * this just re-enables the button.
      */
-    const handleCapturePhotoResponse = (_: {uuid: string}|ErrorInfo) => {
+    const handleCapturePhotoResponse = (capturePhotoResponse: {key: string}|{uuid: string}|ErrorInfo) => {
         setIsCapturingPhoto(false);
+        if ("key" in capturePhotoResponse) {
+            TowerApi
+                .createImageDownloadUrl(capturePhotoResponse.key)
+                .then(x => x.downloadUrl)
+                .then(setPhoto);
+        }
     };
 
     /**
