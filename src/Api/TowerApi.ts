@@ -18,7 +18,7 @@ import DownloadLink from '../Models/DownloadLink';
  * This is used to ensure that the backend is operational and the credentials are correct.
  */
 export async function index() {
-    return JSON.parse(await request('GET', '/'));
+    return request('GET', '/');
 }
 
 /**
@@ -29,7 +29,7 @@ export async function index() {
  * @return The token needed to connect to ACS.
  */
 export async function assistanceToken(): Promise<{userToken: UserToken}> {
-    return JSON.parse(await request('GET', '/assistanceToken'), dateFieldReviver);
+    return request('GET', '/assistanceToken');
 }
 
 /**
@@ -40,7 +40,7 @@ export async function assistanceToken(): Promise<{userToken: UserToken}> {
  * @return The oldest unanswered AssistanceRequest, if any.
  */
 export async function offerAssistance(): Promise<{assistanceRequest?: AssistanceRequest}> {
-    return JSON.parse(await request('GET', '/offerAssistance'), dateFieldReviver);
+    return request('GET', '/offerAssistance');
 }
 
 /**
@@ -51,7 +51,7 @@ export async function offerAssistance(): Promise<{assistanceRequest?: Assistance
  * @return The assistance request that the assistant is supposed to answer.
  */
 export async function beginAssistance(): Promise<{assistanceRequest: AssistanceRequest}> {
-    return JSON.parse(await request('POST', '/beginAssistance'), dateFieldReviver);
+    return request('POST', '/beginAssistance');
 }
 
 /**
@@ -63,7 +63,7 @@ export async function beginAssistance(): Promise<{assistanceRequest: AssistanceR
  * @return The UploadLink sent to the users app, so it can upload the photo.
  */
 export async function createImageUploadUrl(): Promise<UploadLink> {
-    return JSON.parse(await request('POST', '/createImageUploadUrl'), dateFieldReviver);
+    return request('POST', '/createImageUploadUrl');
 }
 
 /**
@@ -77,7 +77,7 @@ export async function createImageUploadUrl(): Promise<UploadLink> {
  * @return The DownloadLink that can be used to download the image.
  */
 export async function createImageDownloadUrl(key: string): Promise<DownloadLink> {
-    return JSON.parse(await request('POST', '/createImageDownloadUrl', {key}), dateFieldReviver);
+    return request('POST', '/createImageDownloadUrl', {key});
 }
 
 async function request(method = 'GET', path: String, body?: {[key: string]: any}) {
@@ -97,5 +97,5 @@ async function request(method = 'GET', path: String, body?: {[key: string]: any}
     if (!response.ok) {
         throw new Error(response.statusText);
     }
-    return response.text();
+    return JSON.parse(await response.text(), dateFieldReviver);
 }
