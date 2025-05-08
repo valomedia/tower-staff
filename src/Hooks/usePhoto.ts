@@ -7,13 +7,14 @@
 //
 
 import PhotoDataChunk from '../Models/PhotoDataChunk';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 
 /**
  * Hook for reassembling a photo from PhotoDataChunk's
  */
 export default function usePhoto(): {
     photo?: URL,
+    setPhoto: Dispatch<SetStateAction<URL|undefined>>,
     storePhotoDataChunk: (photoDataChunk: PhotoDataChunk) => void,
     clearPhoto: () => void
 } {
@@ -54,5 +55,5 @@ export default function usePhoto(): {
         setPhoto(undefined);
     }
 
-    return {photo, storePhotoDataChunk, clearPhoto};
+    return {photo, setPhoto, storePhotoDataChunk, clearPhoto};
 };

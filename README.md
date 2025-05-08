@@ -36,19 +36,47 @@ determined by the type of the message.
 
 ### `capturePhotoRequest`
 
-This message is sent by `tower-staff` to instruct the app of the caller to take a photo. Its contents will always be an
-empty object.
+This message is sent by `tower-staff` to instruct the app of the caller to take a photo. It will contain an 
+`uploadUrl` (along with the date it `expiresOn`), which can be used to upload the photo, and a `key`, which is 
+returned in the `capturePhotoResponse`, so `tower-staff` can download the photo. If the end-user app still relies on 
+the legacy method of sending photos, it will ignore these values and just transmit the photo using `photoDataEvent`s 
+instead.
 
-Message format:
+Request format:
 
-```typescript
-{capturePhotoRequest: {}}
+```
+{
+    capturePhotoRequest: {
+        uploadUrl: string,
+        key: string,
+        expiresOn: string
+    }
+}
+```
+
+Example message:
+
+```json
+{
+    "capturePhotoRequest": {
+        "uploadUrl": "…",
+        "key": "25058120.jpeg",
+        "expiresOn": "2025-05-04T16:55:51.962Z"
+    }
+}
 ```
 
 ### `capturePhotoResponse`
 
-This message is sent by the app of the caller in response to a `capturePhotoRequest`. It contains the uuid that was 
-used on the `photoDataEvent` messages with which the photo was transmitted.
+This message is sent by the app of the caller in response to a `capturePhotoRequest`. There are three forms of this
+message, depending on whether the capture was successful and how the end-user app is sending the photo.
+
+Usually, the caller's app will upload the photo to the backend using HTTP. In this case, the message will specify the 
+key the app has used to upload the photo. Using this key, `tower-staff` can download the photo from the backend.
+
+If the client relies on the legacy method of sending photos, it will instead send several `photoDataEvent` messages on a
+separate data channel. Once all the data has been sent, it will send a `capturePhotoResponse` with the uuid that was 
+used in the `photoDataEvent` messages.
 
 If capturing the photo failed for whatever reason, an object describing the error is sent instead. The properties of 
 this object are the same as the ones on the object sent in an `errorEvent`.
@@ -56,7 +84,7 @@ this object are the same as the ones on the object sent in an `errorEvent`.
 Message format:
 
 ```
-{capturePhotoResponse: {uuid: string}}
+{capturePhotoResponse: {key: string}|{uuid: string}}
 ```
 
 Error format:
@@ -68,7 +96,7 @@ Error format:
 Example message:
 
 ```json
-{"capturePhotoResponse": {"uuid": "571c9dbb-2887-4bfd-b334-ce6b8c2dbe3"}}
+{"capturePhotoResponse": {"url": "https://placebear.com/1080/1920"}}
 ```
 
 ### `locationRequest`

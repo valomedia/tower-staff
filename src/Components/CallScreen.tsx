@@ -235,7 +235,7 @@ export default function CallScreen() {
     /*
      * The most recently captured photo, if any.
      */
-    const {photo, storePhotoDataChunk, clearPhoto} = usePhoto();
+    const {photo, setPhoto, storePhotoDataChunk, clearPhoto} = usePhoto();
 
     /*
      * Whether the assistant currently has the video maximized (and zoomed in).
@@ -319,9 +319,9 @@ export default function CallScreen() {
     /*
      * Capture a photo.
      */
-    const capturePhoto = () => {
+    const capturePhoto = async () => {
         setIsCapturingPhoto(true);
-        sendMessage({capturePhotoRequest: {}});
+        sendMessage({capturePhotoRequest: await TowerApi.createImageUploadUrl()});
     };
 
     /*
@@ -364,8 +364,14 @@ export default function CallScreen() {
      * When this arrives, the photo has already been fully transmitted and is hopefully being shown to the user, so
      * this just re-enables the button.
      */
-    const handleCapturePhotoResponse = (_: {uuid: string}|ErrorInfo) => {
+    const handleCapturePhotoResponse = (capturePhotoResponse: {key: string}|{uuid: string}|ErrorInfo) => {
         setIsCapturingPhoto(false);
+        if ("key" in capturePhotoResponse) {
+            TowerApi
+                .createImageDownloadUrl(capturePhotoResponse.key)
+                .then(x => x.downloadUrl)
+                .then(setPhoto);
+        }
     };
 
     /**
@@ -641,6 +647,8 @@ export default function CallScreen() {
 
                 const message: Message
                     = JSON.parse((new TextDecoder()).decode(receiver.readMessage()!.data), messageReviver);
+                console.log("Got data message:", message);
+
                 if ("capturePhotoResponse" in message) { handleCapturePhotoResponse(message.capturePhotoResponse); }
                 if ("switchCameraResponse" in message) { handleSwitchCameraResponse(message.switchCameraResponse); }
                 if ("toggleTorchResponse" in message) { handleToggleTorchResponse(message.toggleTorchResponse); }
@@ -658,6 +666,7 @@ export default function CallScreen() {
      * Send a message through the data channel.
      */
     const sendMessage = (message: Message) => {
+        console.log("Sending data message:", message);
         messageSender?.sendMessage((new TextEncoder()).encode(JSON.stringify(message)));
 
         // ACS seems to have a bug where data messages can get stuck until another data message is sent. As

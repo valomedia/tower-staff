@@ -12,6 +12,7 @@ import ErrorInfo, { isErrorInfo } from './ErrorInfo';
 import { EmptyObject } from './UtilityTypes';
 import { UserData } from './UserData';
 import { RotationAngle } from './RotationAngle';
+import UploadLink from './UploadLink';
 
 /**
  * A data channel message.
@@ -22,8 +23,8 @@ export type Message = DataMessage|ErrorMessage
  * A data channel message that is sent during normal operation.
  */
 export type DataMessage
-    = {capturePhotoRequest: EmptyObject}
-    | {capturePhotoResponse: {uuid: string}}
+    = {capturePhotoRequest: UploadLink}
+    | {capturePhotoResponse: {key: string}|{uuid: string}}
     | {switchCameraRequest: EmptyObject}
     | {switchCameraResponse: EmptyObject}
     | {toggleTorchRequest: EmptyObject}
