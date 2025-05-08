@@ -96,7 +96,7 @@ Error format:
 Example message:
 
 ```json
-{"capturePhotoResponse": {"url": "https://placebear.com/1080/1920"}}
+{"capturePhotoResponse": {"key": "25058120.jpeg"}}
 ```
 
 ### `locationRequest`
