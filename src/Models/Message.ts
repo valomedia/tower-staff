@@ -24,7 +24,7 @@ export type Message = DataMessage|ErrorMessage
  */
 export type DataMessage
     = {capturePhotoRequest: UploadLink}
-    | {capturePhotoResponse: {uuid: string}}
+    | {capturePhotoResponse: {key: string}|{uuid: string}}
     | {switchCameraRequest: EmptyObject}
     | {switchCameraResponse: EmptyObject}
     | {toggleTorchRequest: EmptyObject}
