@@ -325,6 +325,7 @@ export default function CallScreen() {
      * Capture a photo.
      */
     const capturePhoto = async () => {
+        if (!isDataChannelAvailable) { return; }
         setIsCapturingPhoto(true);
         sendMessage({capturePhotoRequest: await TowerApi.createImageUploadUrl()});
     };
@@ -751,7 +752,6 @@ export default function CallScreen() {
                         onClick={capturePhoto}
                         disabled={
                             isCapturingPhoto
-                                || !isDataChannelAvailable
                                 || isCallOnHold
                                 || isHangingUp
                                 || !isVideoEnabled
