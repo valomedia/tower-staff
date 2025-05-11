@@ -252,6 +252,11 @@ export default function CallScreen() {
      */
     const videoContainerRef = useRef() as MutableRefObject<HTMLDivElement>;
 
+    /**
+     * The canvas photo previews are drawn into.
+     */
+    const canvasRef = useRef() as MutableRefObject<HTMLCanvasElement>;
+
     /*
      * Turn off the video feed.
      */
@@ -730,6 +735,7 @@ export default function CallScreen() {
                     {location && (<MapComponent coordinate={location}/>)}
                 </aside>
                 <aside id='right-aside' className={isVideoMaximized ? 'closed' : 'open'}>
+                    <canvas ref={canvasRef}></canvas>
                     {photo && (<img src={photo.href} alt='Vom Gerät der Benutzer:in aufgenommenes Foto'/>)}
                 </aside>
                 <footer>
