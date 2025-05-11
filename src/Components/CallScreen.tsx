@@ -175,6 +175,16 @@ export default function CallScreen() {
     const [isCapturingPhoto, setIsCapturingPhoto] = useState(false);
 
     /*
+     * Timeout for re-enabling the photo button is no response is received.
+     *
+     * This is the ID of the timeout that re-enables the photo button after a while if no response is received. It is
+     * needed to cancel the timeout when a response is received and the button is re-enabled before the timeout.
+     * Otherwise the timeout would still fire and might prematurely re-enable the button while it's disabled again
+     * waiting for a new photo.
+     */
+    const [photoTimeout, setPhotoTimeout] = useState<NodeJS.Timeout>();
+
+    /*
      * Whether the camera is currently being switched.
      *
      * This is used to disable the camera switch button while waiting for the device to acknowledge the camera switch,
@@ -329,8 +339,12 @@ export default function CallScreen() {
      * Capture a photo.
      */
     const capturePhoto = async () => {
-        if (!isDataChannelAvailable) { return; }
         setIsCapturingPhoto(true);
+
+        // Re-enable the button after a while even if no response is received.
+        setPhotoTimeout(setTimeout(() => setIsCapturingPhoto(false), REENABLE_PHOTO_BUTTON_DELAY_MS));
+        
+        if (!isDataChannelAvailable) { return; }
         sendMessage({capturePhotoRequest: await TowerApi.createImageUploadUrl()});
     };
 
@@ -376,6 +390,7 @@ export default function CallScreen() {
      */
     const handleCapturePhotoResponse = (capturePhotoResponse: {key: string}|{uuid: string}|ErrorInfo) => {
         setIsCapturingPhoto(false);
+        if (photoTimeout) { clearTimeout(photoTimeout); }
         if ("key" in capturePhotoResponse) {
             TowerApi
                 .createImageDownloadUrl(capturePhotoResponse.key)
