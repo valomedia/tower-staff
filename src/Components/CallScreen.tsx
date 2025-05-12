@@ -339,14 +339,35 @@ export default function CallScreen() {
      * Capture a photo.
      */
     const capturePhoto = async () => {
+        const canvas = canvasRef.current;
+        const context = canvas.getContext("2d");
+
         setIsCapturingPhoto(true);
         clearPhoto();
+        context?.clearRect(0, 0, canvas.width, canvas.height);
 
         // Re-enable the button after a while even if no response is received.
         setPhotoTimeout(setTimeout(() => setIsCapturingPhoto(false), REENABLE_PHOTO_BUTTON_DELAY_MS));
-        
+
+        // Render a preview by pulling a frame from the video feed. This is delayed slightly to hopefully make it match
+        // up roughly with what will be on the photo once it comes through.
+        setTimeout(() => renderPhotoPreview(), RENDER_PHOTO_PREVIEW_DELAY_MS);
+
         if (!isDataChannelAvailable) { return; }
         sendMessage({capturePhotoRequest: await TowerApi.createImageUploadUrl()});
+    };
+
+    /*
+     * Capture a picture preview.
+     *
+     * Capturing a photo takes a while and isn't supported by all apps. For this reason, shortly after the assistant
+     * has hit the photo capture button, we capture a frame from the video feed, so we have something to display while
+     * waiting for (or instead of) the real picture.
+     */
+    const renderPhotoPreview = () => {
+        const context = canvasRef.current.getContext("2d");
+        const video = videoContainerRef.current.getElementsByTagName('video').item(0);
+        if (!context || !video) { return; }
     };
 
     /*
