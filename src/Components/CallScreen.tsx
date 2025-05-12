@@ -340,6 +340,7 @@ export default function CallScreen() {
      */
     const capturePhoto = async () => {
         setIsCapturingPhoto(true);
+        clearPhoto();
 
         // Re-enable the button after a while even if no response is received.
         setPhotoTimeout(setTimeout(() => setIsCapturingPhoto(false), REENABLE_PHOTO_BUTTON_DELAY_MS));
