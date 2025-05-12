@@ -365,9 +365,20 @@ export default function CallScreen() {
      * waiting for (or instead of) the real picture.
      */
     const renderPhotoPreview = () => {
-        const context = canvasRef.current.getContext("2d");
+        const canvas = canvasRef.current;
+        const context = canvas.getContext("2d");
         const video = videoContainerRef.current.getElementsByTagName('video').item(0);
         if (!context || !video) { return; }
+
+        const dw = canvas.clientWidth;
+        const dh = canvas.clientHeight;
+        const sw = Math.min(video.videoWidth, video.videoHeight * dw / dh);
+        const sh = Math.min(video.videoHeight, video.videoWidth / dw * dh);
+
+        canvas.width = dw;
+        canvas.height = dh;
+
+        context.drawImage(video, (video.videoWidth - sw) / 2, (video.videoHeight - sh) / 2, sw, sh, 0, 0, dw, dh);
     };
 
     /*
