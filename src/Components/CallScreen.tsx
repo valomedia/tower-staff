@@ -474,6 +474,9 @@ export default function CallScreen() {
      * End the call.
      */
     const endCall = () => {
+        const canvas = canvasRef.current;
+        const context = canvas.getContext("2d");
+
         setIsHangingUp(true);
         call?.hangUp({forEveryone: true});
 
@@ -504,6 +507,7 @@ export default function CallScreen() {
         setLocation(undefined);
         setUserData(undefined);
         clearPhoto();
+        context?.clearRect(0, 0, canvas.width, canvas.height);
         setIsVideoMaximized(false);
     };
 
