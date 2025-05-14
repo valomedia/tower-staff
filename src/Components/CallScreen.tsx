@@ -57,6 +57,10 @@ const DATA_CHANNEL_FLUSH_DELAY_MS = 2000;
 
 const RESUME_CALL_DELAY_MS = 3000;
 
+const RENDER_PHOTO_PREVIEW_DELAY_MS = 500;
+
+const REENABLE_PHOTO_BUTTON_DELAY_MS = 8000;
+
 /**
  * The in-call ui.
  */
@@ -171,6 +175,16 @@ export default function CallScreen() {
     const [isCapturingPhoto, setIsCapturingPhoto] = useState(false);
 
     /*
+     * Timeout for re-enabling the photo button is no response is received.
+     *
+     * This is the ID of the timeout that re-enables the photo button after a while if no response is received. It is
+     * needed to cancel the timeout when a response is received and the button is re-enabled before the timeout.
+     * Otherwise the timeout would still fire and might prematurely re-enable the button while it's disabled again
+     * waiting for a new photo.
+     */
+    const [photoTimeout, setPhotoTimeout] = useState<NodeJS.Timeout>();
+
+    /*
      * Whether the camera is currently being switched.
      *
      * This is used to disable the camera switch button while waiting for the device to acknowledge the camera switch,
@@ -252,6 +266,11 @@ export default function CallScreen() {
      */
     const videoContainerRef = useRef() as MutableRefObject<HTMLDivElement>;
 
+    /**
+     * The canvas photo previews are drawn into.
+     */
+    const canvasRef = useRef() as MutableRefObject<HTMLCanvasElement>;
+
     /*
      * Turn off the video feed.
      */
@@ -320,8 +339,60 @@ export default function CallScreen() {
      * Capture a photo.
      */
     const capturePhoto = async () => {
+        const canvas = canvasRef.current;
+        const context = canvas.getContext("2d");
+
         setIsCapturingPhoto(true);
+        clearPhoto();
+        context?.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Re-enable the button after a while even if no response is received.
+        setPhotoTimeout(setTimeout(() => setIsCapturingPhoto(false), REENABLE_PHOTO_BUTTON_DELAY_MS));
+
+        // Render a preview by pulling a frame from the video feed. This is delayed slightly to hopefully make it match
+        // up roughly with what will be on the photo once it comes through.
+        setTimeout(() => renderPhotoPreview(), RENDER_PHOTO_PREVIEW_DELAY_MS);
+
+        if (!isDataChannelAvailable) { return; }
         sendMessage({capturePhotoRequest: await TowerApi.createImageUploadUrl()});
+    };
+
+    /*
+     * Capture a picture preview.
+     *
+     * Capturing a photo takes a while and isn't supported by all apps. For this reason, shortly after the assistant
+     * has hit the photo capture button, we capture a frame from the video feed, so we have something to display while
+     * waiting for (or instead of) the real picture.
+     */
+    const renderPhotoPreview = () => {
+        const canvas = canvasRef.current;
+        const context = canvas.getContext("2d");
+        const video = videoContainerRef.current.getElementsByTagName('video').item(0);
+        if (!context || !video) { return; }
+
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+
+        const dw = (videoOrientation === 0 || videoOrientation === 180) ? canvas.width : canvas.height;
+        const dh = (videoOrientation === 0 || videoOrientation === 180) ? canvas.height : canvas.width;
+        const sw = Math.min(video.videoWidth, video.videoHeight * dw / dh);
+        const sh = Math.min(video.videoHeight, video.videoWidth / dw * dh);
+        const sx = (video.videoWidth - sw) / 2;
+        const sy = (video.videoHeight - sh) / 2;
+
+        switch (videoOrientation) {
+            case 90:
+                context.setTransform(0, 1, -1, 0, dh, 0);
+                break;
+            case 180:
+                context.setTransform(-1, 0, 0, -1, dw, dh);
+                break;
+            case 270:
+                context.setTransform(0, -1, 1, 0, 0, dw);
+                break;
+        }
+        context.drawImage(video, sx, sy, sw, sh, 0, 0, dw, dh);
+        context.setTransform(1, 0, 0, 1, 0, 0);
     };
 
     /*
@@ -366,6 +437,7 @@ export default function CallScreen() {
      */
     const handleCapturePhotoResponse = (capturePhotoResponse: {key: string}|{uuid: string}|ErrorInfo) => {
         setIsCapturingPhoto(false);
+        if (photoTimeout) { clearTimeout(photoTimeout); }
         if ("key" in capturePhotoResponse) {
             TowerApi
                 .createImageDownloadUrl(capturePhotoResponse.key)
@@ -448,6 +520,9 @@ export default function CallScreen() {
      * End the call.
      */
     const endCall = () => {
+        const canvas = canvasRef.current;
+        const context = canvas.getContext("2d");
+
         setIsHangingUp(true);
         call?.hangUp({forEveryone: true});
 
@@ -478,6 +553,7 @@ export default function CallScreen() {
         setLocation(undefined);
         setUserData(undefined);
         clearPhoto();
+        context?.clearRect(0, 0, canvas.width, canvas.height);
         setIsVideoMaximized(false);
     };
 
@@ -730,6 +806,7 @@ export default function CallScreen() {
                     {location && (<MapComponent coordinate={location}/>)}
                 </aside>
                 <aside id='right-aside' className={isVideoMaximized ? 'closed' : 'open'}>
+                    <canvas ref={canvasRef}></canvas>
                     {photo && (<img src={photo.href} alt='Vom Gerät der Benutzer:in aufgenommenes Foto'/>)}
                 </aside>
                 <footer>
@@ -745,7 +822,6 @@ export default function CallScreen() {
                         onClick={capturePhoto}
                         disabled={
                             isCapturingPhoto
-                                || !isDataChannelAvailable
                                 || isCallOnHold
                                 || isHangingUp
                                 || !isVideoEnabled
