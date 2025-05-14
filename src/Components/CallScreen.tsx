@@ -370,15 +370,29 @@ export default function CallScreen() {
         const video = videoContainerRef.current.getElementsByTagName('video').item(0);
         if (!context || !video) { return; }
 
-        const dw = canvas.clientWidth;
-        const dh = canvas.clientHeight;
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+
+        const dw = (videoOrientation === 0 || videoOrientation === 180) ? canvas.width : canvas.height;
+        const dh = (videoOrientation === 0 || videoOrientation === 180) ? canvas.height : canvas.width;
         const sw = Math.min(video.videoWidth, video.videoHeight * dw / dh);
         const sh = Math.min(video.videoHeight, video.videoWidth / dw * dh);
+        const sx = (video.videoWidth - sw) / 2;
+        const sy = (video.videoHeight - sh) / 2;
 
-        canvas.width = dw;
-        canvas.height = dh;
-
-        context.drawImage(video, (video.videoWidth - sw) / 2, (video.videoHeight - sh) / 2, sw, sh, 0, 0, dw, dh);
+        switch (videoOrientation) {
+            case 90:
+                context.setTransform(0, 1, -1, 0, dh, 0);
+                break;
+            case 180:
+                context.setTransform(-1, 0, 0, -1, dw, dh);
+                break;
+            case 270:
+                context.setTransform(0, -1, 1, 0, 0, dw);
+                break;
+        }
+        context.drawImage(video, sx, sy, sw, sh, 0, 0, dw, dh);
+        context.setTransform(1, 0, 0, 1, 0, 0);
     };
 
     /*
