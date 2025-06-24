@@ -152,7 +152,7 @@ export default function LaunchScreen() {
                     &nbsp;
                     Anfrage annehmen
                 </button>
-                <audio src={videoChatCalling} ref={audioRef} loop></audio>
+                <audio src={videoChatCalling} ref={audioRef} muted={isOnCall} loop></audio>
             </main>
             <footer>
                 <button
