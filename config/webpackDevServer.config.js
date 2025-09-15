@@ -105,20 +105,23 @@ module.exports = function (proxy, allowedHost) {
         },
         // `proxy` is run between `before` and `after` `webpack-dev-server` hooks
         proxy,
-        onBeforeSetupMiddleware(devServer) {
+        setupMiddlewares(middlewares, devServer) {
+            if (!devServer) {
+                throw new Error('webpack-dev-server is not defined')
+            }
+
             // Keep `evalSourceMapMiddleware`
             // middlewares before `redirectServedPath` otherwise will not have any effect
             // This lets us fetch source contents from webpack for the error overlay
-            devServer.app.use(evalSourceMapMiddleware(devServer));
+            middlewares.unshift(evalSourceMapMiddleware(devServer));
 
             if (fs.existsSync(paths.proxySetup)) {
                 // This registers user provided middleware for proxy reasons
-                require(paths.proxySetup)(devServer.app);
+                middlewares = require(paths.proxySetup)(middlewares, devServer);
             }
-        },
-        onAfterSetupMiddleware(devServer) {
+
             // Redirect to `PUBLIC_URL` or `homepage` from `package.json` if url not match
-            devServer.app.use(redirectServedPath(paths.publicUrlOrPath));
+            middlewares.push(redirectServedPath(paths.publicUrlOrPath));
 
             // This service worker file is effectively a 'no-op' that will reset any
             // previous service worker registered for the same host:port combination.
@@ -126,7 +129,9 @@ module.exports = function (proxy, allowedHost) {
             // it used the same host and port.
             //
             // See also: https://github.com/facebook/create-react-app/issues/2272#issuecomment-302832432.
-            devServer.app.use(noopServiceWorkerMiddleware(paths.publicUrlOrPath));
-        },
+            middlewares.push(noopServiceWorkerMiddleware(paths.publicUrlOrPath));
+
+            return middlewares
+        }
     };
 };
