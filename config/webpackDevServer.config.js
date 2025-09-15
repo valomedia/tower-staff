@@ -32,6 +32,8 @@ module.exports = function (proxy, allowedHost) {
     const disableFirewall =
         !proxy || process.env.DANGEROUSLY_DISABLE_HOST_CHECK === 'true';
 
+    const httpsConfig = getHttpsConfig();
+
     // noinspection WebpackConfigHighlighting,JSUnusedGlobalSymbols
     return {
         // If checking the host header, allow the host set via allowedHost, falling back to "127.0.0.1", if no
@@ -88,8 +90,12 @@ module.exports = function (proxy, allowedHost) {
             // `/test` instead of `/test/`.
             publicPath: paths.publicUrlOrPath.slice(0, -1),
         },
-
-        https: getHttpsConfig(),
+        server: httpsConfig
+            ? {
+                type: 'https',
+                options: httpsConfig
+            }
+            : 'http',
         host,
         historyApiFallback: {
             // Paths with dots should still use the history fallback.
