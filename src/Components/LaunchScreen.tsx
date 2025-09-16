@@ -147,7 +147,7 @@ export default function LaunchScreen() {
                                         : 'Verbindung fehlgeschlagen!'
                     }
                 </p>
-                <button id='accept-button' disabled={!isRinging} onClick={handleAccept}>
+                <button id='accept-button' className='primary' disabled={!isRinging} onClick={handleAccept}>
                     <FontAwesomeIcon icon={faPhone}/>
                     &nbsp;
                     Anfrage annehmen
