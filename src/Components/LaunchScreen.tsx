@@ -74,7 +74,7 @@ export default function LaunchScreen() {
      */
     const handleRingtoneToggle = () => {
         setIsRingtoneEnabled(!isRingtoneEnabled);
-    }
+    };
 
     // Poll for users.
     useEffect(() => {
