@@ -28,7 +28,7 @@ const App = () => {
      */
     const [isOnCall, setIsOnCall] = useState(false);
 
-    const [isPresentingCallOptionsDialog, setIsPresentingCallOptionsDialog] = useState(false);
+    const [isPresentingCallOptionsDialog, setIsPresentingCallOptionsDialog] = useState(true);
 
     /**
      * The stateful call client for the app.
@@ -82,7 +82,7 @@ const App = () => {
             </AppContext.Provider>
         </div>
     );
-}
+};
 
 /**
  * Context with app-wide state.
