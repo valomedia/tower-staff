@@ -57,6 +57,11 @@ button.inactive {
   color: white;
 }
 
+button.primary {
+  background-color: colors.$themePrimary;
+  color: white;
+}
+
 .dialog {
   position: fixed;
   top: 50vh;

@@ -6,8 +6,6 @@
 //
 //
 
-@use "../Styles/colors.module";
-
 #launch-screen {
   text-align: center;
   background-color: #282c34;
@@ -38,11 +36,6 @@
 
   p {
     margin: 16px 0;
-  }
-
-  #accept-button {
-    background-color: colors.$themePrimary;
-    color: white;
   }
 
   #ringtone-toggle-button {

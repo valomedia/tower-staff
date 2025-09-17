@@ -8,7 +8,7 @@
 
 import './CallOptionsDialog.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import MicrophoneSelectionDropdown from './MicrophoneSelectionDropdown';
 import SpeakerSelectionDropdown from './SpeakerSelectionDropdown';
 
@@ -22,12 +22,12 @@ export default function CallOptionsDialog(props: {onClose: () => void}) {
         <div id="call-options-dialog" className='dialog'>
             <h1>
                 Anrufoptionen
-                <button className='close-button' onClick={props.onClose}>
-                    <FontAwesomeIcon icon={faXmark}></FontAwesomeIcon>
-                </button>
             </h1>
             <SpeakerSelectionDropdown/>
             <MicrophoneSelectionDropdown/>
+            <button className='primary' onClick={props.onClose}>
+                <FontAwesomeIcon icon={faCheck}></FontAwesomeIcon>&nbsp;Fertig
+            </button>
         </div>
     );
 };
