@@ -55,7 +55,7 @@ export default function LaunchScreen() {
     /*
      * Whether the ringtone is enabled.
      */
-    const [isRingtoneEnabled, setIsRingtoneEnabled] = useState(false);
+    const [isRingtoneEnabled, setIsRingtoneEnabled] = useState(true);
 
     /*
      * The audio element for the ringtone.
