@@ -55,7 +55,7 @@ export default function LaunchScreen() {
     /*
      * Whether the ringtone is enabled.
      */
-    const [isRingtoneEnabled, setIsRingtoneEnabled] = useState(false);
+    const [isRingtoneEnabled, setIsRingtoneEnabled] = useState(true);
 
     /*
      * The audio element for the ringtone.
@@ -112,7 +112,10 @@ export default function LaunchScreen() {
             if (isRinging && isRingtoneEnabled && !isOnCall) {
                 if (audioRef.current.paused) {
                     audioRef.current.currentTime = 0;
-                    audioRef.current.play();
+                    audioRef.current.play().catch(() => {
+                        // Can't play sound, presumably because the user hasn't interacted with the page yet.
+                        setIsRingtoneEnabled(false)
+                    });
                 }
             } else {
                 if (!audioRef.current.paused) {
