@@ -6,7 +6,7 @@
 //
 //
 
-import { MutableRefObject, useContext, useEffect, useRef, useState } from 'react';
+import { MutableRefObject, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import './CallScreen.scss';
 import * as TowerApi from '../Api/TowerApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -55,6 +55,8 @@ const DATA_CHANNEL_BANDWIDTH_KBPS = 32;
 
 const DATA_CHANNEL_FLUSH_DELAY_MS = 2000;
 
+const FORCE_CALL_TEARDOWN_DELAY_MS = 10000;
+
 const RESUME_CALL_DELAY_MS = 3000;
 
 const RENDER_PHOTO_PREVIEW_DELAY_MS = 500;
@@ -73,7 +75,8 @@ export default function CallScreen() {
         isOnCall,
         setIsOnCall,
         isPresentingCallOptionsDialog,
-        setIsPresentingCallOptionsDialog
+        setIsPresentingCallOptionsDialog,
+        resetCallingStack
     } = useContext(AppContext);
 
     /**
@@ -271,6 +274,78 @@ export default function CallScreen() {
      */
     const canvasRef = useRef() as MutableRefObject<HTMLCanvasElement>;
 
+    const hangUpTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+
+    const forceTearingDownCallRef = useRef(false);
+
+    const clearPendingHangUpTimeout = () => {
+        if (!hangUpTimeoutRef.current) { return; }
+
+        clearTimeout(hangUpTimeoutRef.current);
+        hangUpTimeoutRef.current = undefined;
+    };
+
+    const finalizeCallEnd = useCallback(() => {
+        const canvas = canvasRef.current;
+        const context = canvas?.getContext("2d");
+        const videoContainer = videoContainerRef.current;
+
+        clearPendingHangUpTimeout();
+        forceTearingDownCallRef.current = false;
+
+        setIsOnCall(false);
+        setIsCallConnected(false);
+        setIsDataChannelAvailable(false);
+        setIsHangingUp(false);
+        setIsVideoReceiving(false);
+        setIsVideoAvailable(false);
+        setIsVideoEnabled(true);
+        setVideoRotationAngle(0);
+        setVideoOrientation(0);
+        setCall(undefined);
+        setMessageSender(undefined);
+        setIsCallOnHold(false);
+        setIsResumingCall(false);
+        setIsAudioInputMuted(false);
+        setIsAudioOutputMuted(false);
+        setIsCapturingPhoto(false);
+        setIsSwitchingCamera(false);
+        setIsCameraSwitchAvailable(true);
+        setIsUsingFrontCamera(false);
+        setIsTogglingTorch(false);
+        setIsTorchAvailable(true);
+        setIsUsingTorch(false);
+        setIsRequestingLocation(false);
+        setIsLocationAvailable(true);
+        setLocation(undefined);
+        setUserData(undefined);
+        clearPhoto();
+        videoContainer?.replaceChildren();
+        if (videoContainer) {
+            videoContainer.className = '';
+        }
+        if (canvas) {
+            context?.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        setIsVideoMaximized(false);
+    }, [clearPhoto, setIsOnCall]);
+
+    const forceResetActiveCall = useCallback(async (reason: string) => {
+        if (forceTearingDownCallRef.current) { return; }
+
+        forceTearingDownCallRef.current = true;
+        setIsHangingUp(true);
+        console.warn(reason);
+
+        try {
+            await resetCallingStack();
+        } catch (error) {
+            console.error('Failed to reset ACS calling stack.', error);
+        } finally {
+            finalizeCallEnd();
+        }
+    }, [finalizeCallEnd, resetCallingStack]);
+
     /*
      * Turn off the video feed.
      */
@@ -340,11 +415,13 @@ export default function CallScreen() {
      */
     const capturePhoto = async () => {
         const canvas = canvasRef.current;
-        const context = canvas.getContext("2d");
+        const context = canvas?.getContext("2d");
 
         setIsCapturingPhoto(true);
         clearPhoto();
-        context?.clearRect(0, 0, canvas.width, canvas.height);
+        if (canvas) {
+            context?.clearRect(0, 0, canvas.width, canvas.height);
+        }
 
         // Re-enable the button after a while even if no response is received.
         setPhotoTimeout(setTimeout(() => setIsCapturingPhoto(false), REENABLE_PHOTO_BUTTON_DELAY_MS));
@@ -366,9 +443,10 @@ export default function CallScreen() {
      */
     const renderPhotoPreview = () => {
         const canvas = canvasRef.current;
-        const context = canvas.getContext("2d");
-        const video = videoContainerRef.current.getElementsByTagName('video').item(0);
-        if (!context || !video) { return; }
+        const context = canvas?.getContext("2d");
+        const videoContainer = videoContainerRef.current;
+        const video = videoContainer?.getElementsByTagName('video').item(0);
+        if (!canvas || !context || !video) { return; }
 
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
@@ -519,42 +597,36 @@ export default function CallScreen() {
     /*
      * End the call.
      */
-    const endCall = () => {
-        const canvas = canvasRef.current;
-        const context = canvas.getContext("2d");
+    const endCall = (callToEnd?: Call) => {
+        if (!callToEnd) {
+            finalizeCallEnd();
+            return;
+        }
+
+        if (isHangingUp || forceTearingDownCallRef.current) { return; }
+
+        if (callToEnd.state === 'Disconnected') {
+            finalizeCallEnd();
+            return;
+        }
 
         setIsHangingUp(true);
-        call?.hangUp({forEveryone: true});
+        clearPendingHangUpTimeout();
+        hangUpTimeoutRef.current = setTimeout(
+            async () => {
+                if (callToEnd.state === 'Disconnected' || forceTearingDownCallRef.current) { return; }
 
-        setIsOnCall(false);
-        setIsCallConnected(false);
-        setIsDataChannelAvailable(false);
-        setIsHangingUp(false);
-        setIsVideoReceiving(false);
-        setIsVideoAvailable(false);
-        setIsVideoEnabled(true);
-        setVideoRotationAngle(0);
-        setVideoOrientation(0);
-        setCall(undefined);
-        setMessageSender(undefined);
-        setIsCallOnHold(false);
-        setIsResumingCall(false);
-        setIsAudioInputMuted(false);
-        setIsAudioOutputMuted(false);
-        setIsCapturingPhoto(false);
-        setIsSwitchingCamera(false);
-        setIsCameraSwitchAvailable(true);
-        setIsUsingFrontCamera(false);
-        setIsTogglingTorch(false);
-        setIsTorchAvailable(true);
-        setIsUsingTorch(false);
-        setIsRequestingLocation(false);
-        setIsLocationAvailable(true);
-        setLocation(undefined);
-        setUserData(undefined);
-        clearPhoto();
-        context?.clearRect(0, 0, canvas.width, canvas.height);
-        setIsVideoMaximized(false);
+                await forceResetActiveCall(`Call ${callToEnd.id} did not disconnect cleanly; resetting ACS call stack.`);
+            },
+            FORCE_CALL_TEARDOWN_DELAY_MS
+        );
+
+        callToEnd
+            .hangUp({forEveryone: true})
+            .catch(async error => {
+                console.error('Failed to hang up the call cleanly; resetting ACS call stack.', error);
+                await forceResetActiveCall(`Hang-up failed for call ${callToEnd.id}; resetting ACS call stack.`);
+            });
     };
 
     /**
@@ -634,7 +706,7 @@ export default function CallScreen() {
                     console.log('Call started');
                     break;
                 case 'Disconnected':
-                    endCall();
+                    finalizeCallEnd();
                     console.log(`Call ended, call end reason=${JSON.stringify(call.callEndReason)}`);
                     break;
             }
@@ -645,7 +717,7 @@ export default function CallScreen() {
             added.forEach(subscribeToRemoteParticipant);
 
             // End the call, if the user unexpectedly drops.
-            if (removed.length) {endCall();}
+            if (removed.length) {endCall(call);}
         });
     };
 
@@ -667,6 +739,7 @@ export default function CallScreen() {
     const subscribeToRemoteVideoStream = async (remoteVideoStream: RemoteVideoStream): Promise<void> => {
         const renderer = new VideoStreamRenderer(remoteVideoStream);
         const videoContainer = videoContainerRef.current;
+        if (!videoContainer) { return; }
 
         const createViewIfAvailable = async () => {
             if (remoteVideoStream.isAvailable) {
@@ -677,10 +750,16 @@ export default function CallScreen() {
                 }
 
                 const view = await renderer.createView({scalingMode: 'Fit'});
+                if (!videoContainerRef.current) {
+                    view.dispose();
+                    return;
+                }
                 videoContainer.appendChild(view.target);
                 const disposeViewIfUnavailable = async () => {
                     if (!remoteVideoStream.isAvailable) {
-                        videoContainer.removeChild(view.target);
+                        if (videoContainer.contains(view.target)) {
+                            videoContainer.removeChild(view.target);
+                        }
                         view.dispose();
                         remoteVideoStream.off("isAvailableChanged", disposeViewIfUnavailable);
                     }
@@ -761,7 +840,7 @@ export default function CallScreen() {
                     .then(startCall)
                     .catch(error => {
                         console.error(error);
-                        endCall();
+                        finalizeCallEnd();
                     });
             }
         },
@@ -770,8 +849,18 @@ export default function CallScreen() {
     );
 
     useEffect(
+        () =>
+            () => {
+                clearPendingHangUpTimeout();
+            },
+        []
+    );
+
+    useEffect(
         () => {
-            videoContainerRef.current.className = `rotation-${videoOrientation + videoRotationAngle}`;
+            if (videoContainerRef.current) {
+                videoContainerRef.current.className = `rotation-${videoOrientation + videoRotationAngle}`;
+            }
         },
         [videoOrientation, setVideoOrientation, videoRotationAngle, setVideoRotationAngle]
     );
@@ -952,7 +1041,7 @@ export default function CallScreen() {
                     >
                         <FontAwesomeIcon icon={faGear}/>
                     </button>
-                    <button id='hangup-button' disabled={isHangingUp} onClick={endCall}>
+                    <button id='hangup-button' disabled={isHangingUp} onClick={() => endCall(call)}>
                         {isHangingUp ? (
                             <div className='spinner-container'>
                                 <div className='loading-spinner'/>
