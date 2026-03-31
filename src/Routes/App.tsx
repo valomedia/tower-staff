@@ -5,7 +5,7 @@
 //  Created by Jean-Pierre Höhmann on 2023-03-06.
 //
 
-import { Context, createContext, Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Context, createContext, Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
 import './App.scss';
 import LaunchScreen from '../Components/LaunchScreen';
 import CallScreen from '../Components/CallScreen';
@@ -20,6 +20,16 @@ import UserToken from '../Models/UserToken';
 import { CallAgent } from '@azure/communication-calling';
 import { AzureCommunicationTokenCredential } from '@azure/communication-common';
 import CallOptionsDialog from '../Components/CallOptionsDialog';
+
+const disposeCallClient = async (client?: StatefulCallClient) => {
+    if (!client) { return; }
+
+    try {
+        await client.dispose();
+    } catch (error) {
+        console.error('Failed to dispose ACS calling stack.', error);
+    }
+};
 
 const App = () => {
 
@@ -39,18 +49,93 @@ const App = () => {
 
     const [callAgent, setCallAgent] = useState<CallAgent|undefined>();
 
+    const [isCallingStackReady, setIsCallingStackReady] = useState(false);
+
+    const callClientRef = useRef<StatefulCallClient>();
+
+    const callStackResetCounterRef = useRef(0);
+
+    const recreateCallingStack = useCallback(async (token: UserToken) => {
+        const resetCounter = ++callStackResetCounterRef.current;
+        const previousCallClient = callClientRef.current;
+
+        callClientRef.current = undefined;
+        setIsCallingStackReady(false);
+        setCallAgent(undefined);
+        setCallClient(undefined);
+
+        await disposeCallClient(previousCallClient);
+
+        const nextCallClient = createStatefulCallClient({userId: token.user});
+        callClientRef.current = nextCallClient;
+
+        try {
+            const deviceManager = await nextCallClient.getDeviceManager();
+            await deviceManager.askDevicePermission({audio: true, video: false});
+
+            const nextCallAgent
+                = await nextCallClient.createCallAgent(new AzureCommunicationTokenCredential(token.token));
+
+            if (resetCounter !== callStackResetCounterRef.current) {
+                await disposeCallClient(nextCallClient);
+                return;
+            }
+
+            setCallClient(nextCallClient);
+            setCallAgent(nextCallAgent);
+            setIsCallingStackReady(true);
+        } catch (error) {
+            console.error('Failed to initialize ACS calling stack.', error);
+
+            if (callClientRef.current === nextCallClient) {
+                callClientRef.current = undefined;
+            }
+
+            if (resetCounter === callStackResetCounterRef.current) {
+                setCallClient(undefined);
+                setCallAgent(undefined);
+                setIsCallingStackReady(false);
+            }
+
+            await disposeCallClient(nextCallClient);
+        }
+    }, []);
+
+    const resetCallingStack = useCallback(async () => {
+        if (!userToken) { return; }
+
+        await recreateCallingStack(userToken);
+    }, [recreateCallingStack, userToken]);
+
     useEffect(
         () => {
-            if (userToken && !callClient) {
-                const callClient = createStatefulCallClient({userId: userToken.user});
-                callClient.getDeviceManager().then(deviceManager => {
-                    deviceManager.askDevicePermission({audio: true, video: false})
-                });
-                setCallClient(callClient);
-                callClient.createCallAgent(new AzureCommunicationTokenCredential(userToken.token)).then(setCallAgent);
+            if (userToken) {
+                void recreateCallingStack(userToken);
+            } else {
+                const previousCallClient = callClientRef.current;
+
+                callStackResetCounterRef.current += 1;
+                callClientRef.current = undefined;
+                setIsCallingStackReady(false);
+                setCallAgent(undefined);
+                setCallClient(undefined);
+
+                void disposeCallClient(previousCallClient);
             }
         },
-        [userToken, callClient]
+        [recreateCallingStack, userToken]
+    );
+
+    useEffect(
+        () =>
+            () => {
+                const activeCallClient = callClientRef.current;
+
+                callStackResetCounterRef.current += 1;
+                callClientRef.current = undefined;
+                void disposeCallClient(activeCallClient);
+            },
+        []
     );
 
     return (
@@ -60,8 +145,10 @@ const App = () => {
                 setIsOnCall,
                 isPresentingCallOptionsDialog,
                 setIsPresentingCallOptionsDialog,
+                isCallingStackReady,
                 userToken,
-                setUserToken
+                setUserToken,
+                resetCallingStack
             }}>
                 <header>
                     <img src={banner} alt='tower'/>
@@ -92,14 +179,18 @@ export const AppContext: Context<{
     setIsOnCall: Dispatch<SetStateAction<boolean>>,
     isPresentingCallOptionsDialog: boolean,
     setIsPresentingCallOptionsDialog: Dispatch<SetStateAction<boolean>>,
+    isCallingStackReady: boolean,
     userToken?: UserToken,
-    setUserToken: Dispatch<SetStateAction<UserToken|undefined>>
+    setUserToken: Dispatch<SetStateAction<UserToken|undefined>>,
+    resetCallingStack: () => Promise<void>
 }> = createContext({
     isOnCall: false as boolean,
     setIsOnCall: _ => {},
     isPresentingCallOptionsDialog: false as boolean,
     setIsPresentingCallOptionsDialog: _ => {},
-    setUserToken: _ => {}
+    isCallingStackReady: false as boolean,
+    setUserToken: _ => {},
+    resetCallingStack: async () => {}
 });
 
 export default App;
