@@ -1,0 +1,68 @@
+//
+//  AssistantAdminScreen.scss
+//  tower-staff
+//
+//  Created by Arne Engelland on 2026-04-01.
+//
+//
+
+@use "../Styles/colors.module";
+
+#admin-aside {
+  color: #282c34;
+
+  .assistant-admin-screen {
+    min-height: calc(100vh - 53.33px);
+    padding: 80px 24px 24px;
+    box-sizing: border-box;
+  }
+
+  .assistant-admin-screen-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid colors.$themeLight;
+  }
+
+  .assistant-admin-screen-content {
+    padding-top: 24px;
+  }
+
+  .eyebrow {
+    margin: 0 0 12px;
+    color: colors.$themeDark;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 0.75rem;
+  }
+
+  h1 {
+    margin: 0;
+    font-family: "Dolce Vita", sans-serif;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    color: colors.$themePrimary;
+  }
+
+  p {
+    margin: 16px 0 0;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 0 16px;
+    border-radius: 40px;
+    background-color: white;
+    color: #282c34;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      background-color: colors.$themeLighter;
+    }
+  }
+}

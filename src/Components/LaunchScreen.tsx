@@ -7,13 +7,15 @@
 //
 
 import { MutableRefObject, useContext, useEffect, useRef, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBell, faGear, faPhone } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
+import * as TowerApi from '../Api/TowerApi';
 import logoAnimated from '../Assets/logo-animated.svg';
 import videoChatCalling from '../Assets/video-chat-calling.m4a';
 import './LaunchScreen.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faGear, faPhone } from '@fortawesome/free-solid-svg-icons';
-import * as TowerApi from '../Api/TowerApi';
 import { AppContext } from '../Routes/App';
+import { ASSISTANT_ADMIN_PATH } from '../Routes/paths';
 
 const ASSISTANCE_SESSION_MAXIMUM_DURATION_MS = 7_200_000;
 
@@ -151,16 +153,21 @@ export default function LaunchScreen() {
                                         : 'Verbindung fehlgeschlagen!'
                     }
                 </p>
-                <button
-                    id='accept-button'
-                    className='primary'
-                    disabled={!isRinging || !isCallingStackReady}
-                    onClick={handleAccept}
-                >
-                    <FontAwesomeIcon icon={faPhone}/>
-                    &nbsp;
-                    Anfrage annehmen
-                </button>
+                <div className='launch-screen-actions'>
+                    <button
+                        id='accept-button'
+                        className='primary'
+                        disabled={!isRinging || !isCallingStackReady}
+                        onClick={handleAccept}
+                    >
+                        <FontAwesomeIcon icon={faPhone}/>
+                        &nbsp;
+                        Anfrage annehmen
+                    </button>
+                    <Link to={ASSISTANT_ADMIN_PATH} className='admin-link'>
+                        Assistenten-Admin
+                    </Link>
+                </div>
                 <audio src={videoChatCalling} ref={audioRef} muted={isOnCall} loop></audio>
             </main>
             <footer>

@@ -5,10 +5,12 @@
 //  Created by Jean-Pierre Höhmann on 2023-03-06.
 //
 
-import { Context, createContext, Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
+import { createContext, Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import './App.scss';
 import LaunchScreen from '../Components/LaunchScreen';
 import CallScreen from '../Components/CallScreen';
+import AssistantAdminScreen from '../Components/AssistantAdminScreen';
 import banner from '../Assets/banner.svg';
 import {
     CallAgentProvider,
@@ -20,6 +22,7 @@ import UserToken from '../Models/UserToken';
 import { CallAgent } from '@azure/communication-calling';
 import { AzureCommunicationTokenCredential } from '@azure/communication-common';
 import CallOptionsDialog from '../Components/CallOptionsDialog';
+import { ASSISTANT_ADMIN_PATH } from './paths';
 
 const disposeCallClient = async (client?: StatefulCallClient) => {
     if (!client) { return; }
@@ -31,7 +34,21 @@ const disposeCallClient = async (client?: StatefulCallClient) => {
     }
 };
 
+type AppContextValue = {
+    isOnCall: boolean,
+    setIsOnCall: Dispatch<SetStateAction<boolean>>,
+    isPresentingCallOptionsDialog: boolean,
+    setIsPresentingCallOptionsDialog: Dispatch<SetStateAction<boolean>>,
+    isCallingStackReady: boolean,
+    userToken?: UserToken,
+    setUserToken: Dispatch<SetStateAction<UserToken|undefined>>,
+    resetCallingStack: () => Promise<void>
+};
+
 const App = () => {
+    const location = useLocation();
+
+    const isPresentingAssistantAdmin = location.pathname === ASSISTANT_ADMIN_PATH;
 
     /**
      * Whether a call is ongoing.
@@ -165,6 +182,8 @@ const App = () => {
                             </CallAgentProvider>
                         </CallClientProvider>
                     }
+                    <AssistantAdminScreen isOpen={isPresentingAssistantAdmin}/>
+                    <Outlet/>
                 </div>
             </AppContext.Provider>
         </div>
@@ -174,21 +193,13 @@ const App = () => {
 /**
  * Context with app-wide state.
  */
-export const AppContext: Context<{
-    isOnCall: boolean,
-    setIsOnCall: Dispatch<SetStateAction<boolean>>,
-    isPresentingCallOptionsDialog: boolean,
-    setIsPresentingCallOptionsDialog: Dispatch<SetStateAction<boolean>>,
-    isCallingStackReady: boolean,
-    userToken?: UserToken,
-    setUserToken: Dispatch<SetStateAction<UserToken|undefined>>,
-    resetCallingStack: () => Promise<void>
-}> = createContext({
-    isOnCall: false as boolean,
+export const AppContext = createContext<AppContextValue>({
+    isOnCall: false,
     setIsOnCall: _ => {},
-    isPresentingCallOptionsDialog: false as boolean,
+    isPresentingCallOptionsDialog: false,
     setIsPresentingCallOptionsDialog: _ => {},
-    isCallingStackReady: false as boolean,
+    isCallingStackReady: false,
+    userToken: undefined,
     setUserToken: _ => {},
     resetCallingStack: async () => {}
 });
