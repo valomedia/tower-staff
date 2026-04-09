@@ -12,12 +12,23 @@ import App from './Routes/App';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ErrorPage from './error-page';
+import { ASSISTANT_ADMIN_PATH, ROOT_PATH } from './Routes/paths';
 
 const router = createBrowserRouter([
     {
-        path: "/",
+        path: ROOT_PATH,
         element: <App/>,
-        errorElement: <ErrorPage/>
+        errorElement: <ErrorPage/>,
+        children: [
+            {
+                index: true,
+                element: null
+            },
+            {
+                path: ASSISTANT_ADMIN_PATH.slice(1),
+                element: null
+            }
+        ]
     }
 ]);
 
