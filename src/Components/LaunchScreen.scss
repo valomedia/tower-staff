@@ -38,28 +38,6 @@
     margin: 16px 0;
   }
 
-  .launch-screen-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    margin-top: 8px;
-  }
-
-  .admin-link {
-    color: rgba(255, 255, 255, 0.62);
-    font-size: 0.8rem;
-    line-height: 1;
-    text-decoration: none;
-    letter-spacing: 0.02em;
-
-    &:hover,
-    &:focus-visible {
-      color: rgba(255, 255, 255, 0.84);
-      text-decoration: underline;
-    }
-  }
-
   #ringtone-toggle-button {
     width: initial;
   }
