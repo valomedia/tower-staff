@@ -35,6 +35,8 @@ export default function LaunchScreen() {
     const {
         isOnCall,
         setIsOnCall,
+        isRinging,
+        setIsRinging,
         isPresentingCallOptionsDialog,
         setIsPresentingCallOptionsDialog,
         isCallingStackReady,
@@ -51,14 +53,6 @@ export default function LaunchScreen() {
      * Whether a connection with the backend has been established.
      */
     const [hasBackend, setHasBackend] = useState(false);
-
-    /*
-     * Whether there is a user waiting for an assistant to pick up.
-     *
-     * This will become true when the app is connected, and there is a user waiting for assistance or currently
-     * receiving assistance.
-     */
-    const [isRinging, setIsRinging] = useState(false);
 
     /*
      * Whether the ringtone is enabled.
@@ -122,7 +116,7 @@ export default function LaunchScreen() {
 
             return () => window.clearInterval(intervalId);
         },
-        [hasBackend, isConnecting, isOnCall, setUserToken]
+        [hasBackend, isConnecting, isOnCall, setIsRinging, setUserToken]
     );
 
     // Trigger ringtone.

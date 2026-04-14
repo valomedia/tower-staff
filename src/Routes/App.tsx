@@ -35,6 +35,8 @@ const disposeCallClient = async (client?: StatefulCallClient) => {
 type AppContextValue = {
     isOnCall: boolean,
     setIsOnCall: Dispatch<SetStateAction<boolean>>,
+    isRinging: boolean,
+    setIsRinging: Dispatch<SetStateAction<boolean>>,
     isPresentingCallOptionsDialog: boolean,
     setIsPresentingCallOptionsDialog: Dispatch<SetStateAction<boolean>>,
     isCallingStackReady: boolean,
@@ -49,6 +51,11 @@ const App = () => {
      * Whether a call is ongoing.
      */
     const [isOnCall, setIsOnCall] = useState(false);
+
+    /**
+     * Whether an incoming call is ringing.
+     */
+    const [isRinging, setIsRinging] = useState(false);
 
     const [isPresentingCallOptionsDialog, setIsPresentingCallOptionsDialog] = useState(true);
 
@@ -155,6 +162,8 @@ const App = () => {
             <AppContext.Provider value={{
                 isOnCall,
                 setIsOnCall,
+                isRinging,
+                setIsRinging,
                 isPresentingCallOptionsDialog,
                 setIsPresentingCallOptionsDialog,
                 isCallingStackReady,
@@ -190,6 +199,8 @@ const App = () => {
 export const AppContext = createContext<AppContextValue>({
     isOnCall: false,
     setIsOnCall: _ => {},
+    isRinging: false,
+    setIsRinging: _ => {},
     isPresentingCallOptionsDialog: false,
     setIsPresentingCallOptionsDialog: _ => {},
     isCallingStackReady: false,
