@@ -11,9 +11,9 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import './AssistantAdminScreen.scss';
 import { ROOT_PATH } from '../Routes/paths';
 
-export default function AssistantAdminScreen(props: {isOpen: boolean}) {
+export default function AssistantAdminScreen() {
     return (
-        <aside id='admin-aside' className={props.isOpen ? 'open' : 'closed'} aria-hidden={!props.isOpen}>
+        <aside id='admin-aside'>
             <div className='assistant-admin-screen'>
                 <div className='assistant-admin-screen-header'>
                     <div>

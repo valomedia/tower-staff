@@ -6,11 +6,10 @@
 //
 
 import { createContext, Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import './App.scss';
 import LaunchScreen from '../Components/LaunchScreen';
 import CallScreen from '../Components/CallScreen';
-import AssistantAdminScreen from '../Components/AssistantAdminScreen';
 import banner from '../Assets/banner.svg';
 import {
     CallAgentProvider,
@@ -22,7 +21,6 @@ import UserToken from '../Models/UserToken';
 import { CallAgent } from '@azure/communication-calling';
 import { AzureCommunicationTokenCredential } from '@azure/communication-common';
 import CallOptionsDialog from '../Components/CallOptionsDialog';
-import { ASSISTANT_ADMIN_PATH } from './paths';
 
 const disposeCallClient = async (client?: StatefulCallClient) => {
     if (!client) { return; }
@@ -46,9 +44,6 @@ type AppContextValue = {
 };
 
 const App = () => {
-    const location = useLocation();
-
-    const isPresentingAssistantAdmin = location.pathname === ASSISTANT_ADMIN_PATH;
 
     /**
      * Whether a call is ongoing.
@@ -182,7 +177,6 @@ const App = () => {
                             </CallAgentProvider>
                         </CallClientProvider>
                     }
-                    <AssistantAdminScreen isOpen={isPresentingAssistantAdmin}/>
                     <Outlet/>
                 </div>
             </AppContext.Provider>

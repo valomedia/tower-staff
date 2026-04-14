@@ -161,36 +161,12 @@
     overscroll-behavior: contain;
   }
 
-  aside#admin-aside.closed {
-    right: -100vw;
-    visibility: hidden;
-    pointer-events: none;
-  }
-
-  aside#admin-aside.open {
-    visibility: visible;
-  }
-
   @media (prefers-reduced-motion: no-preference) {
 
     aside {
       transition-property: left, right;
       transition-duration: 400ms;
       transition-timing-function: ease-out;
-    }
-
-    aside#admin-aside {
-      transition-property: right, visibility;
-      transition-duration: 400ms, 0s;
-      transition-timing-function: ease-out, linear;
-    }
-
-    aside#admin-aside.closed {
-      transition-delay: 0s, 400ms;
-    }
-
-    aside#admin-aside.open {
-      transition-delay: 0s, 0s;
     }
 
   }
