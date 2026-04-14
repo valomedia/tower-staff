@@ -30,6 +30,26 @@
     padding-top: 24px;
   }
 
+  .incoming-call-notice {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 16px;
+    border: 1px solid colors.$themePrimary;
+    background: colors.$themeLighter;
+    color: colors.$themePrimary;
+    font-weight: 600;
+  }
+
+  .incoming-call-notice .back-link {
+    margin-left: auto;
+    min-height: 32px;
+    padding: 0 14px;
+    border-radius: 32px;
+  }
+
   .eyebrow {
     margin: 0 0 12px;
     color: colors.$themeDark;
