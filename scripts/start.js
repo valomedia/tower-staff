@@ -21,24 +21,23 @@ process.on('unhandledRejection', err => {
 require('../config/env');
 
 const fs = require('fs');
-const chalk = require('react-dev-utils/chalk');
+const chalk = require('chalk');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
-const clearConsole = require('react-dev-utils/clearConsole');
-const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
-const {
-    choosePort,
-    createCompiler,
-    prepareProxy,
-    prepareUrls,
-} = require('react-dev-utils/WebpackDevServerUtils');
-const openBrowser = require('react-dev-utils/openBrowser');
 const semver = require('semver');
+const open = require('open');
 const paths = require('../config/paths');
 const configFactory = require('../config/webpack.config');
 const createDevServerConfig = require('../config/webpackDevServer.config');
 const getClientEnvironment = require('../config/env');
-const react = require(require.resolve('react', {paths: [paths.appPath]}));
+const {
+    checkRequiredFiles,
+    choosePort,
+    clearConsole,
+    createCompiler,
+    prepareProxy,
+    prepareUrls,
+} = require('./utils');
 
 const env = getClientEnvironment(paths.publicUrlOrPath.slice(0, -1));
 const useYarn = fs.existsSync(paths.yarnLockFile);
@@ -58,18 +57,11 @@ if (process.env.HOST) {
         chalk.cyan(`Attempting to bind to HOST environment variable: ${chalk.yellow(chalk.bold(process.env.HOST))}`)
     );
     console.log(`If this was unintentional, check that you haven't mistakenly set it in your shell.`);
-    console.log(`Learn more here: ${chalk.yellow('https://cra.link/advanced-config')}\n`);
+    console.log();
 }
 
-// We require that you explicitly set browsers and do not fall back to
-// browserslist defaults.
-const {checkBrowsers} = require('react-dev-utils/browsersHelper');
-checkBrowsers(paths.appPath, isInteractive)
-    .then(() => {
-        // We attempt to use the default port, but if it is busy, we offer the user to run on a different port.
-        // `choosePort()` Promise resolves to the next free port.
-        return choosePort(HOST, DEFAULT_PORT);
-    })
+const react = require(require.resolve('react', {paths: [paths.appPath]}));
+choosePort(HOST, DEFAULT_PORT)
     .then(port => {
         if (port == null) {
             // We have not found a port.
@@ -128,7 +120,7 @@ checkBrowsers(paths.appPath, isInteractive)
             }
 
             console.log(chalk.cyan('Starting the development server...\n'));
-            openBrowser(urls.localUrlForBrowser);
+            open(urls.localUrlForBrowser);
         });
 
         ['SIGINT', 'SIGTERM'].forEach(function (sig) {

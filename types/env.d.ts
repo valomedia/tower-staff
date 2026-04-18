@@ -1,5 +1,5 @@
 //
-//  react-app-env.d.ts
+//  env.d.ts
 //  tower-staff
 //
 //  Created by Jean-Pierre Höhmann on 2023-03-06.
