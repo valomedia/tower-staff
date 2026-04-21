@@ -13,6 +13,13 @@ declare module "*.m4a" {
     export default src;
 }
 
+declare module "*.mp3" {
+    const src: string;
+
+    // noinspection JSUnusedGlobalSymbols
+    export default src;
+}
+
 declare module '*.avif' {
     const src: string;
 
