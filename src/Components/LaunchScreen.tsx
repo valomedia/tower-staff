@@ -63,6 +63,8 @@ export default function LaunchScreen() {
      */
     const audioRef = useRef() as MutableRefObject<HTMLAudioElement>;
 
+    const isFetchingAssistanceTokenRef = useRef(false);
+
     /*
      * Join call.
      */
@@ -81,14 +83,19 @@ export default function LaunchScreen() {
     useEffect(() => {
         const intervalId = window.setInterval(
             () => {
-                if (isConnecting) {
+                if (isConnecting && !isFetchingAssistanceTokenRef.current) {
+                    isFetchingAssistanceTokenRef.current = true;
                     TowerApi
                         .assistanceToken()
                         .then(response => {
                             setUserToken(response.userToken);
                             setHasBackend(true);
+                            setIsConnecting(false);
                         })
-                        .finally(() => setIsConnecting(false))
+                        .catch(() => setHasBackend(false))
+                        .finally(() => {
+                            isFetchingAssistanceTokenRef.current = false;
+                        })
                 }
                 if (!isOnCall && hasBackend) {
                     TowerApi
@@ -105,7 +112,7 @@ export default function LaunchScreen() {
             2000
         );
         return () => window.clearInterval(intervalId);
-    });
+    }, [hasBackend, isConnecting, isOnCall, setUserToken]);
 
     // Trigger ringtone.
     useEffect(
