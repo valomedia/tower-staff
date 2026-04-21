@@ -48,6 +48,8 @@ import { CallProvider, useCallAgent } from '@azure/communication-react';
 import { UserData } from '../Models/UserData';
 import ProfileComponent from './ProfileComponent';
 import { FULL_ROTATION, ROTATION_STEP, RotationAngle } from '../Models/RotationAngle';
+import callEndTone from "../Assets/call-end-tone.mp3";
+import callErrorTone from '../Assets/call-error-tone.mp3';
 
 const DATA_CHANNEL_ID = 1000;
 
@@ -67,6 +69,9 @@ const REENABLE_PHOTO_BUTTON_DELAY_MS = 8000;
  * The in-call ui.
  */
 export default function CallScreen() {
+
+    const endAudioRef = useRef() as MutableRefObject<HTMLAudioElement>;
+    const errorAudioRef = useRef() as MutableRefObject<HTMLAudioElement>;
 
     /*
      * Whether the assistant is on a call and whether the call options dialog is showing.
@@ -615,7 +620,6 @@ export default function CallScreen() {
         hangUpTimeoutRef.current = setTimeout(
             async () => {
                 if (callToEnd.state === 'Disconnected' || forceTearingDownCallRef.current) { return; }
-
                 await forceResetActiveCall(`Call ${callToEnd.id} did not disconnect cleanly; resetting ACS call stack.`);
             },
             FORCE_CALL_TEARDOWN_DELAY_MS
@@ -717,7 +721,12 @@ export default function CallScreen() {
             added.forEach(subscribeToRemoteParticipant);
 
             // End the call, if the user unexpectedly drops.
-            if (removed.length) {endCall(call);}
+
+            if (removed.length) {
+                console.log('User lost Connection');
+                errorAudioRef.current.play();
+                console.warn("Audio \"call-error-tone\" was played")
+                endCall(call);}
         });
     };
 
@@ -889,6 +898,8 @@ export default function CallScreen() {
                             id='video-container'
                             hidden={!isVideoReceiving || !isVideoAvailable || isCallOnHold || !isVideoEnabled}>
                     </div>
+                    <audio src={callEndTone} ref={endAudioRef}></audio>
+                    <audio src={callErrorTone} ref={errorAudioRef}></audio>
                 </main>
                 <aside id='left-aside' className={isVideoMaximized ? 'closed' : 'open'}>
                     {userData && (<ProfileComponent userData={userData}/>)}
