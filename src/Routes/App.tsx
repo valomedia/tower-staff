@@ -27,6 +27,13 @@ const disposeCallClient = async (client?: StatefulCallClient) => {
     try {
         await client.dispose();
     } catch (error) {
+        if (
+            typeof error === 'object'
+                && error !== null
+                && 'subCode' in error
+                && error.subCode === 40012
+        ) { return; }
+
         console.error('Failed to dispose ACS calling stack.', error);
     }
 };
@@ -87,7 +94,9 @@ const App = () => {
         } catch (error) {
             console.error('Failed to initialize ACS calling stack.', error);
 
-            if (callClientRef.current === nextCallClient) {
+            const failedClientIsCurrent = callClientRef.current === nextCallClient;
+
+            if (failedClientIsCurrent) {
                 callClientRef.current = undefined;
             }
 
@@ -97,7 +106,9 @@ const App = () => {
                 setIsCallingStackReady(false);
             }
 
-            await disposeCallClient(nextCallClient);
+            if (failedClientIsCurrent) {
+                await disposeCallClient(nextCallClient);
+            }
         }
     }, []);
 
