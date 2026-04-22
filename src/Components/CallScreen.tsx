@@ -20,13 +20,11 @@ import {
     faPause,
     faPhone,
     faRotateRight,
-    faTableColumns,
     faVideo,
     faVideoSlash,
     faVolumeHigh,
     faVolumeXmark
 } from '@fortawesome/free-solid-svg-icons';
-import { useLocation, useNavigate } from 'react-router-dom';
 import './CallScreen.scss';
 import * as TowerApi from '../Api/TowerApi';
 import Coordinate from '../Models/Coordinate';
@@ -50,7 +48,7 @@ import { CallProvider, useCallAgent } from '@azure/communication-react';
 import { UserData } from '../Models/UserData';
 import ProfileComponent from './ProfileComponent';
 import { FULL_ROTATION, ROTATION_STEP, RotationAngle } from '../Models/RotationAngle';
-import { ASSISTANT_ADMIN_PATH, ROOT_PATH } from '../Routes/paths';
+import AdminButton from './AdminButton';
 
 const DATA_CHANNEL_ID = 1000;
 
@@ -70,11 +68,6 @@ const REENABLE_PHOTO_BUTTON_DELAY_MS = 8000;
  * The in-call ui.
  */
 export default function CallScreen() {
-    const currentLocation = useLocation();
-
-    const navigate = useNavigate();
-
-    const isPresentingAssistantAdmin = currentLocation.pathname === ASSISTANT_ADMIN_PATH;
 
     /*
      * Whether the assistant is on a call and whether the call options dialog is showing.
@@ -86,10 +79,6 @@ export default function CallScreen() {
         setIsPresentingCallOptionsDialog,
         resetCallingStack
     } = useContext(AppContext);
-
-    const toggleAssistantAdmin = () => {
-        navigate(isPresentingAssistantAdmin ? ROOT_PATH : ASSISTANT_ADMIN_PATH);
-    };
 
     /**
      * Whether the assistant is connected to the user.
@@ -1046,14 +1035,7 @@ export default function CallScreen() {
                             <FontAwesomeIcon icon={faPause}/>
                         </button>
                     )}
-                    <button
-                        id='assistant-admin-button'
-                        className={isPresentingAssistantAdmin ? 'active' : 'inactive'}
-                        onClick={toggleAssistantAdmin}
-                        disabled={isHangingUp}
-                    >
-                        <FontAwesomeIcon icon={faTableColumns}/>
-                    </button>
+                    <AdminButton disabled={isHangingUp}/>
                     <button
                         id='call-options-button'
                         className={isPresentingCallOptionsDialog ? 'active' : 'inactive'}

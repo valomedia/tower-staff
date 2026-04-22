@@ -8,14 +8,13 @@
 
 import { MutableRefObject, useContext, useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faGear, faPhone, faTableColumns } from '@fortawesome/free-solid-svg-icons';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { faBell, faGear, faPhone } from '@fortawesome/free-solid-svg-icons';
 import * as TowerApi from '../Api/TowerApi';
 import logoAnimated from '../Assets/logo-animated.svg';
 import videoChatCalling from '../Assets/video-chat-calling.m4a';
 import './LaunchScreen.scss';
 import { AppContext } from '../Routes/App';
-import { ASSISTANT_ADMIN_PATH, ROOT_PATH } from '../Routes/paths';
+import AdminButton from './AdminButton';
 
 const ASSISTANCE_SESSION_MAXIMUM_DURATION_MS = 7_200_000;
 
@@ -23,11 +22,6 @@ const ASSISTANCE_SESSION_MAXIMUM_DURATION_MS = 7_200_000;
  * The screen presented to the user upon opening the app.
  */
 export default function LaunchScreen() {
-    const currentLocation = useLocation();
-
-    const navigate = useNavigate();
-
-    const isPresentingAssistantAdmin = currentLocation.pathname === ASSISTANT_ADMIN_PATH;
 
     /**
      * State shared throughout the app.
@@ -76,13 +70,6 @@ export default function LaunchScreen() {
      */
     const handleRingtoneToggle = () => {
         setIsRingtoneEnabled(!isRingtoneEnabled);
-    };
-
-    /*
-     * Toggle the assistant admin interface.
-     */
-    const toggleAssistantAdmin = () => {
-        navigate(isPresentingAssistantAdmin ? ROOT_PATH : ASSISTANT_ADMIN_PATH);
     };
 
     // Poll for users.
@@ -176,13 +163,7 @@ export default function LaunchScreen() {
                 <audio src={videoChatCalling} ref={audioRef} muted={isOnCall} loop></audio>
             </main>
             <footer>
-                <button
-                    id='assistant-admin-button'
-                    className={isPresentingAssistantAdmin ? 'active' : 'inactive'}
-                    onClick={toggleAssistantAdmin}
-                >
-                    <FontAwesomeIcon icon={faTableColumns}/>
-                </button>
+                <AdminButton/>
                 <button
                     id='call-options-button'
                     disabled={!hasBackend}
