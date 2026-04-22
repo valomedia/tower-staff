@@ -73,38 +73,34 @@ export default function LaunchScreen() {
     };
 
     // Poll for users.
-    useEffect(
-        () => {
-            const intervalId = window.setInterval(
-                () => {
-                    if (isConnecting) {
-                        TowerApi
-                            .assistanceToken()
-                            .then(response => {
-                                setUserToken(response.userToken);
-                                setHasBackend(true);
-                            })
-                            .finally(() => setIsConnecting(false));
-                    }
-                    if (!isOnCall && hasBackend) {
-                        TowerApi
-                            .offerAssistance()
-                            .then(offerAssistanceResponse => {
-                                setIsRinging(!!offerAssistanceResponse.assistanceRequest);
-                            })
-                            .catch(() => setIsRinging(false));
-                    }
-                    if (isOnCall) {
-                        setIsRinging(false);
-                    }
-                },
-                2000
-            );
-
-            return () => window.clearInterval(intervalId);
-        },
-        [hasBackend, isConnecting, isOnCall, setIsRinging, setUserToken]
-    );
+    useEffect(() => {
+        const intervalId = window.setInterval(
+            () => {
+                if (isConnecting) {
+                    TowerApi
+                        .assistanceToken()
+                        .then(response => {
+                            setUserToken(response.userToken);
+                            setHasBackend(true);
+                        })
+                        .finally(() => setIsConnecting(false));
+                }
+                if (!isOnCall && hasBackend) {
+                    TowerApi
+                        .offerAssistance()
+                        .then(offerAssistanceResponse => {
+                            setIsRinging(!!offerAssistanceResponse.assistanceRequest);
+                        })
+                        .catch(() => setIsRinging(false));
+                }
+                if (isOnCall) {
+                    setIsRinging(false);
+                }
+            },
+            2000
+        );
+        return () => window.clearInterval(intervalId);
+    }, [hasBackend, isConnecting, isOnCall, setIsRinging, setUserToken]);
 
     // Trigger ringtone.
     useEffect(
@@ -127,12 +123,12 @@ export default function LaunchScreen() {
 
     // Refresh if a call comes in and the token is about to expire.
     useEffect(
-            () => {
-                // Refresh if our session is about to expire.
-                if (isRinging
-                    && (userToken?.expiresOn.getTime() || Infinity) < Date.now() + ASSISTANCE_SESSION_MAXIMUM_DURATION_MS
-                ) {window.location.reload();}
-            },
+        () => {
+            // Refresh if our session is about to expire.
+            if (isRinging
+                && (userToken?.expiresOn.getTime() || Infinity) < Date.now() + ASSISTANCE_SESSION_MAXIMUM_DURATION_MS
+            ) {window.location.reload();}
+        },
         [isRinging, userToken?.expiresOn]
     );
 

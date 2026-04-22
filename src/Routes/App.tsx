@@ -32,19 +32,6 @@ const disposeCallClient = async (client?: StatefulCallClient) => {
     }
 };
 
-type AppContextValue = {
-    isOnCall: boolean,
-    setIsOnCall: Dispatch<SetStateAction<boolean>>,
-    isRinging: boolean,
-    setIsRinging: Dispatch<SetStateAction<boolean>>,
-    isPresentingCallOptionsDialog: boolean,
-    setIsPresentingCallOptionsDialog: Dispatch<SetStateAction<boolean>>,
-    isCallingStackReady: boolean,
-    userToken?: UserToken,
-    setUserToken: Dispatch<SetStateAction<UserToken|undefined>>,
-    resetCallingStack: () => Promise<void>
-};
-
 const App = () => {
 
     /**
@@ -196,7 +183,18 @@ const App = () => {
 /**
  * Context with app-wide state.
  */
-export const AppContext = createContext<AppContextValue>({
+export const AppContext = createContext<{
+    isOnCall: boolean,
+    setIsOnCall: Dispatch<SetStateAction<boolean>>,
+    isRinging: boolean,
+    setIsRinging: Dispatch<SetStateAction<boolean>>,
+    isPresentingCallOptionsDialog: boolean,
+    setIsPresentingCallOptionsDialog: Dispatch<SetStateAction<boolean>>,
+    isCallingStackReady: boolean,
+    userToken?: UserToken,
+    setUserToken: Dispatch<SetStateAction<UserToken|undefined>>,
+    resetCallingStack: () => Promise<void>
+}>({
     isOnCall: false,
     setIsOnCall: _ => {},
     isRinging: false,
