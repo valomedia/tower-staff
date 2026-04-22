@@ -12,7 +12,16 @@ import { faArrowLeft, faPhone } from '@fortawesome/free-solid-svg-icons';
 import './AdminScreen.scss';
 import { AppContext } from './App';
 
+/**
+ * Admin panel route for assistant-only controls and operational information.
+ *
+ * The route is rendered inside the app shell so call state remains mounted while the
+ * assistant views admin content.
+ */
 export default function AdminScreen() {
+    /**
+     * Shared ringing state used to surface an incoming-call shortcut while the admin panel is open.
+     */
     const { isRinging } = useContext(AppContext);
 
     return (
