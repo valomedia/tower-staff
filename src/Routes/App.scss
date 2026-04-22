@@ -146,21 +146,6 @@
     right: -30vw;
   }
 
-  aside#admin-aside {
-    top: 0;
-    width: 100vw;
-    right: 0;
-    bottom: 0;
-    height: 100vh;
-    border-top-width: 0;
-    border-bottom-width: 0;
-    border-left-width: 0;
-    border-right-width: 0;
-    z-index: 30;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-  }
-
   @media (prefers-reduced-motion: no-preference) {
 
     aside {

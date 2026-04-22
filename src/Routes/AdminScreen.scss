@@ -1,23 +1,26 @@
 //
-//  AssistantAdminScreen.scss
+//  AdminScreen.scss
 //  tower-staff
 //
 //  Created by Arne Engelland on 2026-04-01.
 //
-//
 
 @use "../Styles/colors.module";
 
-#admin-aside {
+#admin-screen {
+  z-index: 30;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: white;
   color: #282c34;
 
-  .assistant-admin-screen {
+  .admin-screen {
     min-height: 100vh;
-    padding: 80px 24px 80px;
+    padding: 80px 24px;
     box-sizing: border-box;
   }
 
-  .assistant-admin-screen-header {
+  .admin-screen-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -26,7 +29,7 @@
     border-bottom: 2px solid colors.$themeLight;
   }
 
-  .assistant-admin-screen-content {
+  .admin-screen-content {
     padding-top: 24px;
   }
 

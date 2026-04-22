@@ -12,22 +12,17 @@ import App from './Routes/App';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ErrorPage from './error-page';
-import { ASSISTANT_ADMIN_CHILD_PATH, ROOT_PATH } from './Routes/paths';
-import AssistantAdminScreen from './Components/AssistantAdminScreen';
+import AdminScreen from './Routes/AdminScreen';
 
 const router = createBrowserRouter([
     {
-        path: ROOT_PATH,
+        path: '/',
         element: <App/>,
         errorElement: <ErrorPage/>,
         children: [
             {
-                index: true,
-                element: null
-            },
-            {
-                path: ASSISTANT_ADMIN_CHILD_PATH,
-                element: <AssistantAdminScreen/>
+                path: 'admin',
+                element: <AdminScreen/>
             }
         ]
     }
