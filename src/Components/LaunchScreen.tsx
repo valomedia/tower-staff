@@ -126,7 +126,7 @@ export default function LaunchScreen() {
         () => {
             // Refresh if our session is about to expire.
             if (isRinging
-                && (userToken?.expiresOn.getTime() || Infinity) < Date.now() + ASSISTANCE_SESSION_MAXIMUM_DURATION_MS
+                && (userToken?.expiresOn.getTime() || 0) < Date.now() + ASSISTANCE_SESSION_MAXIMUM_DURATION_MS
             ) {window.location.reload();}
         },
         [isRinging, userToken?.expiresOn]
