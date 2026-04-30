@@ -12,24 +12,18 @@ const webpack = require('webpack');
 const resolve = require('resolve');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin');
+const InlineChunkHtmlPlugin = require('./webpack/InlineChunkHtmlPlugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const {WebpackManifestPlugin} = require('webpack-manifest-plugin');
-const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
-const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
-const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
-const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
+const InterpolateHtmlPlugin = require('./webpack/InterpolateHtmlPlugin');
+const ModuleScopePlugin = require('./webpack/ModuleScopePlugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const paths = require('./paths');
 const modules = require('./modules');
 const getClientEnvironment = require('./env');
-const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
-const ForkTsCheckerWebpackPlugin =
-    process.env.TSC_COMPILE_ON_ERROR === 'true'
-        ? require('react-dev-utils/ForkTsCheckerWarningWebpackPlugin')
-        : require('react-dev-utils/ForkTsCheckerWebpackPlugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const createEnvironmentHash = require('./webpack/persistentCache/createEnvironmentHash');
@@ -41,14 +35,11 @@ const reactRefreshRuntimeEntry = require.resolve('react-refresh/runtime');
 const reactRefreshWebpackPluginRuntimeEntry = require.resolve(
     '@pmmmwh/react-refresh-webpack-plugin'
 );
-const babelRuntimeEntry = require.resolve('babel-preset-react-app');
+const babelRuntimeEntry = require.resolve('@babel/runtime/package.json');
 const babelRuntimeEntryHelpers = require.resolve(
-    '@babel/runtime/helpers/esm/assertThisInitialized',
-    {paths: [babelRuntimeEntry]}
+    '@babel/runtime/helpers/esm/assertThisInitialized'
 );
-const babelRuntimeRegenerator = require.resolve('@babel/runtime/regenerator', {
-    paths: [babelRuntimeEntry],
-});
+const babelRuntimeRegenerator = require.resolve('@babel/runtime/regenerator');
 
 // Some apps do not need the benefits of saving a web request, so not inlining the chunk
 // makes for a smoother build process.
@@ -68,9 +59,6 @@ const useTypeScript = fs.existsSync(paths.appTsConfig);
 const useTailwind = fs.existsSync(
     path.join(paths.appPath, 'tailwind.config.js')
 );
-
-// Get the path to the uncompiled service worker (if it exists).
-const swSrc = paths.swSrc;
 
 // style files regexes
 const cssRegex = /\.css$/;
@@ -425,28 +413,18 @@ module.exports = function (webpackEnv) {
                             include: paths.appSrc,
                             loader: require.resolve('babel-loader'),
                             options: {
-                                customize: require.resolve(
-                                    'babel-preset-react-app/webpack-overrides'
-                                ),
                                 presets: [
-                                    [
-                                        require.resolve('babel-preset-react-app'),
-                                        {
-                                            runtime: hasJsxRuntime ? 'automatic' : 'classic',
-                                        },
-                                    ],
+                                    ['@babel/preset-env', {useBuiltIns: false}],
+                                    ['@babel/preset-react', {runtime: hasJsxRuntime ? 'automatic' : 'classic'}],
+                                    '@babel/preset-typescript',
                                 ],
-
                                 plugins: [
+                                    ['@babel/plugin-transform-runtime', {helpers: true}],
                                     isEnvDevelopment &&
                                     shouldUseReactRefresh &&
                                     require.resolve('react-refresh/babel'),
                                 ].filter(Boolean),
-                                // This is a feature of `babel-loader` for webpack (not Babel itself).
-                                // It enables caching results in ./node_modules/.cache/babel-loader/
-                                // directory for faster rebuilds.
                                 cacheDirectory: true,
-                                // See #6846 for context on why cacheCompression is disabled
                                 cacheCompression: false,
                                 compact: isEnvProduction,
                             },
@@ -462,18 +440,10 @@ module.exports = function (webpackEnv) {
                                 configFile: false,
                                 compact: false,
                                 presets: [
-                                    [
-                                        require.resolve('babel-preset-react-app/dependencies'),
-                                        {helpers: true},
-                                    ],
+                                    ['@babel/preset-env', {useBuiltIns: false}],
                                 ],
                                 cacheDirectory: true,
-                                // See #6846 for context on why cacheCompression is disabled
                                 cacheCompression: false,
-
-                                // Babel sourcemaps are for debugging into node_modules
-                                // code.  Without the options below, debuggers like VSCode
-                                // show incorrect code and set breakpoints on the wrong lines.
                                 sourceMaps: shouldUseSourceMap,
                                 inputSourceMap: shouldUseSourceMap,
                             },
@@ -515,7 +485,7 @@ module.exports = function (webpackEnv) {
                                     : isEnvDevelopment,
                                 modules: {
                                     mode: 'local',
-                                    getLocalIdent: getCSSModuleLocalIdent,
+                                    localIdentName: '[name]__[local]--[hash:base64:5]',
                                 },
                             }),
                         },
@@ -555,7 +525,7 @@ module.exports = function (webpackEnv) {
                                         : isEnvDevelopment,
                                     modules: {
                                         mode: 'local',
-                                        getLocalIdent: getCSSModuleLocalIdent,
+                                        localIdentName: '[name]__[local]--[hash:base64:5]',
                                     },
                                 },
                                 'sass-loader'
@@ -619,9 +589,6 @@ module.exports = function (webpackEnv) {
             // It will be an empty string unless you specify "homepage"
             // in `package.json`, in which case it will be the pathname of that URL.
             new InterpolateHtmlPlugin(HtmlWebpackPlugin, env.raw),
-            // This gives some necessary context to module not found errors, such as
-            // the requesting resource.
-            new ModuleNotFoundPlugin(paths.appPath),
             // Makes some environment variables available to the JS code, for example:
             // if (process.env.NODE_ENV === 'production') { ... }. See `./env.js`.
             // It is essential that NODE_ENV is set to production
@@ -681,19 +648,6 @@ module.exports = function (webpackEnv) {
                 resourceRegExp: /^\.\/locale$/,
                 contextRegExp: /moment$/,
             }),
-            // Generate a service worker script that will precache, and keep up to date,
-            // the HTML & assets that are part of the webpack build.
-            isEnvProduction &&
-            fs.existsSync(swSrc) &&
-            new WorkboxWebpackPlugin.InjectManifest({
-                swSrc,
-                dontCacheBustURLsMatching: /\.[0-9a-f]{8}\./,
-                exclude: [/\.map$/, /asset-manifest\.json$/, /LICENSE/],
-                // Bump up the default maximum size (2mb) that's precached,
-                // to make lazy-loading failure scenarios less likely.
-                // See https://github.com/cra-template/pwa/issues/13#issuecomment-722667270
-                maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-            }),
             // TypeScript type checking
             useTypeScript &&
             new ForkTsCheckerWebpackPlugin({
@@ -744,9 +698,7 @@ module.exports = function (webpackEnv) {
             }),
             !disableESLintPlugin &&
             new ESLintPlugin({
-                // Plugin options
                 extensions: ['js', 'mjs', 'jsx', 'ts', 'tsx'],
-                formatter: require.resolve('react-dev-utils/eslintFormatter'),
                 eslintPath: require.resolve('eslint'),
                 failOnError: !(isEnvDevelopment && emitErrorsAsWarnings),
                 context: paths.appSrc,
@@ -755,15 +707,21 @@ module.exports = function (webpackEnv) {
                     paths.appNodeModules,
                     '.cache/.eslintcache'
                 ),
-                // ESLint class options
                 cwd: paths.appPath,
                 resolvePluginsRelativeTo: __dirname,
                 baseConfig: {
-                    extends: [require.resolve('eslint-config-react-app/base')],
+                    extends: ['plugin:react/recommended', 'plugin:react-hooks/recommended'],
+                    plugins: ['@typescript-eslint'],
+                    parser: '@typescript-eslint/parser',
+                    parserOptions: {
+                        ecmaVersion: 2018,
+                        sourceType: 'module',
+                        ecmaFeatures: {jsx: true},
+                    },
+                    settings: {react: {version: 'detect'}},
                     rules: {
-                        ...(!hasJsxRuntime && {
-                            'react/react-in-jsx-scope': 'error',
-                        }),
+                        'react/react-in-jsx-scope': hasJsxRuntime ? 'off' : 'error',
+                        'react/prop-types': 'off',
                     },
                 },
             }),

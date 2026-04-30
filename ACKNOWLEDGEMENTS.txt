@@ -1,0 +1,22 @@
+ACKNOWLEDGEMENTS
+
+This file lists third-party works incorporated into this project, along with
+their respective licenses and copyright notices.
+
+--------------------------------------------------------------------------------
+
+react-dev-utils
+https://github.com/facebook/create-react-app
+
+Copyright (c) 2013-2022, Facebook, Inc.
+Licensed under the MIT License: https://opensource.org/licenses/MIT
+
+The following files in this project are based on react-dev-utils:
+
+  config/middleware.js
+  config/webpack/InlineChunkHtmlPlugin.js
+  config/webpack/InterpolateHtmlPlugin.js
+  config/webpack/ModuleScopePlugin.js
+  scripts/utils.js
+
+--------------------------------------------------------------------------------
