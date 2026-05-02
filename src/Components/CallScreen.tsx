@@ -7,8 +7,6 @@
 //
 
 import { MutableRefObject, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import './CallScreen.scss';
-import * as TowerApi from '../Api/TowerApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faCameraRotate,
@@ -27,6 +25,8 @@ import {
     faVolumeHigh,
     faVolumeXmark
 } from '@fortawesome/free-solid-svg-icons';
+import './CallScreen.scss';
+import * as TowerApi from '../Api/TowerApi';
 import Coordinate from '../Models/Coordinate';
 import MapComponent from './MapComponent';
 import Location from '../Models/Location';
@@ -48,6 +48,7 @@ import { CallProvider, useCallAgent } from '@azure/communication-react';
 import { UserData } from '../Models/UserData';
 import ProfileComponent from './ProfileComponent';
 import { FULL_ROTATION, ROTATION_STEP, RotationAngle } from '../Models/RotationAngle';
+import AdminButton from './AdminButton';
 
 const DATA_CHANNEL_ID = 1000;
 
@@ -1034,6 +1035,7 @@ export default function CallScreen() {
                             <FontAwesomeIcon icon={faPause}/>
                         </button>
                     )}
+                    <AdminButton disabled={isHangingUp}/>
                     <button
                         id='call-options-button'
                         className={isPresentingCallOptionsDialog ? 'active' : 'inactive'}

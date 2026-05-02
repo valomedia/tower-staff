@@ -7,13 +7,14 @@
 //
 
 import { MutableRefObject, useContext, useEffect, useRef, useState } from 'react';
-import logoAnimated from '../Assets/logo-animated.svg';
-import videoChatCalling from '../Assets/video-chat-calling.m4a';
-import './LaunchScreen.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faGear, faPhone } from '@fortawesome/free-solid-svg-icons';
 import * as TowerApi from '../Api/TowerApi';
+import logoAnimated from '../Assets/logo-animated.svg';
+import videoChatCalling from '../Assets/video-chat-calling.m4a';
+import './LaunchScreen.scss';
 import { AppContext } from '../Routes/App';
+import AdminButton from './AdminButton';
 
 const ASSISTANCE_SESSION_MAXIMUM_DURATION_MS = 7_200_000;
 
@@ -28,6 +29,8 @@ export default function LaunchScreen() {
     const {
         isOnCall,
         setIsOnCall,
+        isRinging,
+        setIsRinging,
         isPresentingCallOptionsDialog,
         setIsPresentingCallOptionsDialog,
         isCallingStackReady,
@@ -44,14 +47,6 @@ export default function LaunchScreen() {
      * Whether a connection with the backend has been established.
      */
     const [hasBackend, setHasBackend] = useState(false);
-
-    /*
-     * Whether there is a user waiting for an assistant to pick up.
-     *
-     * This will become true when the app is connected, and there is a user waiting for assistance or currently
-     * receiving assistance.
-     */
-    const [isRinging,setIsRinging] = useState(false);
 
     /*
      * Whether the ringtone is enabled.
@@ -88,7 +83,7 @@ export default function LaunchScreen() {
                             setUserToken(response.userToken);
                             setHasBackend(true);
                         })
-                        .finally(() => setIsConnecting(false))
+                        .finally(() => setIsConnecting(false));
                 }
                 if (!isOnCall && hasBackend) {
                     TowerApi
@@ -105,7 +100,7 @@ export default function LaunchScreen() {
             2000
         );
         return () => window.clearInterval(intervalId);
-    });
+    }, [hasBackend, isConnecting, isOnCall, setIsRinging, setUserToken]);
 
     // Trigger ringtone.
     useEffect(
@@ -164,6 +159,7 @@ export default function LaunchScreen() {
                 <audio src={videoChatCalling} ref={audioRef} muted={isOnCall} loop></audio>
             </main>
             <footer>
+                <AdminButton/>
                 <button
                     id='call-options-button'
                     disabled={!hasBackend}

@@ -5,7 +5,8 @@
 //  Created by Jean-Pierre Höhmann on 2023-03-06.
 //
 
-import { Context, createContext, Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
+import { createContext, Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
+import { Outlet } from 'react-router-dom';
 import './App.scss';
 import LaunchScreen from '../Components/LaunchScreen';
 import CallScreen from '../Components/CallScreen';
@@ -37,6 +38,11 @@ const App = () => {
      * Whether a call is ongoing.
      */
     const [isOnCall, setIsOnCall] = useState(false);
+
+    /**
+     * Whether an incoming call is ringing.
+     */
+    const [isRinging, setIsRinging] = useState(false);
 
     const [isPresentingCallOptionsDialog, setIsPresentingCallOptionsDialog] = useState(true);
 
@@ -143,6 +149,8 @@ const App = () => {
             <AppContext.Provider value={{
                 isOnCall,
                 setIsOnCall,
+                isRinging,
+                setIsRinging,
                 isPresentingCallOptionsDialog,
                 setIsPresentingCallOptionsDialog,
                 isCallingStackReady,
@@ -165,6 +173,7 @@ const App = () => {
                             </CallAgentProvider>
                         </CallClientProvider>
                     }
+                    <Outlet/>
                 </div>
             </AppContext.Provider>
         </div>
@@ -174,21 +183,26 @@ const App = () => {
 /**
  * Context with app-wide state.
  */
-export const AppContext: Context<{
+export const AppContext = createContext<{
     isOnCall: boolean,
     setIsOnCall: Dispatch<SetStateAction<boolean>>,
+    isRinging: boolean,
+    setIsRinging: Dispatch<SetStateAction<boolean>>,
     isPresentingCallOptionsDialog: boolean,
     setIsPresentingCallOptionsDialog: Dispatch<SetStateAction<boolean>>,
     isCallingStackReady: boolean,
     userToken?: UserToken,
     setUserToken: Dispatch<SetStateAction<UserToken|undefined>>,
     resetCallingStack: () => Promise<void>
-}> = createContext({
-    isOnCall: false as boolean,
+}>({
+    isOnCall: false,
     setIsOnCall: _ => {},
-    isPresentingCallOptionsDialog: false as boolean,
+    isRinging: false,
+    setIsRinging: _ => {},
+    isPresentingCallOptionsDialog: false,
     setIsPresentingCallOptionsDialog: _ => {},
-    isCallingStackReady: false as boolean,
+    isCallingStackReady: false,
+    userToken: undefined,
     setUserToken: _ => {},
     resetCallingStack: async () => {}
 });
