@@ -63,8 +63,6 @@ export default function LaunchScreen() {
      */
     const audioRef = useRef() as MutableRefObject<HTMLAudioElement>;
 
-    const isFetchingAssistanceTokenRef = useRef(false);
-
     /*
      * Join call.
      */
@@ -79,40 +77,60 @@ export default function LaunchScreen() {
         setIsRingtoneEnabled(!isRingtoneEnabled);
     };
 
-    // Poll for users.
+    // Fetch the ACS token during bootstrap and retry on failure.
     useEffect(() => {
-        const intervalId = window.setInterval(
-            () => {
-                if (isConnecting && !isFetchingAssistanceTokenRef.current) {
-                    isFetchingAssistanceTokenRef.current = true;
-                    TowerApi
-                        .assistanceToken()
-                        .then(response => {
-                            setUserToken(response.userToken);
-                            setHasBackend(true);
-                            setIsConnecting(false);
-                        })
-                        .catch(() => setHasBackend(false))
-                        .finally(() => {
-                            isFetchingAssistanceTokenRef.current = false;
-                        })
-                }
-                if (!isOnCall && hasBackend) {
-                    TowerApi
-                        .offerAssistance()
-                        .then(offerAssistanceResponse => {
-                            setIsRinging(!!offerAssistanceResponse.assistanceRequest);
-                        })
-                        .catch(() => setIsRinging(false));
-                }
-                if (isOnCall) {
-                    setIsRinging(false);
-                }
-            },
-            2000
-        );
+        let cancelled = false;
+        let retryTimeoutId: number | undefined;
+
+        const fetchAssistanceToken = async () => {
+            try {
+                const response = await TowerApi.assistanceToken();
+
+                if (cancelled) { return; }
+
+                setUserToken(response.userToken);
+                setHasBackend(true);
+                setIsConnecting(false);
+            } catch {
+                if (cancelled) { return; }
+
+                setHasBackend(false);
+                retryTimeoutId = window.setTimeout(() => {
+                    void fetchAssistanceToken();
+                }, 2000);
+            }
+        };
+
+        void fetchAssistanceToken();
+
+        return () => {
+            cancelled = true;
+            if (retryTimeoutId) {
+                window.clearTimeout(retryTimeoutId);
+            }
+        };
+    }, [setUserToken]);
+
+    // Poll for pending assistance requests once backend setup is complete.
+    useEffect(() => {
+        if (isOnCall) {
+            setIsRinging(false);
+            return;
+        }
+
+        if (!hasBackend) { return; }
+
+        const intervalId = window.setInterval(() => {
+            TowerApi
+                .offerAssistance()
+                .then(offerAssistanceResponse => {
+                    setIsRinging(!!offerAssistanceResponse.assistanceRequest);
+                })
+                .catch(() => setIsRinging(false));
+        }, 2000);
+
         return () => window.clearInterval(intervalId);
-    }, [hasBackend, isConnecting, isOnCall, setUserToken]);
+    }, [hasBackend, isOnCall]);
 
     // Trigger ringtone.
     useEffect(
