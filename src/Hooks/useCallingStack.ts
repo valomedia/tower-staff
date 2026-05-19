@@ -11,6 +11,8 @@ import { AzureCommunicationTokenCredential } from '@azure/communication-common';
 import { createStatefulCallClient, StatefulCallClient } from '@azure/communication-react';
 import UserToken from '../Models/UserToken';
 
+const ACS_ALREADY_DISPOSED = 40012;
+
 const disposeCallClient = async (client?: StatefulCallClient) => {
     if (!client) { return; }
 
@@ -21,7 +23,7 @@ const disposeCallClient = async (client?: StatefulCallClient) => {
             typeof error === 'object'
                 && error !== null
                 && 'subCode' in error
-                && error.subCode === 40012
+                && error.subCode === ACS_ALREADY_DISPOSED
         ) { return; }
 
         console.error('Failed to dispose ACS calling stack.', error);
@@ -84,9 +86,7 @@ export default function useCallingStack(userToken?: UserToken): {
         } catch (error) {
             console.error('Failed to initialize ACS calling stack.', error);
 
-            const failedClientIsCurrent = callClientRef.current === nextCallClient;
-
-            if (failedClientIsCurrent) {
+            if (callClientRef.current === nextCallClient) {
                 callClientRef.current = undefined;
             }
 
@@ -96,9 +96,7 @@ export default function useCallingStack(userToken?: UserToken): {
                 setIsCallingStackReady(false);
             }
 
-            if (failedClientIsCurrent) {
-                await disposeCallClient(nextCallClient);
-            }
+            await disposeCallClient(nextCallClient);
         }
     }, []);
 
