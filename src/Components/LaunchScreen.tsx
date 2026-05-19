@@ -36,11 +36,6 @@ export default function LaunchScreen() {
     } = useContext(AppContext);
 
     /*
-     * Whether the application is still trying to reach the backend.
-     */
-    const [isConnecting, setIsConnecting] = useState(true);
-
-    /*
      * Whether a connection with the backend has been established.
      */
     const [hasBackend, setHasBackend] = useState(false);
@@ -90,7 +85,6 @@ export default function LaunchScreen() {
 
                 setUserToken(response.userToken);
                 setHasBackend(true);
-                setIsConnecting(false);
             } catch {
                 if (cancelled) { return; }
 
@@ -172,8 +166,7 @@ export default function LaunchScreen() {
                         isOnCall ? 'Verbindung hergestellt'
                             : isRinging ? 'Eine Nutzer:in benötigt Unterstützung!'
                                 : hasBackend ? 'Warten auf Anfragen…'
-                                    : isConnecting ? 'Verbindung wird hergestellt…'
-                                        : 'Verbindung fehlgeschlagen!'
+                                    : 'Verbindung wird hergestellt…'
                     }
                 </p>
                 <button
