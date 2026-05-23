@@ -36,11 +36,6 @@ export default function LaunchScreen() {
     } = useContext(AppContext);
 
     /*
-     * Whether the application is still trying to reach the backend.
-     */
-    const [isConnecting, setIsConnecting] = useState(true);
-
-    /*
      * Whether a connection with the backend has been established.
      */
     const [hasBackend, setHasBackend] = useState(false);
@@ -77,35 +72,59 @@ export default function LaunchScreen() {
         setIsRingtoneEnabled(!isRingtoneEnabled);
     };
 
-    // Poll for users.
+    // Fetch the ACS token during bootstrap and retry on failure.
     useEffect(() => {
-        const intervalId = window.setInterval(
-            () => {
-                if (isConnecting) {
-                    TowerApi
-                        .assistanceToken()
-                        .then(response => {
-                            setUserToken(response.userToken);
-                            setHasBackend(true);
-                        })
-                        .finally(() => setIsConnecting(false))
-                }
-                if (!isOnCall && hasBackend) {
-                    TowerApi
-                        .offerAssistance()
-                        .then(offerAssistanceResponse => {
-                            setIsRinging(!!offerAssistanceResponse.assistanceRequest);
-                        })
-                        .catch(() => setIsRinging(false));
-                }
-                if (isOnCall) {
-                    setIsRinging(false);
-                }
-            },
-            2000
-        );
+        let cancelled = false;
+        let retryTimeoutId: number | undefined;
+
+        const fetchAssistanceToken = async () => {
+            try {
+                const response = await TowerApi.assistanceToken();
+
+                if (cancelled) { return; }
+
+                setUserToken(response.userToken);
+                setHasBackend(true);
+            } catch {
+                if (cancelled) { return; }
+
+                setHasBackend(false);
+                retryTimeoutId = window.setTimeout(() => {
+                    void fetchAssistanceToken();
+                }, 2000);
+            }
+        };
+
+        void fetchAssistanceToken();
+
+        return () => {
+            cancelled = true;
+            if (retryTimeoutId) {
+                window.clearTimeout(retryTimeoutId);
+            }
+        };
+    }, [setUserToken]);
+
+    // Poll for pending assistance requests once backend setup is complete.
+    useEffect(() => {
+        if (isOnCall) {
+            setIsRinging(false);
+            return;
+        }
+
+        if (!hasBackend) { return; }
+
+        const intervalId = window.setInterval(() => {
+            TowerApi
+                .offerAssistance()
+                .then(offerAssistanceResponse => {
+                    setIsRinging(!!offerAssistanceResponse.assistanceRequest);
+                })
+                .catch(() => setIsRinging(false));
+        }, 2000);
+
         return () => window.clearInterval(intervalId);
-    });
+    }, [hasBackend, isOnCall]);
 
     // Trigger ringtone.
     useEffect(
@@ -147,8 +166,7 @@ export default function LaunchScreen() {
                         isOnCall ? 'Verbindung hergestellt'
                             : isRinging ? 'Eine Nutzer:in benötigt Unterstützung!'
                                 : hasBackend ? 'Warten auf Anfragen…'
-                                    : isConnecting ? 'Verbindung wird hergestellt…'
-                                        : 'Verbindung fehlgeschlagen!'
+                                    : 'Verbindung wird hergestellt…'
                     }
                 </p>
                 <button
