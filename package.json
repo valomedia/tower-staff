@@ -6,7 +6,7 @@
     "@azure/communication-calling": "^1.30.4",
     "@azure/communication-common": "^2.3.1",
     "@azure/communication-react": "^1.21.0",
-    "@babel/core": "^7.16.0",
+    "@babel/core": "^7.29.6",
     "@babel/plugin-transform-runtime": "^7.28.0",
     "@babel/preset-env": "^7.28.0",
     "@babel/preset-react": "^7.27.0",
