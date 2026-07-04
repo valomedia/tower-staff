@@ -118,7 +118,6 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://staff.dev.tower-assist.de",
   "jest": {
     "roots": [
       "<rootDir>/src"

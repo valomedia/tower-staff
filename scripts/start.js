@@ -89,10 +89,8 @@ choosePort(HOST, DEFAULT_PORT)
             useTypeScript,
             webpack,
         });
-        // Load proxy config
-        const proxySetting = require(paths.appPackageJson).proxy;
         const proxyConfig = prepareProxy(
-            proxySetting,
+            process.env.TOWER_PROXY_TARGET,
             paths.appPublic,
             paths.publicUrlOrPath
         );
