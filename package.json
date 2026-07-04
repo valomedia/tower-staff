@@ -165,5 +165,11 @@
       "jest-watch-typeahead/testname"
     ],
     "resetMocks": true
+  },
+  "allowScripts": {
+    "@parcel/watcher@2.5.1": true,
+    "core-js-pure@3.45.1": true,
+    "fsevents@2.3.3": true,
+    "unrs-resolver@1.11.1": true
   }
 }
