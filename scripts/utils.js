@@ -203,9 +203,9 @@ function onProxyError(proxy) {
 }
 
 /**
- * Converts the `proxy` string from package.json into a webpack-dev-server proxy configuration array.
+ * Converts the configured proxy target into a webpack-dev-server proxy configuration array.
  *
- * @param proxy           The proxy target URL string from package.json.
+ * @param proxy           The proxy target URL string.
  * @param appPublicFolder Absolute path to the public folder (used to exclude static file requests).
  * @param servedPathname  The base pathname the app is served under.
  *
@@ -216,9 +216,9 @@ function prepareProxy(proxy, appPublicFolder, servedPathname) {
         return undefined;
     }
     if (typeof proxy !== 'string') {
-        console.log(chalk.red('When specified, "proxy" in package.json must be a string.'));
-        console.log(chalk.red('Instead, the type of "proxy" was "' + typeof proxy + '".'));
-        console.log(chalk.red('Either remove "proxy" from package.json, or make it a string.'));
+        console.log(chalk.red('When specified, TOWER_PROXY_TARGET must be a string.'));
+        console.log(chalk.red('Instead, the type of TOWER_PROXY_TARGET was "' + typeof proxy + '".'));
+        console.log(chalk.red('Either remove TOWER_PROXY_TARGET, or make it a string.'));
         process.exit(1);
     }
 
@@ -238,7 +238,7 @@ function prepareProxy(proxy, appPublicFolder, servedPathname) {
     if (!/^http(s)?:\/\//.test(proxy)) {
         console.log(
             chalk.red(
-                'When "proxy" is specified in package.json it must start with either http:// or https://'
+                'When TOWER_PROXY_TARGET is specified it must start with either http:// or https://'
             )
         );
         process.exit(1);

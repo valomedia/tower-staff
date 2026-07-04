@@ -11,12 +11,14 @@ respectively).
 
 ### Development
 
-To run this app locally, execute `npm start`. To avoid issues with cross-origin requests during development, the app is 
-set to make all requests against the development server while running in development mode. The development server is 
-configured to proxy the requests intended for the backend as needed. If needed, you can modify the backend the requests 
-are sent to by changing the value for the proxy-parameter in `package.json`. If the relative path to the api on your 
-backend-server is non-standard, you will also need to override `REACT_APP_TOWER_API_ENDPOINT`, by creating 
-`.env.development.local`.
+To run this app locally, execute `npm start`.
+To avoid issues with cross-origin requests during development,
+the app is set to make all requests against the development server while running in development mode.
+The development server is configured to proxy the requests intended for the backend as needed.
+If needed,
+you can modify the backend the requests are sent to by overriding `TOWER_PROXY_TARGET` in `.env.development.local`.
+If the relative path to the api on your backend-server is non-standard,
+you will also need to override `REACT_APP_TOWER_API_ENDPOINT` in `.env.development.local`.
 
 ### Deployment
 

@@ -37,7 +37,7 @@
   or other secrets.
 - The Google Maps key is expected as `REACT_APP_MAPS_API_KEY` for local or deployed use.
 - `REACT_APP_TOWER_API_ENDPOINT` can override the backend API endpoint.
-- Development requests are proxied to the `proxy` target in `package.json` unless overridden.
+- `TOWER_PROXY_TARGET` configures the development server backend proxy target.
 
 ## Source Layout
 
