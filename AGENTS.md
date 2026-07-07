@@ -17,11 +17,14 @@
 - Install dependencies with `npm ci`.
 - Start the development server with `npm start`.
 - Run the Jest suite with `CI=true npm test -- --watchAll=false`.
+- Run ESLint with `npm run lint`.
 - Build production assets with `npm run build`.
 - CI uses Node.js 22,
   runs `npm ci`,
-  then runs `CI=true npm test -- --watchAll=false`.
-- There is no separate lint or typecheck npm script at the moment;
+  then runs separate `npm run lint`,
+  `CI=true npm test -- --watchAll=false`,
+  and `npm run build` jobs.
+- There is no separate typecheck npm script at the moment;
   `npm run build` exercises the webpack, ESLint plugin, and TypeScript checker path.
 
 ## Environment and Secrets
