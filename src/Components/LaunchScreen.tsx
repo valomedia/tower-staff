@@ -2,7 +2,6 @@
 //  LaunchScreen.tsx
 //  tower-staff
 //
-//  Created by Jean-Pierre Höhmann on 2023-04-25.
 //
 //
 

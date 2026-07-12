@@ -2,7 +2,6 @@
 //  useCallingStack.ts
 //  tower-staff
 //
-//  Created by Arne Engelland on 2026-05-06.
 //
 
 import { useCallback, useEffect, useRef, useState } from 'react';

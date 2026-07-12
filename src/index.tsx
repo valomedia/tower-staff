@@ -2,7 +2,6 @@
 //  index.tsx
 //  tower-staff
 //
-//  Created by Jean-Pierre Höhmann on 2023-03-06.
 //
 
 import React from 'react';

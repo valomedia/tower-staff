@@ -2,7 +2,6 @@
 //  setupTests.ts
 //  tower-staff
 //
-//  Created by Jean-Pierre Höhmann on 2023-03-06.
 //
 
 // jest-dom adds custom jest matchers for asserting on DOM nodes.

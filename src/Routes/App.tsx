@@ -2,7 +2,6 @@
 //  App.tsx
 //  tower-staff
 //
-//  Created by Jean-Pierre Höhmann on 2023-03-06.
 //
 
 import { Context, createContext, Dispatch, SetStateAction, useState } from 'react';

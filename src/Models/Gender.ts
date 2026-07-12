@@ -2,7 +2,6 @@
 //  Gender.ts
 //  tower-staff
 //
-//  Created by Jean-Pierre Höhmann on 2025-03-09.
 //  Copyright © 2025 valo.media GmbH. All rights reserved.
 //
 
