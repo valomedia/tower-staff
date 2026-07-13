@@ -19,11 +19,11 @@
 - Run the Jest suite with `CI=true npm test -- --watchAll=false`.
 - Run ESLint with `npm run lint`.
 - Build production assets with `npm run build`.
-- CI uses Node.js 22,
-  runs `npm ci`,
-  then runs separate `npm run lint`,
-  `CI=true npm test -- --watchAll=false`,
-  and `npm run build` jobs.
+- CI uses the shared `valomedia/github-workflows` Node/npm workflow without overriding its default Node.js version.
+  The shared workflow installs dependencies with `npm ci --include=dev`,
+  then runs `npm run build`,
+  `npm run lint`,
+  and its default npm test command.
 - There is no separate typecheck npm script at the moment;
   `npm run build` exercises the webpack, ESLint plugin, and TypeScript checker path.
 
