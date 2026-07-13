@@ -2,7 +2,6 @@
 #   robots.txt
 #   tower-staff
 #
-#   Created by Jean-Pierre Höhmann 2023-03-06.
 #
 
 # https://www.robotstxt.org/robotstxt.html

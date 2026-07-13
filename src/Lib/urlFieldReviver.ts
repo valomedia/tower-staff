@@ -2,7 +2,6 @@
 //  urlFieldReviver.ts
 //  tower-staff
 //
-//  Created by Jean-Pierre Höhmann on 2024-12-24.
 //  Copyright © 2024 valo.media GmbH. All rights reserved.
 //
 
