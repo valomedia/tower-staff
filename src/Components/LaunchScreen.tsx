@@ -179,6 +179,15 @@ export default function LaunchScreen() {
                     Anfrage annehmen
                 </button>
                 <audio src={videoChatCalling} ref={audioRef} muted={isOnCall} loop></audio>
+                <nav>
+                    <ul>
+                        <li>
+                            <a href={process.env.REACT_APP_SOURCE_URL} target='_blank' rel="noreferrer">
+                                Quellcode
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </main>
             <footer>
                 <button

@@ -41,6 +41,21 @@
     width: initial;
   }
 
+  nav {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    padding: 8px;
+    border-top: 1px solid gray;
+    width: 100vw;
+    font-size: initial;
+    text-align: left;
+
+    a {
+      color: white;
+    }
+  }
+
 }
 
 @media (prefers-reduced-motion: no-preference) {
