@@ -17,6 +17,9 @@
 - Install dependencies with `npm ci`.
 - Start the development server with `npm start`.
 - Run the Jest suite with `CI=true npm test -- --watchAll=false`.
+- Install Chromium with `npx playwright install --with-deps chromium`.
+  Run browser integration tests and their typecheck with `npm run test:integration`.
+  `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` can select an existing Chromium executable.
 - Run ESLint with `npm run lint`.
 - Build production assets with `npm run build`.
 - CI uses the shared `valomedia/github-workflows` Node/npm workflow without overriding its default Node.js version.
@@ -24,7 +27,8 @@
   then runs `npm run build`,
   `npm run lint`,
   and its default npm test command.
-- There is no separate typecheck npm script at the moment;
+  This repository also enables the shared integration-test job with Chromium installation.
+- There is no separate app typecheck npm script at the moment;
   `npm run build` exercises the webpack, ESLint plugin, and TypeScript checker path.
 
 ## Environment and Secrets
@@ -66,7 +70,16 @@
 - Keep hook filenames in the existing `useThing.ts` style.
 - Prefer explicit exported model types for data-channel messages and backend payloads.
 - Keep data-channel message shapes aligned with the README protocol documentation.
-- Place tests next to the code they cover as `*.test.ts` or `*.test.tsx`.
+- Place unit tests next to the code they cover as `*.test.ts` or `*.test.tsx`.
+- Place Playwright specs in `tests/integration/*.spec.ts` and import their `test`/`expect` from `fixtures.ts`.
+  The fixture mocks the Tower HTTP boundary, blocks external traffic,
+  and leaves app modules and the ACS SDK intact.
+  Call success is outside this suite's scope;
+  its deliberately invalid ACS token keeps acceptance disabled.
+- Integration tests start their own server on `localhost:4173` and never reuse a running server.
+  `scripts/start-integration.js` supplies a sanitized environment,
+  skips `.env*` loading with `SKIP_DOTENV=true`, and disables backend proxying.
+  Use `localhost`, not `127.0.0.1`, because the ACS SDK rejects plain HTTP on the latter.
 
 ## Config and Scripts
 

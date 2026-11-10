@@ -29,6 +29,47 @@ If you have set `REACT_APP_TOWER_API_ENDPOINT` to some relative path, make sure 
 the actual backend. If you have instead configured it to reach out to the domain of the backend directly, make sure you
 have correctly configured the backend to allow these cross-origin requests.
 
+## Integration tests
+
+The Playwright suite loads the real app in Chromium
+and intercepts Tower HTTP requests with a per-test mock backend.
+No backend, Azure credentials, Google Maps key, or physical microphone is needed.
+
+```sh
+npm ci --include=dev
+npx playwright install --with-deps chromium
+npm run test:integration
+```
+
+The test command typechecks the browser tests
+and starts a fresh webpack development server at `http://localhost:4173`.
+Keep that port free;
+Playwright deliberately refuses to reuse an existing server.
+The integration launcher ignores `.env*` files and inherited app configuration,
+disables the backend proxy,
+and never opens a separate browser.
+To use an existing Chromium installation instead of downloading one,
+set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to its executable path.
+
+Tests live in `tests/integration/` and are separate from the Jest unit suite.
+They cover backend bootstrap/retry,
+queue polling and withdrawal,
+poll failure/recovery,
+ringtone controls,
+and token-expiry reloads.
+The fixtures block external HTTP and WebSocket traffic,
+reject unmocked API requests,
+and fail on unhandled browser errors.
+The ACS SDK's known remote-configuration request is blocked without failing the test.
+Synthetic invalid ACS credentials keep call acceptance disabled;
+successful calls, media transport, and data-channel exchanges are not covered.
+
+The existing CI workflow installs Chromium and runs the same command.
+For debugging, use `npm run test:integration -- --headed`
+or `npx playwright show-report` after a run.
+Failure screenshots and traces are saved under `test-results/`;
+HTML reports are written to `playwright-report/`.
+
 ## Data Channel API
 
 This app will communicate directly with the app of the caller (`tower-ios` or `tower-android`) using data channel 
