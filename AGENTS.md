@@ -14,6 +14,9 @@
 
 ## Commands
 
+- Use Node.js 24.11 or newer in the Node 24 line,
+  matching the dev container and CI's Node 24 toolchain.
+  Babel 8 requires Node.js `^22.18.0 || >=24.11.0`.
 - Install dependencies with `npm ci`.
 - Start the development server with `npm start`.
 - Run the Jest suite with `CI=true npm test -- --watchAll=false`.
@@ -74,6 +77,12 @@
 - Keep those files in CommonJS unless the whole toolchain is intentionally migrated.
 - The custom webpack config is based on Create React App conventions;
   inspect existing helpers before changing build behavior.
+- Keep `onlyRemoveTypeImports: false` in the TypeScript presets
+  in both `config/webpack.config.js` and `config/jest/babelTransform.js`.
+  Existing source imports interfaces without `import type`;
+  Babel 8's default would retain those imports at runtime.
+- Nested Babel 7 dependencies are still needed by tools such as SVGR.
+  Do not force all transitive Babel packages onto Babel 8.
 - Do not hand-edit generated output under `build/`,
   `coverage/`,
   or dependency directories.
