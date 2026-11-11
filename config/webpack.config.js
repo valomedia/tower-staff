@@ -424,7 +424,7 @@ module.exports = function (webpackEnv) {
                                 presets: [
                                     ['@babel/preset-env', {useBuiltIns: false}],
                                     ['@babel/preset-react', {runtime: hasJsxRuntime ? 'automatic' : 'classic'}],
-                                    '@babel/preset-typescript',
+                                    ['@babel/preset-typescript', {onlyRemoveTypeImports: false}],
                                 ],
                                 plugins: [
                                     '@babel/plugin-transform-runtime',

@@ -24,7 +24,7 @@ module.exports = babelJest.createTransformer({
     presets: [
         ['@babel/preset-env', {targets: {node: 'current'}}],
         ['@babel/preset-react', {runtime: 'automatic'}],
-        '@babel/preset-typescript',
+        ['@babel/preset-typescript', {onlyRemoveTypeImports: false}],
     ],
     babelrc: false,
     configFile: false,
