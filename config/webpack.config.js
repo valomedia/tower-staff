@@ -427,7 +427,7 @@ module.exports = function (webpackEnv) {
                                     '@babel/preset-typescript',
                                 ],
                                 plugins: [
-                                    ['@babel/plugin-transform-runtime', {helpers: true}],
+                                    '@babel/plugin-transform-runtime',
                                     isEnvDevelopment &&
                                     shouldUseReactRefresh &&
                                     require.resolve('react-refresh/babel'),
