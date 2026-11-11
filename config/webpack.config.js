@@ -47,9 +47,8 @@ const reactRefreshWebpackPluginRuntimeEntry = require.resolve(
 );
 const babelRuntimeEntry = require.resolve('@babel/runtime/package.json');
 const babelRuntimeEntryHelpers = require.resolve(
-    '@babel/runtime/helpers/esm/assertThisInitialized'
+    '@babel/runtime/helpers/assertThisInitialized'
 );
-const babelRuntimeRegenerator = require.resolve('@babel/runtime/regenerator');
 
 // Some apps do not need the benefits of saving a web request, so not inlining the chunk
 // makes for a smoother build process.
@@ -344,7 +343,6 @@ module.exports = function (webpackEnv) {
                     reactRefreshWebpackPluginRuntimeEntry,
                     babelRuntimeEntry,
                     babelRuntimeEntryHelpers,
-                    babelRuntimeRegenerator,
                 ]),
             ],
         },
