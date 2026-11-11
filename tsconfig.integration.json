@@ -1,0 +1,11 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "target": "es2020",
+        "types": ["node"]
+    },
+    "include": [
+        "playwright.config.ts",
+        "tests/integration"
+    ]
+}
