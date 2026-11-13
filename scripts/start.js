@@ -35,7 +35,6 @@ const chalk = require('chalk');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const semver = require('semver');
-const open = require('open');
 const paths = require('../config/paths');
 const configFactory = require('../config/webpack.config');
 const createDevServerConfig = require('../config/webpackDevServer.config');
@@ -128,7 +127,9 @@ choosePort(HOST, DEFAULT_PORT)
             }
 
             console.log(chalk.cyan('Starting the development server...\n'));
-            open(urls.localUrlForBrowser);
+            if (process.env.BROWSER !== 'none') {
+                import('open').then(({default: open}) => open(urls.localUrlForBrowser));
+            }
         });
 
         ['SIGINT', 'SIGTERM'].forEach(function (sig) {
