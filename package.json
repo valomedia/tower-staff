@@ -35,7 +35,7 @@
     "bfj": "^9.0.0",
     "camelcase": "^10.0.0",
     "case-sensitive-paths-webpack-plugin": "^2.4.0",
-    "chalk": "^4.0.0",
+    "chalk": "^6.0.0",
     "css-loader": "^7.0.0",
     "css-minimizer-webpack-plugin": "^8.0.0",
     "detect-port-alt": "^1.1.6",
