@@ -47,9 +47,8 @@ const reactRefreshWebpackPluginRuntimeEntry = require.resolve(
 );
 const babelRuntimeEntry = require.resolve('@babel/runtime/package.json');
 const babelRuntimeEntryHelpers = require.resolve(
-    '@babel/runtime/helpers/esm/assertThisInitialized'
+    '@babel/runtime/helpers/assertThisInitialized'
 );
-const babelRuntimeRegenerator = require.resolve('@babel/runtime/regenerator');
 
 // Some apps do not need the benefits of saving a web request, so not inlining the chunk
 // makes for a smoother build process.
@@ -344,7 +343,6 @@ module.exports = function (webpackEnv) {
                     reactRefreshWebpackPluginRuntimeEntry,
                     babelRuntimeEntry,
                     babelRuntimeEntryHelpers,
-                    babelRuntimeRegenerator,
                 ]),
             ],
         },
@@ -426,10 +424,10 @@ module.exports = function (webpackEnv) {
                                 presets: [
                                     ['@babel/preset-env', {useBuiltIns: false}],
                                     ['@babel/preset-react', {runtime: hasJsxRuntime ? 'automatic' : 'classic'}],
-                                    '@babel/preset-typescript',
+                                    ['@babel/preset-typescript', {onlyRemoveTypeImports: false}],
                                 ],
                                 plugins: [
-                                    ['@babel/plugin-transform-runtime', {helpers: true}],
+                                    '@babel/plugin-transform-runtime',
                                     isEnvDevelopment &&
                                     shouldUseReactRefresh &&
                                     require.resolve('react-refresh/babel'),
@@ -702,7 +700,6 @@ module.exports = function (webpackEnv) {
                         {file: '**/src/setupTests.*'},
                     ],
                 },
-                logger: 'webpack-infrastructure',
             }),
             !disableESLintPlugin &&
             new ESLintPlugin({
