@@ -19,7 +19,7 @@
 'use strict';
 
 const address = require('address');
-const chalk = require('chalk');
+const chalk = require('chalk').default;
 const detect = require('detect-port-alt');
 const fs = require('fs');
 const path = require('path');

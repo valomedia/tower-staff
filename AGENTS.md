@@ -88,6 +88,9 @@
 
 - `config/` and `scripts/` are Node.js files using CommonJS `require` and `module.exports`.
 - Keep those files in CommonJS unless the whole toolchain is intentionally migrated.
+- Load Chalk 6 in those files with `require('chalk').default`.
+  Node 24 supports synchronous ESM loading,
+  but `require('chalk')` returns a module namespace, not the styling instance.
 - The custom webpack config is based on Create React App conventions;
   inspect existing helpers before changing build behavior.
 - Keep `onlyRemoveTypeImports: false` in the TypeScript presets

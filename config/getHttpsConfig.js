@@ -19,7 +19,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const chalk = require('chalk');
+const chalk = require('chalk').default;
 const paths = require('./paths');
 
 // Ensure the certificate and key provided are valid and if not,
