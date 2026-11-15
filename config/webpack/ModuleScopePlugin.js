@@ -18,7 +18,7 @@
 
 'use strict';
 
-const chalk = require('chalk');
+const chalk = require('chalk').default;
 const path = require('path');
 const os = require('os');
 

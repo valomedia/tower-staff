@@ -31,7 +31,7 @@ process.on('unhandledRejection', err => {
 require('../config/env');
 
 const fs = require('fs');
-const chalk = require('chalk');
+const chalk = require('chalk').default;
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const semver = require('semver');

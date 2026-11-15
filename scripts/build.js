@@ -30,7 +30,7 @@ process.on('unhandledRejection', err => {
 // Ensure environment variables are read.
 require('../config/env');
 
-const chalk = require('chalk');
+const chalk = require('chalk').default;
 const fs = require('fs-extra');
 const bfj = require('bfj');
 const webpack = require('webpack');
