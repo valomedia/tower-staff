@@ -52,7 +52,7 @@ const dotenvFiles = process.env.SKIP_DOTENV === 'true' ? [] : [
 //  * https://github.com/motdotla/dotenv-expand
 dotenvFiles.forEach(dotenvFile => {
     if (fs.existsSync(dotenvFile)) {
-        require('dotenv-expand')(
+        require('dotenv-expand').expand(
             require('dotenv').config({
                 path: dotenvFile,
             })
