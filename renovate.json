@@ -1,4 +1,13 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>valomedia/renovate-config"]
+  "extends": ["github>valomedia/renovate-config"],
+  "packageRules": [
+    {
+      "description": "Automerge stable minor updates when CI passes.",
+      "matchUpdateTypes": ["minor"],
+      "matchCurrentVersion": ">=1.0.0",
+      "automerge": true,
+      "automergeType": "pr"
+    }
+  ]
 }
