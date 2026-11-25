@@ -3,7 +3,7 @@
   "version": "1.2.16",
   "private": true,
   "dependencies": {
-    "@azure/communication-calling": "^1.30.4",
+    "@azure/communication-calling": "^2.0.0",
     "@azure/communication-common": "^2.3.1",
     "@azure/communication-react": "^1.35.0",
     "@babel/core": "^8.0.0",
